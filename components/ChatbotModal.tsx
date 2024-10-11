@@ -19,8 +19,6 @@ interface Message {
 
 //make a jsx modal type 
 const ChatBotModal: React.FC<ChatModalProps> = ({ onClose }) => {
-
-
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputMessage, setInputMessage] = useState('');
     const [loading, setLoading] = useState(false);
