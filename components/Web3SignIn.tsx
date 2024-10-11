@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ChevronDown } from 'lucide-react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ethers } from 'ethers';
+import Spinner from '@/components/shared/Spinner';
+//use wallet context
 import { useWallet } from '@/contexts/WalletContext';
-import Spinner from './Spinner';
 
 interface ExtendedProvider extends ethers.providers.ExternalProvider {
   isMetaMask?: boolean;
@@ -29,8 +30,8 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
   useEffect(() => {
     const checkAvailableWallets = () => {
       const wallets = [];
-      if ((window.ethereum as ExtendedProvider)?.isMetaMask) wallets.push('MetaMask');
-      if ((window.ethereum as ExtendedProvider)?.isRabby || (window as any).rabby) wallets.push('Rabby');
+      if ((window.ethereum as unknown as ExtendedProvider)?.isMetaMask) wallets.push('MetaMask');
+      if ((window.ethereum as unknown as ExtendedProvider)?.isRabby || (window as any).rabby) wallets.push('Rabby');
       setAvailableWallets(wallets);
     };
 
@@ -47,13 +48,12 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
       fetchBalance(wallet.address);
     }
   };
-
   const getProvider = (type: string): ExtendedProvider | null => {
-    if (type === 'MetaMask' && (window.ethereum as ExtendedProvider)?.isMetaMask) {
-      return window.ethereum as ExtendedProvider;
-    } else if (type === 'Rabby' && ((window.ethereum as ExtendedProvider)?.isRabby || window.rabby)) {
-      return ((window as any).rabby || window.ethereum) as ExtendedProvider;
-    }
+    const isMetaMask = type === 'MetaMask' && (window.ethereum as unknown as ExtendedProvider)?.isMetaMask;
+    const isRabby = type === 'Rabby' && ((window.ethereum as unknown as ExtendedProvider)?.isRabby || (window as any).rabby);
+
+    if (isMetaMask) return window.ethereum as unknown as ExtendedProvider;
+    if (isRabby) return ((window as any).rabby || window.ethereum) as unknown as ExtendedProvider;
     return null;
   };
 

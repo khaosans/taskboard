@@ -99,7 +99,6 @@
     "tailwindcss": "^3.4.13",
     "tailwindcss-animate": "^1.0.7",
     "tree-kill": "^1.2.2",
-    "typescript": "5.3.3",
     "ui": "npm:@shadcn/ui@latest",
     "web3": "^4.13.0",
     "web3-react": "^5.0.5",
@@ -126,8 +125,8 @@
     "@types/recharts": "^1.8.29",
     "@types/socket.io-client": "^3.0.0",
     "@types/supertest": "^6.0.2",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
+    "@typescript-eslint/eslint-plugin": "^8.8.1",
+    "@typescript-eslint/parser": "^8.8.1",
     "babel-jest": "^29.7.0",
     "chromedriver": "^129.0.2",
     "concurrently": "^9.0.1",
@@ -137,7 +136,8 @@
     "jest-environment-jsdom": "^29.7.0",
     "node-mocks-http": "^1.16.1",
     "supertest": "^7.0.0",
-    "ts-jest": "^29.2.5"
+    "ts-jest": "^29.2.5",
+    "typescript": "5.1.6"
   },
   "resolutions": {
     "punycode": "2.1.0"
