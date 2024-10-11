@@ -2,24 +2,12 @@
 
 import React from 'react';
 
-interface SpinnerProps {
-  size?: 'small' | 'medium' | 'large';
-  color?: string;
-  className?: string;
-}
-
-const Spinner: React.FC<SpinnerProps> = ({ size = 'medium', color = 'currentColor', className = '' }) => {
-  const sizeClass = {
-    small: 'w-4 h-4',
-    medium: 'w-6 h-6',
-    large: 'w-8 h-8',
-  }[size];
-
-  return (
-    <div className={`inline-block ${sizeClass} ${className} animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]`} style={{ color }}>
-      <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
-    </div>
-  );
+const Spinner: React.FC = () => {
+    return (
+        <div className="flex items-center justify-center h-full">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+        </div>
+    );
 };
 
 export default Spinner;

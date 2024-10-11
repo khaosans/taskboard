@@ -9,8 +9,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
 import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes';
-import NotificationSimulator from '@/components/NotificationSimulator';
-import { WalletProvider } from '@/contexts/WalletContext';
 
 export default function RootLayout({
     children,
@@ -36,6 +34,7 @@ export default function RootLayout({
               boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
               borderRadius: '8px',
             },
+            // Center the modal
             modalContent: {
               display: 'flex',
               flexDirection: 'column',
@@ -43,9 +42,10 @@ export default function RootLayout({
               justifyContent: 'center',
               minHeight: '100vh',
             },
+            // Ensure the inner content is centered as well
             modalContentInner: {
               width: '100%',
-              maxWidth: '400px',
+              maxWidth: '400px', // Adjust this value as needed
             },
           },
           layout: {
@@ -55,15 +55,12 @@ export default function RootLayout({
         }}>
             <html lang="en">
                 <body>
-                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                    <ThemeProvider attribute="class" defaultTheme="dark">
                         <Web3ReactProvider getLibrary={(provider: any) => new Web3Provider(provider)}>
-                            <WalletProvider>
-                                <Layout>
-                                    <NotificationSimulator />
-                                    {children}
-                                    <Toaster />
-                                </Layout>
-                            </WalletProvider>
+                            <Layout>
+                                {children}
+                                <Toaster />
+                            </Layout>
                         </Web3ReactProvider>
                     </ThemeProvider>
                 </body>

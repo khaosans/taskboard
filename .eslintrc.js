@@ -1,4 +1,5 @@
 module.exports = {
+<<<<<<< HEAD
   parser: '@typescript-eslint/parser',
   env: {
     node: true, // Enable Node.js global variables
@@ -44,4 +45,8 @@ module.exports = {
       },
     },
   ],
+=======
+  extends: ['next/core-web-vitals'],
+  // Remove the 'useEslintrc' and 'extensions' options
+>>>>>>> parent of e63c4a1 (chore: Add ConsoleSidePanel and DefiWalletPage components, update eslint.config.js and rename MoncacoEditor to MonacoEditor (#42))
 };
