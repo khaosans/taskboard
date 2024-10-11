@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { createContext, useState, useContext, useEffect } from 'react';
+=======
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+>>>>>>> 9798f34 (feat: Add ConsoleSidePanel and DefiWalletPage components, update eslint.config.js and rename MoncacoEditor to MonacoEditor)
 
 interface Wallet {
   address: string;
@@ -12,6 +16,7 @@ interface WalletContextType {
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
+<<<<<<< HEAD
 export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
 
@@ -22,6 +27,11 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, []);
 
+=======
+export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [wallet, setWallet] = useState<Wallet | null>(null);
+
+>>>>>>> 9798f34 (feat: Add ConsoleSidePanel and DefiWalletPage components, update eslint.config.js and rename MoncacoEditor to MonacoEditor)
   return (
     <WalletContext.Provider value={{ wallet, setWallet }}>
       {children}
@@ -29,9 +39,15 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   );
 };
 
+<<<<<<< HEAD
 export const useWallet = () => {
   const context = useContext(WalletContext);
   if (context === undefined) {
+=======
+export const useWallet = (): WalletContextType => {
+  const context = useContext(WalletContext);
+  if (!context) {
+>>>>>>> 9798f34 (feat: Add ConsoleSidePanel and DefiWalletPage components, update eslint.config.js and rename MoncacoEditor to MonacoEditor)
     throw new Error('useWallet must be used within a WalletProvider');
   }
   return context;
