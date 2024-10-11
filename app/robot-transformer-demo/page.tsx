@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import CommonLayout from '@/components/CommonLayout';
-import RobotTransformerWallpaperDemo from '@/components/RobotTransformerWallpaperDemo';
 
-export default function RobotTransformerDemoPage() {
+const RobotTransformerDemo: React.FC = () => {
   return (
-    <CommonLayout>
-      <RobotTransformerWallpaperDemo />
-    </CommonLayout>
+    <div className="min-h-screen bg-gray-900 text-white">
+      <h1>Robot Transformer Demo</h1>
+      {/* Add demo components here */}
+    </div>
   );
-}
+};
+
+export default RobotTransformerDemo;

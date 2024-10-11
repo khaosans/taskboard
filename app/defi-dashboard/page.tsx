@@ -1,10 +1,19 @@
-import React from 'react';
+'use client';
 
-export default function DeFiDashboardPage() {
+import React from 'react';
+import { useUser } from '@clerk/nextjs';
+import DeFiBalance from '@/components/DeFiBalance';
+
+const DefiDashboard: React.FC = () => {
+  const { isSignedIn, user } = useUser();
+
   return (
-    <div>
+    <div className="min-h-screen bg-gray-900 text-white">
       <h1>DeFi Dashboard</h1>
-      {/* Add your dashboard content here */}
+      {isSignedIn && <DeFiBalance />}
+      {/* Add other dashboard components here */}
     </div>
   );
-}
+};
+
+export default DefiDashboard;

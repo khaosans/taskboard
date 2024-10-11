@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Bell, Settings, MessageCircle } from 'lucide-react';
@@ -20,10 +20,15 @@ interface TopBarProps {
 const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isNudged, setIsNudged] = useState(false);
+  const [isLocalhost, setIsLocalhost] = useState(false);
   const router = useRouter();
   const { isLoaded, isSignedIn, user } = useUser();
   const { notifications } = useNotifications();
   const unreadCount = notifications.filter(n => !n.read).length;
+
+  useEffect(() => {
+    setIsLocalhost(window.location.hostname === 'localhost');
+  }, []);
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
@@ -62,6 +67,9 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         <nav className="flex space-x-4">
           <SignedIn>
             <motion.div className="flex space-x-4">
+              <Link href="/defi-dashboard" className="hover:text-purple-400 transition-colors">
+                Defi Dashboard
+              </Link>
               {['Members', 'Task Manager', 'Agent Manager', 'Portfolio'].map((item, index) => (
                 <motion.div
                   key={item}
@@ -113,6 +121,11 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
             </motion.div>
           </SignedOut>
         </div>
+        {isLocalhost && (
+          <Link href="/portfolio" className="text-white hover:text-purple-400">
+            Portfolio
+          </Link>
+        )}
       </motion.header>
       {isChatOpen && <ChatbotModal onClose={() => setIsChatOpen(false)} />}
     </>
