@@ -9,7 +9,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
 import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes';
-import NotificationSimulator from '@/components/NotificationSimulator';
 import { WalletProvider } from '@/contexts/WalletContext';
 
 export default function RootLayout({
@@ -59,7 +58,6 @@ export default function RootLayout({
                         <Web3ReactProvider getLibrary={(provider: any) => new Web3Provider(provider)}>
                             <WalletProvider>
                                 <Layout>
-                                    <NotificationSimulator />
                                     {children}
                                     <Toaster />
                                 </Layout>

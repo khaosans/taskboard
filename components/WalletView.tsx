@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CustomButton from '@/components/CustomButton';
 import { Pie, PieChart, Cell, ResponsiveContainer } from 'recharts';
 import { ArrowUpRight, ArrowDownRight, MoreHorizontal } from 'lucide-react';
 
