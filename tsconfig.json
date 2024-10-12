@@ -38,12 +38,12 @@
       "react",
       "react-dom"
     ],
-    "baseUrl": "."
+    "baseUrl": "src"
   },
   "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/.next/types/**/*.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [

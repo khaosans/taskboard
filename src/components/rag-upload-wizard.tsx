@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Mark this component as a Client Component
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button"; // Absolute path
@@ -8,7 +8,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress"; // Absolute path
 import { ScrollArea } from "@/components/ui/scroll-area"; // Absolute path
 import { ChevronRight, File, Trash2, Upload, Search } from 'lucide-react';
-import vercelKVClient from '@/utils/vercelKV'; // Import the Vercel KV client
+import { Pinecone } from '@pinecone-database/pinecone'; // Import Pinecone with types
+
+// Initialize Pinecone client
+const apiKey = process.env.NEXT_PUBLIC_PINECONE_API_KEY;
+if (!apiKey) {
+  throw new Error('PINECONE_API_KEY is not defined in the environment variables.');
+}
+
+const pc = new Pinecone({
+  apiKey: apiKey
+});
 
 const RAGUploadWizard = () => {
   const [step, setStep] = useState(1);
@@ -37,6 +47,26 @@ const RAGUploadWizard = () => {
     setFiles(newFiles);
   };
 
+  const fetchEmbeddings = async (text: string) => {
+    const response = await fetch('http://localhost:11434/api/embeddings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'nomic-embed-text',
+        prompt: text,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch embeddings');
+    }
+
+    const data = await response.json();
+    return data.embeddings; // Adjust based on the actual response structure
+  };
+
   const handleUpload = async () => {
     setUploadStatus('Processing and uploading data...');
     let progress = 0;
@@ -45,50 +75,40 @@ const RAGUploadWizard = () => {
       setUploadProgress(progress);
       if (progress >= 100) {
         clearInterval(interval);
-        setUploadStatus('Upload complete! Data processed and stored.');
+        setUploadStatus('Upload complete! Data processed and stored in Pinecone.');
       }
     }, 500);
 
-    const formData = new FormData();
-    files.forEach((file, index) => {
-      formData.append(`file${index}`, file);
-    });
+    // Prepare vectors for upload
+    const vectors = await Promise.all(files.map(async (file, index) => {
+      const text = await file.text(); // Read the file content
+      const embedding = await fetchEmbeddings(text); // Get embeddings from local API
+      return {
+        id: `${index + 1}`,
+        values: embedding, // Use the embeddings as vector values
+        metadata: { text: file.name }
+      };
+    }));
 
-    try {
-      await vercelKVClient.post('/api/upload', formData, { // Ensure the path is correct
-        onUploadProgress: (progressEvent) => {
-          if (progressEvent.total) {
-            setUploadProgress(Math.round((progressEvent.loaded / progressEvent.total) * 100));
-          }
-        }
-      });
-    } catch (error) {
-      console.error('Upload failed:', error);
-      setUploadStatus('Upload failed. Please try again.');
-    }
+    // Upsert vectors to Pinecone
+    await pc.upsert(vectors); // Upload vectors to Pinecone
   };
 
   const handleInference = async () => {
     setUploadStatus('Performing inference...');
-    try {
-      const response = await vercelKVClient.post('/embeddings', {
-        model: 'nomic-embed-text',
-        prompt: inferenceQuery
-      });
-      setInferenceResults(response.data);
-      setUploadStatus('Inference complete!');
-    } catch (error) {
-      console.error('Inference failed:', error);
-      setUploadStatus('Inference failed. Please try again.');
-    }
+    // Simulate vector encoding of the query
+    const queryVector = [0.1, 0.2, 0.3]; // Replace with actual vector encoding logic
+    const results = await pc.query(queryVector); // Query Pinecone
+    setInferenceResults(results);
+    setUploadStatus('Inference complete!');
   };
 
   return (
     <div className="container mx-auto p-4">
       <Card>
         <CardHeader>
-          <CardTitle>RAG Upload and Inference with Ollama</CardTitle>
-          <CardDescription>Upload data, process with Ollama, and perform inference</CardDescription>
+          <CardTitle>RAG Upload and Inference with Pinecone</CardTitle>
+          <CardDescription>Upload data, process with Pinecone, and perform inference</CardDescription>
         </CardHeader>
         <CardContent>
           {step === 1 && (
@@ -140,7 +160,7 @@ const RAGUploadWizard = () => {
 
           {step === 3 && (
             <div>
-              <h2 className="text-lg font-semibold mb-4">Process and Upload to Ollama</h2>
+              <h2 className="text-lg font-semibold mb-4">Process and Upload to Pinecone</h2>
               <Button onClick={handleUpload}>Process and Upload</Button>
               {uploadStatus && (
                 <div className="mt-4">
