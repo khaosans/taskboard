@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabaseClient';
+import { createClerkSupabaseClient } from '@/lib/supabase';
 
 export async function POST(req: Request) {
   const { userId, message } = await req.json();
 
-  const { data, error } = await supabase
+  const client = await createClerkSupabaseClient();
+  const { data, error } = await client
     .from('notifications')
     .insert([
       { userId, message, read: false }

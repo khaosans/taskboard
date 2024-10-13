@@ -6,7 +6,7 @@ import { Label } from "@/components/forms/label";
 import { Input } from "@/components/forms/input";
 import { FormMessage } from "@/components/forms/form-message";
 import { toast } from "react-hot-toast";
-import { supabase } from "@/utils/supabase/client";
+import { createClerkSupabaseClient } from "@/lib/supabase";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 interface ForgotPasswordForm {
@@ -24,7 +24,8 @@ export default function ForgotPasswordForm() {
 
     const { email } = data;
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const client = await createClerkSupabaseClient();
+    const { error } = await client.auth.resetPasswordForEmail(email);
     if (error) {
       setMessage(error.message);
       toast.error(error.message);
