@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ethers } from 'ethers';
 import { useWallet } from '@/contexts/WalletContext';
 import Spinner from './Spinner';
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets'; // Import Phantom wallet adapter
 
 interface ExtendedProvider extends ethers.providers.ExternalProvider {
   isMetaMask?: boolean;
@@ -31,6 +32,7 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
       const wallets = [];
       if ((window.ethereum as ExtendedProvider)?.isMetaMask) wallets.push('MetaMask');
       if ((window.ethereum as ExtendedProvider)?.isRabby || (window as any).rabby) wallets.push('Rabby');
+      wallets.push('Phantom'); // Add Phantom to available wallets
       setAvailableWallets(wallets);
     };
 
@@ -53,6 +55,8 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
       return window.ethereum as ExtendedProvider;
     } else if (type === 'Rabby' && ((window.ethereum as ExtendedProvider)?.isRabby || window.rabby)) {
       return ((window as any).rabby || window.ethereum) as ExtendedProvider;
+    } else if (type === 'Phantom') {
+      return window.solana; // Phantom wallet is accessible via window.solana
     }
     return null;
   };
@@ -64,21 +68,28 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
       if (!provider) {
         throw new Error(`${walletType} provider not found`);
       }
-      const ethersProvider = new ethers.providers.Web3Provider(provider);
-      
-      // Artificial delay for visibility (3 seconds)
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      await ethersProvider.send("eth_requestAccounts", []);
-      const signer = ethersProvider.getSigner();
-      const address = await signer.getAddress();
-      
-      const newWallet = { address, type: walletType };
-      setWallet(newWallet);
-      localStorage.setItem('connectedWallet', JSON.stringify(newWallet));
-      onWalletChange(newWallet);
-      fetchBalance(address);
-      toast.success('Wallet connected successfully');
+      if (walletType === 'Phantom') {
+        // Handle Phantom wallet connection
+        const { publicKey } = await provider.connect();
+        const newWallet = { address: publicKey.toString(), type: walletType };
+        setWallet(newWallet);
+        localStorage.setItem('connectedWallet', JSON.stringify(newWallet));
+        onWalletChange(newWallet);
+        fetchBalance(publicKey.toString());
+        toast.success('Wallet connected successfully');
+      } else {
+        // Existing connection logic for MetaMask and Rabby
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        await ethersProvider.send("eth_requestAccounts", []);
+        const signer = ethersProvider.getSigner();
+        const address = await signer.getAddress();
+        const newWallet = { address, type: walletType };
+        setWallet(newWallet);
+        localStorage.setItem('connectedWallet', JSON.stringify(newWallet));
+        onWalletChange(newWallet);
+        fetchBalance(address);
+        toast.success('Wallet connected successfully');
+      }
     } catch (error) {
       console.error("Failed to connect wallet:", error);
       toast.error("Failed to connect wallet. Please try again.");
