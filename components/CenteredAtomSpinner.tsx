@@ -8,4 +8,4 @@ const CenteredAtomSpinner: React.FC = () => {
   );
 };
 
-export default CenteredAtomSpinner;
+export default CenteredAtomSpinner; 
