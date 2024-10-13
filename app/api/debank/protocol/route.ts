@@ -52,8 +52,9 @@ export async function GET(req: NextRequest) {
     await vercelKVClient.set(cacheKey, JSON.stringify(protocolData), { ex: cacheTTL });
 
     return NextResponse.json(protocolData);
+
   } catch (error) {
     logger.error(`Error fetching protocol data: ${(error as Error).message}`);
-    return NextResponse.json({ error: 'Failed to fetch protocol data' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
