@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient'; // Ensure you have the correct path to your Supabase client
+import { supabase } from '@/lib/supabase'; // Ensure you have the correct path to your Supabase client
 import { useRouter } from 'next/navigation';
 import Image from 'next/image'; // Import Image for optimized loading
 
