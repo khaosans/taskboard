@@ -12,12 +12,7 @@ import Web3SignIn from './Web3SignIn';
 import { motion } from 'framer-motion';
 import { useNotifications } from '@/hooks/useNotifications';
 
-interface TopBarProps {
-  onWalletChange: (wallet: { address: string; type: string } | null) => void;
-  selectedWallet: { address: string; type: string } | null;
-}
-
-const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
+const TopBar: React.FC<{ onWalletChange: () => void, selectedWallet: string | null }> = ({ onWalletChange, selectedWallet }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isNudged, setIsNudged] = useState(false);
   const router = useRouter();
@@ -32,10 +27,6 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
   const handleLogoClick = () => {
     setIsNudged(true);
     globalThis.setTimeout(() => setIsNudged(false), 300);
-  };
-
-  const handleWalletChange = (wallet: { address: string; type: string } | null) => {
-    onWalletChange(wallet);
   };
 
   if (!isLoaded) {
@@ -62,14 +53,14 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         <nav className="flex space-x-4">
           <SignedIn>
             <motion.div className="flex space-x-4">
-              {[ 'Portfolio'].map((item, index) => (
+              {['Portfolio', 'CoinGraphs'].map((item, index) => (
                 <motion.div
                   key={item}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Link href={`/${item.toLowerCase().replace(' ', '-')}`} className="hover:text-purple-400 transition-colors">
+                  <Link href={`/${item.toLowerCase()}`} className="hover:text-purple-400 transition-colors">
                     {item}
                   </Link>
                 </motion.div>
@@ -79,7 +70,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         </nav>
         <div className="flex items-center space-x-4">
           <SignedIn>
-            <Web3SignIn onWalletChange={handleWalletChange} />
+            <Web3SignIn onWalletChange={onWalletChange} />
             <motion.button 
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}

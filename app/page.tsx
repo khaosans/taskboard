@@ -15,7 +15,10 @@ export default function Home() {
     <div>
       <h1>Welcome to the Home Page</h1>
       {isSignedIn ? (
-        <Link href="/drive">Go to Drive</Link>
+        <>
+          <Link href="/portfolio">Go to Portfolio</Link>
+          <Link href="/coin-graphs">Go to Coin Graphs</Link>
+        </>
       ) : (
         <Link href="/login">Sign In</Link>
       )}
