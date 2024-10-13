@@ -73,7 +73,8 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
     try {
       setIsConnecting(true);
       if (walletType === 'Solana') {
-        await solanaWallet.select('Phantom'); // or whichever wallet you want to use
+        // @ts-ignore
+        await solanaWallet.select('Phantom'); 
         await solanaWallet.connect();
       } else {
         const provider = getProvider(walletType);

@@ -1,49 +1,26 @@
 "use client"
 
-import { useState } from 'react'
-import toast from 'react-hot-toast'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import React from 'react'
+import { Button } from '@/components/ui/button'
 
-interface Props {
+interface GoogleDriveAuthProps {
   onConnect: () => void
 }
 
-export default function GoogleDriveAuth({ onConnect }: Props) {
-  const [isLoading, setIsLoading] = useState(false)
-  const supabase = createClientComponentClient()
-
-  const handleConnect = async () => {
-    setIsLoading(true)
+const GoogleDriveAuth: React.FC<GoogleDriveAuthProps> = ({ onConnect }) => {
+  const handleAuth = async () => {
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          scopes: 'https://www.googleapis.com/auth/drive.readonly',
-          redirectTo: `${window.location.origin}/drive`
-        }
-      })
-
-      if (error) throw error
-      if (data.url) {
-        window.location.href = data.url
-      }
+      const response = await fetch('/api/auth/callback?action=google-drive-login');
+      const { url } = await response.json();
+      window.location.href = url;
     } catch (error) {
-      console.error('Error connecting to Google Drive:', error)
-      toast.error(`Failed to connect to Google Drive: ${error instanceof Error ? error.message : 'Unknown error'}`)
-    } finally {
-      setIsLoading(false)
+      console.error('Error initiating Google Drive auth:', error);
     }
-  }
+  };
 
   return (
-    <div>
-      <button
-        onClick={handleConnect}
-        disabled={isLoading}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        {isLoading ? 'Connecting...' : 'Connect Google Drive'}
-      </button>
-    </div>
-  )
-}
+    <Button onClick={handleAuth}>Connect Google Drive</Button>
+  );
+};
+
+export default GoogleDriveAuth;

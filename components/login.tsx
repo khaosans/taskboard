@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient'; // Ensure you have the correct path to your Supabase client
+import supabase from '@/lib/supabaseClient'; 
 import { useRouter } from 'next/navigation';
-import Image from 'next/image'; // Import Image for optimized loading
+import Image from 'next/image'; 
 
 export default function Login() {
   const [email, setEmail] = useState('');

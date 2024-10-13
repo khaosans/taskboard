@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react'; // Ensure lucide-react is installed and imported correctly
-import supabase from '../utils/supabase'; // Adjust the import based on your file structure
+import supabase from '@/lib/supabaseClient';
 import SkeletonLoader from './SkeletonLoader'; // Import Skeleton Loader
 import LoaderSpinner from './LoaderSpinner'; // Import Loader Spinner
 
@@ -94,8 +94,7 @@ const ChatBotModal: React.FC<ChatModalProps> = ({ onClose }) => {
                     ]);
                 }
 
-                // Save messages to Supabase
-                await supabase.from('messages').insert([
+                await   supabase.from('messages').insert([
                     { content: inputMessage, role: 'user' },
                     { content: assistantMessage, role: 'assistant' }
                 ]);

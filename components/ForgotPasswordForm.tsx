@@ -6,7 +6,7 @@ import { Label } from "@/components/forms/label";
 import { Input } from "@/components/forms/input";
 import { FormMessage } from "@/components/forms/form-message";
 import { toast } from "react-hot-toast";
-import { supabase } from "@/utils/supabase/client";
+import supabase from "@/lib/supabaseClient";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 interface ForgotPasswordForm {

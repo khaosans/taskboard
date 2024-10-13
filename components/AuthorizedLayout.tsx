@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/utils/supabase/client';
+import supabase from '@/lib/supabaseClient';
 import { User } from '@supabase/supabase-js';
 
 const AuthorizedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {

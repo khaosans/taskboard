@@ -1,20 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
-import { Redis } from '@upstash/redis';
+import kvClient from '@/lib/kvClient';
 
 // Add these lines
 import 'server-only';
 import { headers } from 'next/headers';
 
-// Initialize Upstash Redis client
-const redis = new Redis({
-  url: 'https://viable-ladybird-24042.upstash.io',
-  token: 'AV3qAAIjcDE1YjZkMjExYTAyOTQ0ZDI5YWI3MzU4OGE2ZDlkMTE1ZHAxMA'
-});
-
-export async function GET(req: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = req.nextUrl;
+    const { searchParams } = request.nextUrl;
     const walletAddress = searchParams.get('id');
 
     logger.info('Starting API request...');
@@ -36,7 +30,7 @@ export async function GET(req: NextRequest) {
     const debankAPIUrl = `https://pro-openapi.debank.com/v1/user/total_balance?id=${walletAddress}`;
 
     // Try to get data from cache
-    const cachedData = await redis.get(cacheKey);
+    const cachedData = await kvClient.get(cacheKey);
     
     if (cachedData) {
       logger.info('Retrieved data from Redis cache');
@@ -69,7 +63,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Store the sorted data in cache
-    await redis.set(cacheKey, JSON.stringify(data), { ex: cacheTTL });
+    await kvClient.set(cacheKey, JSON.stringify(data), { ex: cacheTTL });
     logger.info('Stored sorted data in Redis cache');
 
     return NextResponse.json(data);

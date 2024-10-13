@@ -1,42 +1,30 @@
 import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
-import { notificationStore, Notification } from '@/lib/notificationStore';
+import logger from '@/lib/logger';
+import kvClient from '@/lib/kvClient';
 
-export const useNotifications = () => {
-  const { user } = useUser();
+interface Notification {
+  id: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+  // Add other properties as needed
+}
+
+export function useNotifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    if (user) {
-      fetchNotifications();
-      const intervalId = setInterval(fetchNotifications, 30000); // Poll every 30 seconds
-      return () => clearInterval(intervalId);
-    }
-  }, [user]);
+    fetchNotifications();
+  }, []);
 
   const fetchNotifications = async () => {
-    if (!user) return;
-    
     try {
-      const fetchedNotifications = await notificationStore.fetchNotifications(user.id);
-      setNotifications(fetchedNotifications);
+      const notifs = await kvClient.get<Notification[]>('notifications');
+      setNotifications(notifs || []);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      logger.error(`Error fetching notifications: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
-  const markAsRead = async (notificationId: string) => {
-    if (!user) return;
-
-    try {
-      await notificationStore.markAsRead(user.id, notificationId);
-      setNotifications(prev =>
-        prev.map(n => n.id === notificationId ? { ...n, read: true } : n)
-      );
-    } catch (error) {
-      console.error('Error marking notification as read:', error);
-    }
-  };
-
-  return { notifications, markAsRead };
-};
+  return { notifications, fetchNotifications };
+}

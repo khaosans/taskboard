@@ -3,8 +3,8 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"; // Updated import
 import { Button } from "@/components/ui/button";
-import { useTheme } from '@/components/ThemeContext'; // Updated import
 import { X } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,8 +14,8 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
-  const { isDark } = useTheme();
-
+  const { theme  } = useTheme();
+  const isDark = theme === 'dark';
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={`sm:max-w-[425px] p-4 rounded-lg shadow-lg ${isDark ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}`}>

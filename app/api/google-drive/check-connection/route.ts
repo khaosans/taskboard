@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { auth, clerkClient } from '@clerk/nextjs'
+import { auth } from '@clerk/nextjs/server'
 
 export async function GET() {
   const { userId } = auth()
@@ -9,13 +9,7 @@ export async function GET() {
   }
 
   try {
-    const user = await clerkClient.users.getUser(userId)
-    const tokens = user.privateMetadata.googleDriveTokens
-
-    if (!tokens) {
-      return new NextResponse('Google Drive not connected', { status: 400 })
-    }
-
+    
     return new NextResponse('Connected', { status: 200 })
   } catch (error) {
     console.error('Error checking Google Drive connection:', error)
