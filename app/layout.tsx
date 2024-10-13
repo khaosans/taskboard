@@ -7,18 +7,35 @@ import Layout from '@/components/Layout';
 import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
-import { ClerkProvider } from '@clerk/nextjs'
+import { ClerkProvider, useSession } from '@clerk/nextjs'
 import { dark } from '@clerk/themes';
 import { WalletProvider } from '@/contexts/WalletContext';
-import { createClient } from '@supabase/supabase-js'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { SolanaWalletProvider } from '@/components/SolanaWalletProvider';
+import { createClerkSupabaseClient } from '@/utils/supabase';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+function SupabaseProvider({ children }: { children: React.ReactNode }) {
+  const { session } = useSession();
+  const [supabase, setSupabase] = React.useState(null);
+
+  React.useEffect(() => {
+    async function initSupabase() {
+      const client = await createClerkSupabaseClient(session);
+      setSupabase(client);
+    }
+    initSupabase();
+  }, [session]);
+
+  if (!supabase) {
+    return null; // or a loading spinner
+  }
+
+  return (
+    <SessionContextProvider supabaseClient={supabase}>
+      {children}
+    </SessionContextProvider>
+  );
+}
 
 export default function RootLayout({
     children,
@@ -62,22 +79,22 @@ export default function RootLayout({
           },
         }}>
             <html lang="en">
-                <SessionContextProvider supabaseClient={supabase}>
-                    <body>
-                        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                            <Web3ReactProvider getLibrary={(provider: any) => new Web3Provider(provider)}>
-                                <WalletProvider>
-                                    <SolanaWalletProvider>
+                <body>
+                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                        <Web3ReactProvider getLibrary={(provider: any) => new Web3Provider(provider)}>
+                            <WalletProvider>
+                                <SolanaWalletProvider>
+                                    <SupabaseProvider>
                                         <Layout>
                                             {children}
                                             <Toaster />
                                         </Layout>
-                                    </SolanaWalletProvider>
-                                </WalletProvider>
-                            </Web3ReactProvider>
-                        </ThemeProvider>
-                    </body>
-                </SessionContextProvider>
+                                    </SupabaseProvider>
+                                </SolanaWalletProvider>
+                            </WalletProvider>
+                        </Web3ReactProvider>
+                    </ThemeProvider>
+                </body>
             </html>
         </ClerkProvider>
     )

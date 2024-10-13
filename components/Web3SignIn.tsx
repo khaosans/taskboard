@@ -73,27 +73,26 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
     try {
       setIsConnecting(true);
       if (walletType === 'Solana') {
-        // Solana wallet connection is handled by WalletMultiButton
-        return;
+        await solanaWallet.select('Phantom'); // or whichever wallet you want to use
+        await solanaWallet.connect();
+      } else {
+        const provider = getProvider(walletType);
+        if (!provider) {
+          throw new Error(`${walletType} provider not found`);
+        }
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        
+        await ethersProvider.send("eth_requestAccounts", []);
+        const signer = ethersProvider.getSigner();
+        const address = await signer.getAddress();
+        
+        const newWallet = { address, type: walletType };
+        setEVMWallet(newWallet);
+        localStorage.setItem('connectedWallet', JSON.stringify(newWallet));
+        onWalletChange(newWallet);
+        fetchBalance(address);
       }
-      const provider = getProvider(walletType);
-      if (!provider) {
-        throw new Error(`${walletType} provider not found`);
-      }
-      const ethersProvider = new ethers.providers.Web3Provider(provider);
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      await ethersProvider.send("eth_requestAccounts", []);
-      const signer = ethersProvider.getSigner();
-      const address = await signer.getAddress();
-      
-      const newWallet = { address, type: walletType };
-      setEVMWallet(newWallet);
-      localStorage.setItem('connectedWallet', JSON.stringify(newWallet));
-      onWalletChange(newWallet);
-      fetchBalance(address);
-      toast.success('Wallet connected successfully');
+      toast.success(`${walletType} wallet connected successfully`);
     } catch (error) {
       console.error("Failed to connect wallet:", error);
       toast.error("Failed to connect wallet. Please try again.");
@@ -197,11 +196,15 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
                     >
                       <motion.div whileHover={{ x: 5 }} className="flex items-center">
                         {isConnecting ? <Spinner size="small" className="mr-2" /> : null}
-                        {wallet === 'Solana' ? (
-                          <WalletMultiButton className="bg-transparent hover:bg-transparent text-white" />
-                        ) : (
-                          <span>{isConnecting ? 'Connecting...' : `Connect ${wallet}`}</span>
-                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-start text-white hover:bg-gray-700"
+                          onClick={() => connectWallet(wallet)}
+                          disabled={isConnecting}
+                        >
+                          {isConnecting ? 'Connecting...' : `Connect ${wallet}`}
+                        </Button>
                       </motion.div>
                     </DropdownMenu.Item>
                   ))
