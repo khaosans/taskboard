@@ -10,6 +10,14 @@ import { Toaster } from 'react-hot-toast';
 import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes';
 import { WalletProvider } from '@/contexts/WalletContext';
+import { createClient } from '@supabase/supabase-js'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { SessionContextProvider } from '@supabase/auth-helpers-react'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 export default function RootLayout({
     children,
@@ -53,18 +61,20 @@ export default function RootLayout({
           },
         }}>
             <html lang="en">
-                <body>
-                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                        <Web3ReactProvider getLibrary={(provider: any) => new Web3Provider(provider)}>
-                            <WalletProvider>
-                                <Layout>
-                                    {children}
-                                    <Toaster />
-                                </Layout>
-                            </WalletProvider>
-                        </Web3ReactProvider>
-                    </ThemeProvider>
-                </body>
+                <SessionContextProvider supabaseClient={supabase}>
+                    <body>
+                        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                            <Web3ReactProvider getLibrary={(provider: any) => new Web3Provider(provider)}>
+                                <WalletProvider>
+                                    <Layout>
+                                        {children}
+                                        <Toaster />
+                                    </Layout>
+                                </WalletProvider>
+                            </Web3ReactProvider>
+                        </ThemeProvider>
+                    </body>
+                </SessionContextProvider>
             </html>
         </ClerkProvider>
     )

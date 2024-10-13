@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
-export async function POST(req: NextRequest) {
-  try {
-    const { token } = await req.json();
+export async function GET(request: NextRequest) {
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get('code');
 
-    // Simulate token verification or processing
-    if (!token) {
-      return NextResponse.json({ error: 'Token is required' }, { status: 400 });
-    }
-
-    // Mock successful authentication
-    return NextResponse.json({ message: 'Authentication successful', token }, { status: 200 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  if (code) {
+    const supabase = createRouteHandlerClient({ cookies });
+    await supabase.auth.exchangeCodeForSession(code);
   }
+
+  // URL to redirect to after sign in process completes
+  return NextResponse.redirect(requestUrl.origin + '/drive');
 }
