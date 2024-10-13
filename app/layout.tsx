@@ -12,24 +12,9 @@ import { dark } from '@clerk/themes';
 import { WalletProvider } from '@/contexts/WalletContext';
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { SolanaWalletProvider } from '@/components/SolanaWalletProvider';
-import { createClerkSupabaseClient } from '@/utils/supabase';
+import { supabase } from '@/utils/supabase'; // Import the supabase client
 
 function SupabaseProvider({ children }: { children: React.ReactNode }) {
-  const { session } = useSession();
-  const [supabase, setSupabase] = React.useState(null);
-
-  React.useEffect(() => {
-    async function initSupabase() {
-      const client = await createClerkSupabaseClient(session);
-      setSupabase(client);
-    }
-    initSupabase();
-  }, [session]);
-
-  if (!supabase) {
-    return null; // or a loading spinner
-  }
-
   return (
     <SessionContextProvider supabaseClient={supabase}>
       {children}

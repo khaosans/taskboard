@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react'; // Ensure lucide-react is installed and imported correctly
-import supabase from '../utils/supabase'; // Adjust the import based on your file structure
+import { supabase } from '@/utils/supabase'; // Update import
 import SkeletonLoader from './SkeletonLoader'; // Import Skeleton Loader
 import LoaderSpinner from './LoaderSpinner'; // Import Loader Spinner
 
