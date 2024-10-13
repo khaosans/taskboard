@@ -12,15 +12,19 @@ import { dark } from '@clerk/themes';
 import { WalletProvider } from '@/contexts/WalletContext';
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { SolanaWalletProvider } from '@/components/SolanaWalletProvider';
-import { createClerkSupabaseClient } from '@/utils/supabase';
+import { createClerkSupabaseClient } from 'lib/supabase';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { supabase } from 'lib/supabase';
 
 function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const { isLoaded, userId } = useAuth();
-  const [supabaseClient, setSupabaseClient] = useState(null);
+  const [supabaseClient, setSupabaseClient] = useState<SupabaseClient | null>(null);
 
   useEffect(() => {
     if (isLoaded && userId) {
-      createClerkSupabaseClient().then(setSupabaseClient);
+      createClerkSupabaseClient().then((client) => {
+        setSupabaseClient(client);
+      });
     }
   }, [isLoaded, userId]);
 

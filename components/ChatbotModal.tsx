@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react'; // Ensure lucide-react is installed and imported correctly
-import { getSupabaseClient, createClerkSupabaseClient } from '@/utils/supabase'; // Update import
+import { createClerkSupabaseClient } from '@/lib/supabase'; // Update import
 import SkeletonLoader from './SkeletonLoader'; // Import Skeleton Loader
 import LoaderSpinner from './LoaderSpinner'; // Import Loader Spinner
 
