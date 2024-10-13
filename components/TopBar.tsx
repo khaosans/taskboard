@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Bell, Settings, MessageCircle } from 'lucide-react';
+import { Bell, Settings, MessageCircle, HardDrive } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ChatbotModal from './ChatbotModal';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
@@ -62,7 +62,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         <nav className="flex space-x-4">
           <SignedIn>
             <motion.div className="flex space-x-4">
-              {['Portfolio'].map((item, index) => (
+              {['Portfolio', 'Drive'].map((item, index) => (
                 <motion.div
                   key={item}
                   initial={{ opacity: 0, y: -20 }}

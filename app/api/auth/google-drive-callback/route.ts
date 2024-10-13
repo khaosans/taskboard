@@ -1,44 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { clerkClient } from '@clerk/nextjs'
+import { createClient } from '@supabase/supabase-js'
+import { google } from 'googleapis'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const code = searchParams.get('code')
-  const state = searchParams.get('state')
+  const state = searchParams.get('state') // This should be the user ID
 
   if (!code || !state) {
-    return NextResponse.redirect('/drive?error=missing_params')
+    return new NextResponse('Missing authorization code or state', { status: 400 })
   }
 
   try {
-    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        code,
-        client_id: process.env.GOOGLE_CLIENT_ID!,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-        redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google-drive-callback`,
-        grant_type: 'authorization_code',
-      }),
-    })
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google-drive-callback`
+    )
 
-    if (!tokenResponse.ok) {
-      throw new Error('Failed to exchange code for tokens')
+    const { tokens } = await oauth2Client.getToken(code)
+
+    // Store tokens in Supabase
+    const { error } = await supabase
+      .from('user_google_tokens')
+      .upsert({ user_id: state, tokens }, { onConflict: 'user_id' })
+
+    if (error) {
+      console.error('Error storing tokens:', error)
+      return new NextResponse('Failed to store tokens', { status: 500 })
     }
 
-    const tokens = await tokenResponse.json()
-
-    // Store tokens in Clerk's user metadata
-    await clerkClient.users.updateUserMetadata(state, {
-      privateMetadata: {
-        googleDriveTokens: tokens,
-      },
+    // Redirect to a success page with a script to store tokens in localStorage
+    return new NextResponse(`
+      <html>
+        <body>
+          <script>
+            localStorage.setItem('googleDriveTokens', '${JSON.stringify(tokens)}');
+            window.location.href = '/dashboard'; // Redirect to your dashboard or desired page
+          </script>
+        </body>
+      </html>
+    `, {
+      headers: { 'Content-Type': 'text/html' },
     })
-
-    return NextResponse.redirect('/drive?success=true')
   } catch (error) {
     console.error('Error in Google Drive callback:', error)
-    return NextResponse.redirect('/drive?error=auth_failed')
+    return new NextResponse('Authentication failed', { status: 500 })
   }
 }

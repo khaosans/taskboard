@@ -19,7 +19,7 @@ export default function GoogleDriveAuth({ onConnect }: Props) {
         provider: 'google',
         options: {
           scopes: 'https://www.googleapis.com/auth/drive.readonly',
-          redirectTo: `${window.location.origin}/api/auth/callback`
+          redirectTo: `${window.location.origin}/drive`
         }
       })
 

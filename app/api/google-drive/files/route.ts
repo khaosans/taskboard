@@ -1,20 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs'
-import { clerkClient } from '@clerk/nextjs/server'
+import { createClient } from '@supabase/supabase-js'
 import { google } from 'googleapis'
 
-export async function GET(request: NextRequest) {
-  const { userId } = auth();
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
-  if (!userId) {
-    return new NextResponse('Unauthorized', { status: 401 })
+// Function to get tokens from local storage (client-side only)
+const getTokensFromLocalStorage = () => {
+  if (typeof window !== 'undefined') {
+    const tokens = localStorage.getItem('googleDriveTokens')
+    return tokens ? JSON.parse(tokens) : null
   }
+  return null
+}
 
+export async function GET(request: NextRequest) {
   try {
-    const user = await clerkClient.users.getUser(userId)
-    const tokens = user.privateMetadata.googleDriveTokens as any
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      return new NextResponse('Unauthorized', { status: 401 })
+    }
 
-    if (!tokens) {
+    const { data: userTokens, error } = await supabase
+      .from('user_google_tokens')
+      .select('tokens')
+      .eq('user_id', session.user.id)
+      .single()
+
+    if (error || !userTokens) {
       return new NextResponse('Google Drive not connected', { status: 400 })
     }
 
@@ -24,7 +40,7 @@ export async function GET(request: NextRequest) {
       `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google-drive-callback`
     )
 
-    oauth2Client.setCredentials(tokens)
+    oauth2Client.setCredentials(userTokens.tokens)
 
     const drive = google.drive({ version: 'v3', auth: oauth2Client })
 

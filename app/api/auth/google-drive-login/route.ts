@@ -1,12 +1,17 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function POST() {
   try {
-    const { userId } = auth()
+    const { data: { session } } = await supabase.auth.getSession()
 
-    if (!userId) {
-      console.error('Unauthorized: No user ID found')
+    if (!session) {
+      console.error('Unauthorized: No session found')
       return new NextResponse('Unauthorized', { status: 401 })
     }
 
@@ -18,7 +23,7 @@ export async function POST() {
       scope: 'https://www.googleapis.com/auth/drive.readonly',
       access_type: 'offline',
       prompt: 'consent',
-      state: userId,
+      state: session.user.id,
     })
 
     const url = `${GOOGLE_AUTH_URL}?${params.toString()}`
