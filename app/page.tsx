@@ -3,10 +3,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
-import { ArrowRight, Brain, Cog, Users, Zap, BarChart, Shield } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import ChainInfo from '@/components/ChainInfo';
 
 const WelcomePage: React.FC = () => {
   const { isSignedIn, user } = useUser();
+  const [selectedChain, setSelectedChain] = React.useState('eth');
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -47,39 +49,8 @@ const WelcomePage: React.FC = () => {
         )}
 
         <section className="mb-16">
-          <h2 className="text-3xl font-semibold mb-8 text-center">Our Features</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <FeatureCard 
-              icon={<Brain className="h-12 w-12 text-purple-500" />}
-              title="AI Agents"
-              description="Leverage our intelligent AI agents for various tasks, from data analysis to content creation."
-            />
-            <FeatureCard 
-              icon={<Cog className="h-12 w-12 text-purple-500" />}
-              title="Task Management"
-              description="Efficiently manage and track your projects with our intuitive task management system."
-            />
-            <FeatureCard 
-              icon={<Users className="h-12 w-12 text-purple-500" />}
-              title="Collaboration"
-              description="Work seamlessly with your team members in real-time, enhancing productivity and communication."
-            />
-            <FeatureCard 
-              icon={<Zap className="h-12 w-12 text-purple-500" />}
-              title="Automation"
-              description="Automate repetitive tasks and workflows to save time and reduce errors."
-            />
-            <FeatureCard 
-              icon={<BarChart className="h-12 w-12 text-purple-500" />}
-              title="Analytics"
-              description="Gain valuable insights with our advanced analytics and reporting tools."
-            />
-            <FeatureCard 
-              icon={<Shield className="h-12 w-12 text-purple-500" />}
-              title="Security"
-              description="Rest easy knowing your data is protected with our state-of-the-art security measures."
-            />
-          </div>
+          <h2 className="text-3xl font-semibold mb-8 text-center">Chain Information</h2>
+          <ChainInfo chainId={selectedChain} />
         </section>
 
         <footer className="text-center text-gray-500">
@@ -89,15 +60,5 @@ const WelcomePage: React.FC = () => {
     </div>
   );
 };
-
-const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; description: string }> = ({ icon, title, description }) => (
-  <div className="bg-gray-800 p-6 rounded-lg shadow-lg transition-transform duration-300 hover:transform hover:scale-105">
-    <div className="flex items-center mb-4">
-      {icon}
-      <h3 className="text-xl font-semibold ml-4">{title}</h3>
-    </div>
-    <p className="text-gray-400">{description}</p>
-  </div>
-);
 
 export default WelcomePage;

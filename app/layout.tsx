@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ThemeProvider } from 'next-themes';
 import '@/styles/globals.css';
 import Layout from '@/components/Layout';
@@ -12,24 +12,23 @@ import { dark } from '@clerk/themes';
 import { WalletProvider } from '@/contexts/WalletContext';
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { SolanaWalletProvider } from '@/components/SolanaWalletProvider';
-import { createClerkSupabaseClient } from 'lib/supabase';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 function SupabaseProvider({ children }: { children: React.ReactNode }) {
-  const { isLoaded, userId } = useAuth();
-  const [supabaseClient, setSupabaseClient] = useState<SupabaseClient | null>(null);
-
-  useEffect(() => {
-    if (isLoaded && userId) {
-      createClerkSupabaseClient().then((client) => {
-        setSupabaseClient(client);
-      });
-    }
-  }, [isLoaded, userId]);
-
-  if (!supabaseClient) {
-    return null; // or a loading spinner
-  }
+  const { getToken } = useAuth();
+  
+  const supabaseClient = React.useMemo(() => {
+    return createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${getToken({ template: 'supabase' })}`,
+        },
+      },
+    });
+  }, [getToken]);
 
   return (
     <SessionContextProvider supabaseClient={supabaseClient}>
