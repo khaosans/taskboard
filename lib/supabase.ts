@@ -16,7 +16,9 @@ export type CreateServerSupabaseClient = () => ServerSupabaseClient;
 export type CreateClerkSupabaseClient = () => Promise<ClerkSupabaseClient>;
 
 // Client-side Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const createClientSupabaseClient = () => {
+  return createClient(supabaseUrl, supabaseAnonKey);
+};
 
 // Placeholder for server-side functions
 export let createServerSupabaseClient: CreateServerSupabaseClient = () => {
