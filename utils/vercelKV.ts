@@ -1,10 +1,11 @@
-import axios from 'axios';
+import { Redis } from '@upstash/redis';
 
-const vercelKVClient = axios.create({
-  baseURL: process.env.KV_REST_API_URL,
-  headers: {
-    Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
-  },
+// Initialize Upstash Redis client
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_URL,
+  token: process.env.UPSTASH_REDIS_TOKEN
 });
+
+const vercelKVClient = redis;
 
 export default vercelKVClient;
