@@ -51,8 +51,8 @@ interface Protocol {
   }>;
 }
 
-export default function PortfolioPage() {
-  const { isLoaded: isUserLoaded, isSignedIn, user } = useUser();
+const PortfolioPage = () => {
+  const { user } = useUser();
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +64,7 @@ export default function PortfolioPage() {
   const [selectedProtocol, setSelectedProtocol] = useState<Protocol | null>(null);
 
   useEffect(() => {
-    if (isUserLoaded && isSignedIn && user && wallet) {
+    if (user && wallet) {
       logger.info(`Fetching balance for wallet: ${wallet.address}`);
       const fetchPortfolioData = async () => {
         try {
@@ -105,7 +105,7 @@ export default function PortfolioPage() {
       setPortfolioData(null);
       setLoading(false);
     }
-  }, [isUserLoaded, isSignedIn, user, wallet]);
+  }, [user, wallet]);
 
   const handleChainClick = async (chain: ChainData) => {
     setSelectedChain(chain);
@@ -131,12 +131,18 @@ export default function PortfolioPage() {
 
   const renderOverview = () => (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Your Portfolio</h1>
+      <h1 className="text-2xl font-bold mb-4">Portfolio</h1>
       <div className="flex items-center mb-4">
-        <img src={user.imageUrl || '/default-profile.png'} alt={'User'} className="w-12 h-12 rounded-full mr-2" />
-        <h2 className="text-xl font-semibold">{user.username}</h2>
+        <img 
+          src={user?.imageUrl || '/default-profile.png'} 
+          alt="User" 
+          className="w-12 h-12 rounded-full mr-2" 
+        />
+        <h2 className="text-xl font-semibold">{user?.username || 'User'}</h2>
       </div>
-      <p className="mb-4">Connected Wallet: {wallet.address}</p>
+      {wallet && (
+        <p className="mb-4">Connected Wallet: {wallet.address}</p>
+      )}
       {portfolioData ? (
         <div>
           <Card className="mb-4">
@@ -251,20 +257,11 @@ export default function PortfolioPage() {
     </div>
   );
 
-  if (!isUserLoaded || loading) {
+  if (!user || loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <Spinner size="large" color="#611BBD" />
         <p className="mt-4 text-xl">Loading...</p>
-      </div>
-    );
-  }
-
-  if (!isSignedIn) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-2xl font-bold mb-4">Please sign in to view your portfolio</h1>
-        <Button onClick={() => router.push('/sign-in')}>Sign In</Button>
       </div>
     );
   }
@@ -291,4 +288,6 @@ export default function PortfolioPage() {
   }
 
   return renderOverview();
-}
+};
+
+export default PortfolioPage;

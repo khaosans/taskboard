@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import { ArrowRight } from 'lucide-react';
 import ChainInfo from '@/components/ChainInfo';
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 
 const WelcomePage: React.FC = () => {
   const { isSignedIn, user } = useUser();

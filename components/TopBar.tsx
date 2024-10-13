@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Bell, Settings, MessageCircle, HardDrive } from 'lucide-react';
+import { Bell, Settings, MessageCircle, Home, Briefcase, Layout } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ChatbotModal from './ChatbotModal';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
@@ -11,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import Web3SignIn from './Web3SignIn';
 import { motion } from 'framer-motion';
 import { useNotifications } from '@/hooks/useNotifications';
-import { createClerkSupabaseClient } from 'lib/supabase';
 
 interface TopBarProps {
   onWalletChange: (wallet: { address: string; type: string } | null) => void;
@@ -21,27 +19,18 @@ interface TopBarProps {
 const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isNudged, setIsNudged] = useState(false);
-  const router = useRouter();
   const { isLoaded, isSignedIn, user } = useUser();
   const { notifications } = useNotifications();
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const toggleChat = () => {
-    setIsChatOpen(!isChatOpen);
-  };
+  const toggleChat = () => setIsChatOpen(!isChatOpen);
 
   const handleLogoClick = () => {
     setIsNudged(true);
-    globalThis.setTimeout(() => setIsNudged(false), 300);
+    setTimeout(() => setIsNudged(false), 300);
   };
 
-  const handleWalletChange = (wallet: { address: string; type: string } | null) => {
-    onWalletChange(wallet);
-  };
-
-  if (!isLoaded) {
-    return null;
-  }
+  if (!isLoaded) return null;
 
   return (
     <>
@@ -63,15 +52,20 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         <nav className="flex space-x-4">
           <SignedIn>
             <motion.div className="flex space-x-4">
-              {['Portfolio'].map((item, index) => (
+              {[
+                { name: 'Home', icon: Home, path: '/' },
+                { name: 'Dashboard', icon: Layout, path: '/dashboard' },
+                { name: 'Portfolio', icon: Briefcase, path: '/portfolio' }
+              ].map((item, index) => (
                 <motion.div
-                  key={item}
+                  key={item.name}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Link href={`/${item.toLowerCase().replace(' ', '-')}`} className="hover:text-purple-400 transition-colors">
-                    {item}
+                  <Link href={item.path} className="hover:text-purple-400 transition-colors flex items-center">
+                    <item.icon className="h-5 w-5 mr-1" />
+                    <span className="hidden md:inline">{item.name}</span>
                   </Link>
                 </motion.div>
               ))}
@@ -80,7 +74,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         </nav>
         <div className="flex items-center space-x-4">
           <SignedIn>
-            <Web3SignIn onWalletChange={handleWalletChange} />
+            <Web3SignIn onWalletChange={onWalletChange} />
             <motion.button 
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
