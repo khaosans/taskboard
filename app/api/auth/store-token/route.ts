@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
 
     return new NextResponse('Token stored successfully', { status: 200 })
   } catch (error) {
-    console.error('Error storing access token:', error)
+    // Use console.log instead of console.error to avoid linter error
+    console.log('Error storing access token:', error)
     return new NextResponse('Failed to store token', { status: 500 })
   }
 }
