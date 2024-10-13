@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react'; // Ensure lucide-react is installed and imported correctly
-import { supabase } from '@/utils/supabase'; // Update import
+import { getSupabaseClient, createClerkSupabaseClient } from '@/utils/supabase'; // Update import
 import SkeletonLoader from './SkeletonLoader'; // Import Skeleton Loader
 import LoaderSpinner from './LoaderSpinner'; // Import Loader Spinner
 
@@ -52,6 +52,14 @@ const ChatBotModal: React.FC<ChatModalProps> = ({ onClose }) => {
         }
     };
 
+    const saveMessagesToSupabase = async (userMessage: string, assistantMessage: string) => {
+        const supabase = await createClerkSupabaseClient();
+        await supabase.from('messages').insert([
+            { content: userMessage, role: 'user' },
+            { content: assistantMessage, role: 'assistant' }
+        ]);
+    };
+
     const handleSendMessage = async () => {
         if (inputMessage.trim() && !loading) {
             setLoading(true); // Set loading to true
@@ -95,10 +103,7 @@ const ChatBotModal: React.FC<ChatModalProps> = ({ onClose }) => {
                 }
 
                 // Save messages to Supabase
-                await supabase.from('messages').insert([
-                    { content: inputMessage, role: 'user' },
-                    { content: assistantMessage, role: 'assistant' }
-                ]);
+                await saveMessagesToSupabase(inputMessage, assistantMessage);
 
             } catch (error) {
                 console.error('Error:', error);

@@ -1,22 +1,35 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ThemeProvider } from 'next-themes';
 import '@/styles/globals.css';
 import Layout from '@/components/Layout';
 import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
-import { ClerkProvider, useSession } from '@clerk/nextjs'
+import { ClerkProvider, useAuth } from '@clerk/nextjs'
 import { dark } from '@clerk/themes';
 import { WalletProvider } from '@/contexts/WalletContext';
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { SolanaWalletProvider } from '@/components/SolanaWalletProvider';
-import { supabase } from '@/utils/supabase'; // Import the supabase client
+import { createClerkSupabaseClient } from '@/utils/supabase';
 
 function SupabaseProvider({ children }: { children: React.ReactNode }) {
+  const { isLoaded, userId } = useAuth();
+  const [supabaseClient, setSupabaseClient] = useState(null);
+
+  useEffect(() => {
+    if (isLoaded && userId) {
+      createClerkSupabaseClient().then(setSupabaseClient);
+    }
+  }, [isLoaded, userId]);
+
+  if (!supabaseClient) {
+    return null; // or a loading spinner
+  }
+
   return (
-    <SessionContextProvider supabaseClient={supabase}>
+    <SessionContextProvider supabaseClient={supabaseClient}>
       {children}
     </SessionContextProvider>
   );
