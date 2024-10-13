@@ -19,8 +19,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }
 
-    const cacheKey = `protocol_list:${id}:${chainId}`;
-    const cacheTTL = 3600; // Cache for 1 hour (3600 seconds)
+    const cacheKey = `complex_protocol_list:${id}:${chainId}`;
+    const cacheTTL = 300; // Cache for 5 minutes (300 seconds)
 
     // Try to get data from cache
     const cachedData = await vercelKVClient.get(cacheKey);
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(protocolListData);
   } catch (error) {
-    logger.error(`Error fetching protocol list data: ${(error as Error).message}`);
+    logger.error(`Error fetching complex protocol list data: ${(error as Error).message}`);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -119,6 +119,7 @@ export default function PortfolioPage() {
       setProtocols(data);
     } catch (error) {
       logger.error(`Error fetching protocol data: ${(error as Error).message}`);
+      setError(`Failed to fetch protocol data: ${(error as Error).message}`);
     } finally {
       setLoadingProtocols(false);
     }
@@ -189,6 +190,8 @@ export default function PortfolioPage() {
       <h2 className="text-2xl font-bold mb-4">DeFi Protocols</h2>
       {loadingProtocols ? (
         <Spinner size="large" color="#611BBD" />
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
       ) : protocols.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {protocols.map((protocol) => (
