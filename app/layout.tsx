@@ -13,6 +13,7 @@ import { WalletProvider } from '@/contexts/WalletContext';
 import { createClient } from '@supabase/supabase-js'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
+import { SolanaWalletProvider } from '@/components/SolanaWalletProvider';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -66,10 +67,12 @@ export default function RootLayout({
                         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
                             <Web3ReactProvider getLibrary={(provider: any) => new Web3Provider(provider)}>
                                 <WalletProvider>
-                                    <Layout>
-                                        {children}
-                                        <Toaster />
-                                    </Layout>
+                                    <SolanaWalletProvider>
+                                        <Layout>
+                                            {children}
+                                            <Toaster />
+                                        </Layout>
+                                    </SolanaWalletProvider>
                                 </WalletProvider>
                             </Web3ReactProvider>
                         </ThemeProvider>
