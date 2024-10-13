@@ -11,6 +11,13 @@ import Web3SignIn from './Web3SignIn';
 import { motion } from 'framer-motion';
 import { useNotifications } from '@/hooks/useNotifications';
 
+// Add this type declaration at the top of the file
+declare global {
+  interface Window {
+    setTimeout: typeof setTimeout;
+  }
+}
+
 interface TopBarProps {
   onWalletChange: (wallet: { address: string; type: string } | null) => void;
   selectedWallet: { address: string; type: string } | null;
@@ -27,7 +34,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
 
   const handleLogoClick = () => {
     setIsNudged(true);
-    setTimeout(() => setIsNudged(false), 300);
+    window.setTimeout(() => setIsNudged(false), 300);
   };
 
   if (!isLoaded) return null;

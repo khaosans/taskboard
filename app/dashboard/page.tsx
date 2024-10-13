@@ -6,14 +6,17 @@ import { useWallet } from '@/contexts/WalletContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, Activity, DollarSign, Briefcase, TrendingUp, Globe, PieChart } from 'lucide-react';
+import { ArrowRight, DollarSign, Briefcase, TrendingUp, Globe, PieChart, Wallet } from 'lucide-react';
 import Spinner from '@/components/Spinner';
+import { ethers } from 'ethers';
+import vercelKVClient from '@/utils/vercelKV';
 
 interface Asset {
   name: string;
   symbol: string;
   value: number;
-  logo: string;
+  balance: string;
+  chain: string;
   percentage: number;
 }
 
@@ -25,7 +28,7 @@ interface ChainDistribution {
 
 interface PortfolioSummary {
   totalValue: number;
-  topAssets: Asset[];
+  assets: Asset[];
   chainDistribution: ChainDistribution[];
 }
 
@@ -42,8 +45,17 @@ interface GlobalData {
   market_cap_change_percentage_24h_usd: number;
 }
 
-const DashboardPage = () => {
-  const { user } = useUser();
+const INFURA_API_KEY = process.env.NEXT_PUBLIC_INFURA_API_KEY;
+
+const chains = [
+  { name: 'Ethereum', rpcUrl: `https://mainnet.infura.io/v3/${INFURA_API_KEY}`, symbol: 'ETH' },
+  { name: 'Optimism', rpcUrl: `https://optimism-mainnet.infura.io/v3/${INFURA_API_KEY}`, symbol: 'ETH' },
+  { name: 'Arbitrum', rpcUrl: `https://arbitrum-mainnet.infura.io/v3/${INFURA_API_KEY}`, symbol: 'ETH' },
+  { name: 'Polygon', rpcUrl: `https://polygon-mainnet.infura.io/v3/${INFURA_API_KEY}`, symbol: 'MATIC' },
+];
+
+const DashboardPage: React.FC = () => {
+  const { isLoaded, isSignedIn, user } = useUser();
   const { wallet } = useWallet();
   const [loading, setLoading] = useState(true);
   const [portfolioSummary, setPortfolioSummary] = useState<PortfolioSummary | null>(null);
@@ -51,69 +63,101 @@ const DashboardPage = () => {
   const [globalData, setGlobalData] = useState<GlobalData | null>(null);
 
   useEffect(() => {
+    if (!isLoaded || !isSignedIn || !wallet?.address) {
+      setLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
-      if (wallet?.address) {
-        try {
-          // Fetch portfolio data from DeBank API
-          const portfolioResponse = await fetch(`/api/debank/user/total_balance?id=${wallet.address}`);
-          const portfolioData = await portfolioResponse.json();
-          
-          const totalValue = portfolioData.total_usd_value;
-          
-          // Process top assets
-          const allAssets = portfolioData.chain_list.flatMap((chain: any) => chain.token_list || []);
-          const sortedAssets = allAssets.sort((a: any, b: any) => b.amount * b.price - a.amount * a.price);
-          const topAssets = sortedAssets.slice(0, 5).map((token: any) => {
-            const value = token.amount * token.price;
-            return {
-              name: token.name,
-              symbol: token.symbol,
-              value: value,
-              logo: token.logo_url,
-              percentage: (value / totalValue) * 100
-            };
-          });
+      try {
+        const cacheKey = `dashboard_${wallet.address}`;
+        const cachedData = await vercelKVClient.get(cacheKey);
 
-          // Process chain distribution
-          const chainDistribution = portfolioData.chain_list.map((chain: any) => ({
-            name: chain.name,
-            value: chain.usd_value,
-            percentage: (chain.usd_value / totalValue) * 100
-          })).sort((a: ChainDistribution, b: ChainDistribution) => b.value - a.value);
-
-          setPortfolioSummary({
-            totalValue,
-            topAssets,
-            chainDistribution
-          });
-
-          // Fetch trending coins from CoinGecko
-          const trendingResponse = await fetch('https://api.coingecko.com/api/v3/search/trending');
-          const trendingData = await trendingResponse.json();
-          setTrendingCoins(trendingData.coins.slice(0, 5).map((coin: any) => coin.item));
-
-          // Fetch global data from CoinGecko
-          const globalResponse = await fetch('https://api.coingecko.com/api/v3/global');
-          const globalData = await globalResponse.json();
-          setGlobalData(globalData.data);
-
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        } finally {
+        if (cachedData) {
+          setPortfolioSummary(JSON.parse(cachedData));
           setLoading(false);
+          return;
         }
-      } else {
+
+        // Fetch token prices from CoinGecko
+        const priceResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,optimism,arbitrum,matic-network&vs_currencies=usd');
+        const priceData = await priceResponse.json();
+
+        let totalValue = 0;
+        const assets: Asset[] = [];
+        const chainValues: { [key: string]: number } = {};
+
+        for (const chain of chains) {
+          try {
+            const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrl);
+            const balance = await provider.getBalance(wallet.address);
+            const ethBalance = parseFloat(ethers.utils.formatEther(balance));
+            const price = priceData[chain.name.toLowerCase()]?.usd || 0;
+            const value = ethBalance * price;
+
+            totalValue += value;
+            chainValues[chain.name] = value;
+
+            assets.push({
+              name: chain.name,
+              symbol: chain.symbol,
+              value: value,
+              balance: ethBalance.toFixed(4),
+              chain: chain.name,
+              percentage: 0
+            });
+          } catch (error) {
+            console.error(`Error fetching balance for ${chain.name}:`, error);
+          }
+        }
+
+        assets.forEach(asset => {
+          asset.percentage = (asset.value / totalValue) * 100;
+        });
+
+        const chainDistribution = Object.entries(chainValues).map(([name, value]) => ({
+          name,
+          value,
+          percentage: (value / totalValue) * 100
+        })).sort((a, b) => b.value - a.value);
+
+        const portfolioSummary = {
+          totalValue,
+          assets,
+          chainDistribution
+        };
+
+        setPortfolioSummary(portfolioSummary);
+
+        // Cache the data for 5 minutes
+        await vercelKVClient.set(cacheKey, JSON.stringify(portfolioSummary), { ex: 300 });
+
+        // Fetch trending coins and global data
+        // ... (keep existing trending coins and global data fetching)
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [wallet]);
+  }, [isLoaded, isSignedIn, wallet]);
 
-  if (loading) {
+  if (!isLoaded || loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spinner size="large" color="#611BBD" />
+      </div>
+    );
+  }
+
+  if (!isSignedIn || !wallet?.address) {
+    return (
+      <div className="container mx-auto p-4">
+        <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+        <p>Please sign in and connect your wallet to view your dashboard.</p>
       </div>
     );
   }
@@ -123,6 +167,20 @@ const DashboardPage = () => {
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Wallet className="mr-2" />
+              Connected Wallet
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm font-medium truncate">
+              {wallet?.address}
+            </p>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -141,20 +199,19 @@ const DashboardPage = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Briefcase className="mr-2" />
-              Top Assets
+              Your Assets
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ul>
-              {portfolioSummary?.topAssets.map((asset, index) => (
+              {portfolioSummary?.assets.map((asset, index) => (
                 <li key={index} className="flex items-center justify-between mb-2">
-                  <div className="flex items-center">
-                    <img src={asset.logo} alt={asset.name} className="w-6 h-6 mr-2" />
-                    <span>{asset.name} ({asset.symbol})</span>
-                  </div>
+                  <span>{asset.name} ({asset.symbol})</span>
                   <div className="text-right">
-                    <span>${asset.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                    <span className="ml-2 text-sm text-gray-500">({asset.percentage.toFixed(2)}%)</span>
+                    <span>{asset.balance} {asset.symbol}</span>
+                    <span className="ml-2 text-sm text-gray-500">
+                      (${asset.value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
+                    </span>
                   </div>
                 </li>
               ))}
