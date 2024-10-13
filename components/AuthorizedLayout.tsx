@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase';
+import { createClerkSupabaseClient } from '@/lib/supabase';
 const AuthorizedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
@@ -9,7 +9,8 @@ const AuthorizedLayout: React.FC<{ children: React.ReactNode }> = ({ children })
 
     useEffect(() => {
         const checkSession = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
+            const client = await createClerkSupabaseClient();
+            const { data: { user } } = await client.auth.getUser();
             if (!user) {
                 router.push('/login');
             } else {

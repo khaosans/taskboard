@@ -14,7 +14,6 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { SolanaWalletProvider } from '@/components/SolanaWalletProvider';
 import { createClerkSupabaseClient } from 'lib/supabase';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { supabase } from 'lib/supabase';
 
 function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const { isLoaded, userId } = useAuth();

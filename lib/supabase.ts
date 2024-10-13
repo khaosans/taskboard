@@ -1,64 +1,77 @@
 import { createClient } from '@supabase/supabase-js';
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { auth } from '@clerk/nextjs/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// Use a type assertion for the environment variables
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
-// Create a single instance of the Supabase client for client-side usage
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Type definitions
+export type ServerSupabaseClient = SupabaseClient;
+export type ClerkSupabaseClient = SupabaseClient;
+export type CreateServerSupabaseClient = () => ServerSupabaseClient;
+export type CreateClerkSupabaseClient = () => Promise<ClerkSupabaseClient>;
 
-// Create a server-side Supabase client
-export const createServerSupabaseClient = () => {
-  const cookieStore = cookies();
-
-  return createServerClient(
-    supabaseUrl,
-    supabaseAnonKey,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-        set(name: string, value: string, options: any) {
-          try {
-            cookieStore.set(name, value, options)
-          } catch (error) {
-            // The `set` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing user sessions.
-          }
-        },
-        remove(name: string, options: any) {
-          try {
-            cookieStore.set(name, '', { ...options, maxAge: 0 })
-          } catch (error) {
-            // The `delete` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing user sessions.
-          }
-        },
-      },
-    }
-  );
+// Client-side Supabase client
+export const createClientSupabaseClient = () => {
+  return createClient(supabaseUrl, supabaseAnonKey);
 };
 
-// Create a Clerk-authenticated Supabase client
-export async function createClerkSupabaseClient() {
-  const { getToken } = auth();
-  const supabaseAccessToken = await getToken({ template: 'supabase' });
+// Placeholder for server-side functions
+export let createServerSupabaseClient: CreateServerSupabaseClient = () => {
+  throw new Error('createServerSupabaseClient is only available on the server');
+};
 
-  return createClient(supabaseUrl, supabaseAnonKey, {
-    global: {
-      headers: {
-        Authorization: `Bearer ${supabaseAccessToken}`,
+export let createClerkSupabaseClient: CreateClerkSupabaseClient = async () => {
+  throw new Error('createClerkSupabaseClient is only available on the server');
+};
+
+// Server-side implementations
+if (typeof window === 'undefined') {
+  const { createServerClient } = require("@supabase/ssr");
+  const { cookies } = require("next/headers");
+  const { auth } = require('@clerk/nextjs');
+
+  createServerSupabaseClient = () => {
+    const cookieStore = cookies();
+    return createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        get: (name: string) => cookieStore.get(name)?.value,
+        set: (name: string, value: string, options: any) => cookieStore.set({ name, value, ...options }),
+        remove: (name: string, options: any) => cookieStore.set({ name, value: '', ...options }),
       },
-    },
-  });
+    });
+  };
+
+  createClerkSupabaseClient = async () => {
+    const { getToken } = auth();
+    const supabaseAccessToken = await getToken({ template: 'supabase' });
+
+    return createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${supabaseAccessToken}`,
+        },
+      },
+    });
+  };
 }
 
-// Export the createClient function for cases where a new client is needed
+// Helper function to create a Clerk-authenticated Supabase client (client-side)
+export function createClerkSupabaseClientHelper(getToken: () => Promise<string | null>) {
+  return async () => {
+    const token = await getToken();
+    return createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    });
+  };
+}
+
 export { createClient };

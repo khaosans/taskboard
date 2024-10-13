@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase'; // Ensure you have the correct path to your Supabase client
+import { createClerkSupabaseClient } from '@/lib/supabase'; // Ensure you have the correct path to your Supabase client
 import { useRouter } from 'next/navigation';
 import Image from 'next/image'; // Import Image for optimized loading
 
@@ -16,7 +16,8 @@ export default function Login() {
     setError('');
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const client = await createClerkSupabaseClient();
+      const { error } = await client.auth.signInWithPassword({ email, password });
       if (error) throw error;
       router.push('/dashboard');
     } catch (error: any) {
@@ -25,7 +26,8 @@ export default function Login() {
   };
 
   const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const client = await createClerkSupabaseClient();
+    const { error } = await client.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`, // Adjust the redirect URL as needed

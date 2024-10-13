@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import Web3SignIn from './Web3SignIn';
 import { motion } from 'framer-motion';
 import { useNotifications } from '@/hooks/useNotifications';
-import { supabase } from 'lib/supabase';
+import { createClerkSupabaseClient } from 'lib/supabase';
 
 interface TopBarProps {
   onWalletChange: (wallet: { address: string; type: string } | null) => void;
