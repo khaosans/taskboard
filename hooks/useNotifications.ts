@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import logger from '@/lib/logger';
-import kvClient from '@/lib/kvClient';
-
 interface Notification {
   id: string;
   message: string;
@@ -19,8 +17,6 @@ export function useNotifications() {
 
   const fetchNotifications = async () => {
     try {
-      const notifs = await kvClient.get<Notification[]>('notifications');
-      setNotifications(notifs || []);
     } catch (error) {
       logger.error(`Error fetching notifications: ${error instanceof Error ? error.message : String(error)}`);
     }

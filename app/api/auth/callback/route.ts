@@ -4,8 +4,6 @@ import logger from '@/lib/logger';
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import googleDriveClient from '@/lib/googleDriveClient';
-import { insertToken, getTokens } from '@/lib/supabaseClient'; // Adjust the import path
-
 export async function GET(request: NextRequest) {
   const { userId } = getAuth(request);
   const searchParams = request.nextUrl.searchParams;
@@ -32,7 +30,7 @@ export async function GET(request: NextRequest) {
         }
         const redirectUri = `${request.nextUrl.origin}/api/auth/callback/google`;
         const tokens = await googleDriveClient.getTokens(code, redirectUri);
-        await insertToken(userId, tokens); // Use the insert function
+        await insertToken(userId, tokens);
         return NextResponse.redirect(request.nextUrl.origin + '/drive');
       }
 
@@ -61,3 +59,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Operation failed' }, { status: 500 });
   }
 }
+function insertToken(userId: string, tokens: unknown) {
+  throw new Error('Function not implemented.');
+}
+

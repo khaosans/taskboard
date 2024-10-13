@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
-import kvClient from '@/lib/kvClient';
 
 // Add these lines
 import 'server-only';
-import { headers } from 'next/headers';
+import kvClient from '@/lib/kvClient'; // Adjusted to default import
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,7 +25,6 @@ export async function GET(request: NextRequest) {
     }
 
     const cacheKey = `debank-total-balance-${walletAddress}`;
-    const cacheTTL = 3600; // Cache for 60 minutes (3600 seconds)
     const debankAPIUrl = `https://pro-openapi.debank.com/v1/user/total_balance?id=${walletAddress}`;
 
     // Try to get data from cache
@@ -63,7 +61,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Store the sorted data in cache
-    await kvClient.set(cacheKey, JSON.stringify(data), { ex: cacheTTL });
+    await kvClient.set(cacheKey, JSON.stringify(data));
     logger.info('Stored sorted data in Redis cache');
 
     return NextResponse.json(data);
