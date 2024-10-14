@@ -1,4 +1,10 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+
+interface Network {
+  id: string;
+  name: string;
+  provider: string;
+}
 
 interface Wallet {
   address: string;
@@ -8,22 +14,21 @@ interface Wallet {
 interface WalletContextType {
   wallet: Wallet | null;
   setWallet: (wallet: Wallet | null) => void;
+  networks: Network[];
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
-export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
-
-  useEffect(() => {
-    const savedWallet = localStorage.getItem('connectedWallet');
-    if (savedWallet) {
-      setWallet(JSON.parse(savedWallet));
-    }
-  }, []);
+  const networks: Network[] = [
+    { id: 'ethereum', name: 'Ethereum', provider: 'homestead' },
+    { id: 'optimism', name: 'Optimism', provider: 'optimism-mainnet' },
+    { id: 'arbitrum', name: 'Arbitrum', provider: 'arbitrum-mainnet' },
+  ];
 
   return (
-    <WalletContext.Provider value={{ wallet, setWallet }}>
+    <WalletContext.Provider value={{ wallet, setWallet, networks }}>
       {children}
     </WalletContext.Provider>
   );
