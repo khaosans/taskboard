@@ -7,8 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import logger from '@/lib/logger';
 import { useWallet } from '@/contexts/WalletContext';
 import Spinner from '@/components/Spinner';
-import Link from 'next/link';
-import { Home, Wallet } from 'lucide-react'; // Import icons from lucide-react
 
 interface ChainData {
   id: string;
@@ -96,14 +94,6 @@ export default function PortfolioPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <nav className="flex justify-between items-center mb-4">
-        <Link href="/" className="flex items-center">
-          <Home className="h-6 w-6 text-gray-800 dark:text-white" />
-        </Link>
-        <Link href="/wallet-value" className="flex items-center">
-          <Wallet className="h-6 w-6 text-gray-800 dark:text-white" />
-        </Link>
-      </nav>
       <h1 className="text-3xl font-bold mb-4">Your Portfolio</h1>
       <div className="flex items-center mb-4">
         {user ? (
@@ -120,7 +110,36 @@ export default function PortfolioPage() {
       ) : (
         <p className="mb-4">No wallet connected.</p>
       )}
-      {/* Render portfolio data here */}
+      {portfolioData ? (
+        <div>
+          <Card className="mb-4">
+            <CardHeader>
+              <CardTitle>Portfolio Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-lg font-semibold">Total Balance: ${portfolioData.total_usd_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            </CardContent>
+          </Card>
+          <h3 className="text-xl font-semibold mb-2">Chain Breakdown</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {portfolioData.chain_list.map((chain) => (
+              <Card key={chain.id}>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <img src={chain.logo_url} alt={chain.name} className="w-6 h-6 mr-2" />
+                    {chain.name}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>${chain.usd_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p>No portfolio data available.</p>
+      )}
     </div>
   );
 }
