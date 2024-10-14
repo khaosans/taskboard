@@ -49,8 +49,4 @@ export async function GET(req: NextRequest) {
     await vercelKVClient.set(cacheKey, JSON.stringify(tokenData), { ex: cacheTTL });
 
     return NextResponse.json(tokenData);
-  } catch (error) {
-    logger.error(`Error in DeBank API route: ${(error as Error).message}`);
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
-  }
 }

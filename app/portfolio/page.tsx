@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
 import logger from '@/lib/logger';
+import { toast } from 'react-hot-toast';
 import { useWallet } from '@/contexts/WalletContext';
 import Spinner from '@/components/Spinner';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -27,6 +29,7 @@ export default function PortfolioPage() {
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
   const { wallet } = useWallet();
 
   useEffect(() => {
@@ -42,6 +45,12 @@ export default function PortfolioPage() {
           });
 
           logger.info(`Response Status: ${response.status}`);
+
+          if (response.status === 404) {
+            const errorText = await response.text();
+            logger.error(`404 Error: ${errorText}`);
+            throw new Error('API endpoint not found');
+          }
 
           if (!response.ok) {
             const errorData = await response.json();
@@ -85,7 +94,7 @@ export default function PortfolioPage() {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <h1 className="text-2xl font-bold mb-4">Please sign in to view your portfolio</h1>
-        <Button onClick={() => window.location.href = '/sign-in'}>Sign In</Button>
+        <Button onClick={() => router.push('/sign-in')}>Sign In</Button>
       </div>
     );
   }
@@ -99,24 +108,22 @@ export default function PortfolioPage() {
     );
   }
 
+  if (loading) {
+    return <div>Loading portfolio data...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">Your Portfolio</h1>
       <div className="flex items-center mb-4">
-        {user ? (
-          <>
-            <img src={user.imageUrl || '/default-profile.png'} alt={'User'} className="w-12 h-12 rounded-full mr-2" />
-            <h2 className="text-xl font-semibold">{user.username}</h2>
-          </>
-        ) : (
-          <p>Please log in to see your profile.</p>
-        )}
+        <img src={user.imageUrl || '/default-profile.png'} alt={'User'} className="w-12 h-12 rounded-full mr-2" />
+        <h2 className="text-xl font-semibold">{user.username}</h2>
       </div>
-      {wallet ? (
-        <p className="mb-4">Connected Wallet: {wallet.address}</p>
-      ) : (
-        <p className="mb-4">No wallet connected.</p>
-      )}
+      <p className="mb-4">Connected Wallet: {wallet.address}</p>
       {portfolioData ? (
         <div>
           <Card className="mb-4">
