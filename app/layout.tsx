@@ -13,6 +13,7 @@ import { WalletProvider } from '@/contexts/WalletContext';
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { SolanaWalletProvider } from '@/components/SolanaWalletProvider';
 import { createClient } from '@supabase/supabase-js';
+import { ethers } from 'ethers';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
@@ -35,6 +36,10 @@ function SupabaseProvider({ children }: { children: React.ReactNode }) {
       {children}
     </SessionContextProvider>
   );
+}
+
+function getLibrary(provider: any) {
+    return new ethers.providers.Web3Provider(provider);
 }
 
 export default function RootLayout({
@@ -81,7 +86,7 @@ export default function RootLayout({
             <html lang="en">
                 <body>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                        <Web3ReactProvider getLibrary={(provider: any) => new Web3Provider(provider)}>
+                        <Web3ReactProvider getLibrary={getLibrary}>
                             <WalletProvider>
                                 <SolanaWalletProvider>
                                     <SupabaseProvider>

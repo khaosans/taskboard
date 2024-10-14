@@ -48,10 +48,7 @@ const WelcomePage: React.FC = () => {
           </div>
         )}
 
-        <section className="mb-16">
-          <h2 className="text-3xl font-semibold mb-8 text-center">Chain Information</h2>
-          <ChainInfo chainId={selectedChain} />
-        </section>
+      
 
         <footer className="text-center text-gray-500">
           <p>&copy; 2023 Quantum Labs. All rights reserved.</p>
