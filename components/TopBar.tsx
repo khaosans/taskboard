@@ -10,8 +10,6 @@ import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { useNotifications } from '@/hooks/useNotifications';
-import { useWallet } from '@/contexts/WalletContext';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Web3SignIn from './Web3SignIn';
 
 const TopBar: React.FC = () => {
@@ -20,7 +18,6 @@ const TopBar: React.FC = () => {
   const { isLoaded, isSignedIn } = useUser();
   const { notifications } = useNotifications();
   const unreadCount = notifications.filter(n => !n.read).length;
-  const { wallet } = useWallet();
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
@@ -62,7 +59,6 @@ const TopBar: React.FC = () => {
         <div className="flex items-center space-x-4">
           <SignedIn>
             <Web3SignIn onWalletChange={(wallet) => {
-              // Handle wallet change if needed
               console.log('Wallet changed:', wallet);
             }} />
             <motion.button 
