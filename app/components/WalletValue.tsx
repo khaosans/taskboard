@@ -13,15 +13,19 @@ const WalletValue = () => {
 
     useEffect(() => {
         const fetchBalance = async () => {
-            if (typeof walletAddress !== 'string') return; // Ensure walletAddress is a string
-            if (!walletAddress) return; // Exit if wallet address is not available
+            if (typeof walletAddress !== 'string' || !walletAddress) return;
 
             // Check KV cache for balance
             const cachedBalance = await getCachedBalance(walletAddress);
             if (cachedBalance) {
                 setBalance(cachedBalance);
             } else {
-                setBalance(null); // Handle the case where cachedBalance is null
+                // If not in cache, fetch new balance and cache it
+                const newBalance = await fetchNewBalance(walletAddress);
+                if (newBalance) {
+                    setBalance(newBalance);
+                    await cacheBalance(walletAddress, newBalance);
+                }
             }
         };
 
@@ -36,7 +40,14 @@ const WalletValue = () => {
 
     // Function to cache the balance in KV
     const cacheBalance = async (address: string, balance: string) => {
-        await vercelKVClient.set(`balance:${address}`, balance); // Remove ttl if not supported
+        // Cache for 24 hours (86400 seconds)
+        await vercelKVClient.set(`balance:${address}`, balance, { ex: 86400 });
+    };
+
+    const fetchNewBalance = async (address: string): Promise<string | null> => {
+        // Implement your balance fetching logic here
+        // This is a placeholder and should be replaced with actual balance fetching
+        return "0.0";
     };
 
     return (
