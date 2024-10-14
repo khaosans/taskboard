@@ -49,4 +49,8 @@ export async function GET(req: NextRequest) {
     await vercelKVClient.set(cacheKey, JSON.stringify(tokenData), { ex: cacheTTL });
 
     return NextResponse.json(tokenData);
+  } catch (error) {
+    console.error('Error fetching token data:', error);
+    return new Response('Internal Server Error', { status: 500 });
+  }
 }
