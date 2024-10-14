@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import logger from '@/lib/logger';
 import { useWallet } from '@/contexts/WalletContext';
 import Spinner from '@/components/Spinner';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ChainData {
   id: string;
@@ -67,9 +69,14 @@ export default function PortfolioPage() {
 
   if (!isUserLoaded || loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <Spinner size="large" color="#611BBD" />
-        <p className="mt-4 text-xl">Loading...</p>
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-[250px]" />
+        <Skeleton className="h-4 w-[200px]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <Skeleton key={i} className="h-[200px] w-full" />
+          ))}
+        </div>
       </div>
     );
   }

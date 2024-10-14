@@ -14,8 +14,8 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { SolanaWalletProvider } from '@/components/SolanaWalletProvider';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
 
 function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const { getToken } = useAuth();
@@ -99,4 +99,3 @@ export default function RootLayout({
         </ClerkProvider>
     )
 }
-
