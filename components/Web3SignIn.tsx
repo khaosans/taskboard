@@ -7,9 +7,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ethers } from 'ethers';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { useWallet as useEVMWallet } from '@/contexts/WalletContext';
+import { useWallet } from '@/contexts/WalletContext';
 import Spinner from './Spinner';
 
 interface ExtendedProvider extends ethers.providers.ExternalProvider {
@@ -22,8 +20,7 @@ interface Web3SignInProps {
 }
 
 const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
-  const { wallet: evmWallet, setWallet: setEVMWallet } = useEVMWallet();
-  const solanaWallet = useWallet();
+  const { wallet, connectWallet, disconnectWallet } = useWallet();
   const [availableWallets, setAvailableWallets] = useState<string[]>([]);
   const [isConnecting, setIsConnecting] = useState(false);
   const [balance, setBalance] = useState<string | null>(null);
@@ -34,7 +31,6 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
       const wallets = [];
       if ((window.ethereum as ExtendedProvider)?.isMetaMask) wallets.push('MetaMask');
       if ((window.ethereum as ExtendedProvider)?.isRabby || (window as any).rabby) wallets.push('Rabby');
-      wallets.push('Solana');
       setAvailableWallets(wallets);
     };
 
@@ -43,20 +39,18 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
   }, []);
 
   useEffect(() => {
-    if (solanaWallet.connected) {
-      const newWallet = { address: solanaWallet.publicKey?.toBase58() || '', type: 'Solana' };
-      setEVMWallet(newWallet);
-      onWalletChange(newWallet);
+    if (wallet) {
+      fetchBalance(wallet.address); // Fetch balance when wallet changes
+      onWalletChange(wallet); // Notify about wallet change
     }
-  }, [solanaWallet.connected, solanaWallet.publicKey]);
+  }, [wallet]);
 
   const loadConnectedWallet = () => {
     const savedWallet = localStorage.getItem('connectedWallet');
     if (savedWallet) {
-      const wallet = JSON.parse(savedWallet);
-      setEVMWallet(wallet);
-      onWalletChange(wallet);
-      fetchBalance(wallet.address);
+      const walletData = JSON.parse(savedWallet);
+      fetchBalance(walletData.address);
+      onWalletChange(walletData); // Notify about wallet change
     }
   };
 
@@ -69,30 +63,24 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
     return null;
   };
 
-  const connectWallet = async (walletType: string) => {
+  const handleConnectWallet = async (walletType: string) => {
     try {
       setIsConnecting(true);
-      if (walletType === 'Solana') {
-        //@ts-ignore
-        await solanaWallet.select('Phantom'); // or whichever wallet you want to use
-        await solanaWallet.connect();
-      } else {
-        const provider = getProvider(walletType);
-        if (!provider) {
-          throw new Error(`${walletType} provider not found`);
-        }
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        
-        await ethersProvider.send("eth_requestAccounts", []);
-        const signer = ethersProvider.getSigner();
-        const address = await signer.getAddress();
-        
-        const newWallet = { address, type: walletType };
-        setEVMWallet(newWallet);
-        localStorage.setItem('connectedWallet', JSON.stringify(newWallet));
-        onWalletChange(newWallet);
-        fetchBalance(address);
+      const provider = getProvider(walletType);
+      if (!provider) {
+        throw new Error(`${walletType} provider not found`);
       }
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+      
+      await ethersProvider.send("eth_requestAccounts", []);
+      const signer = ethersProvider.getSigner();
+      const address = await signer.getAddress();
+      
+      const newWallet = { address, type: walletType };
+      localStorage.setItem('connectedWallet', JSON.stringify(newWallet)); // Store wallet in localStorage
+      connectWallet(); // Call the context's connectWallet function
+      fetchBalance(address);
+      onWalletChange(newWallet); // Notify about wallet change
       toast.success(`${walletType} wallet connected successfully`);
     } catch (error) {
       console.error("Failed to connect wallet:", error);
@@ -102,14 +90,11 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
     }
   };
 
-  const disconnectWallet = () => {
-    setEVMWallet(null);
+  const handleDisconnectWallet = () => {
+    disconnectWallet(); // Use the context's disconnect function
     setBalance(null);
-    localStorage.removeItem('connectedWallet');
-    onWalletChange(null);
-    if (solanaWallet.connected) {
-      solanaWallet.disconnect();
-    }
+    localStorage.removeItem('connectedWallet'); // Remove wallet from localStorage
+    onWalletChange(null); // Notify about wallet change
     toast.success('Wallet disconnected');
   };
 
@@ -129,15 +114,6 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  const getConnectedWallet = () => {
-    if (solanaWallet.connected) {
-      return { type: 'Solana', address: solanaWallet.publicKey?.toBase58() || '' };
-    }
-    return evmWallet;
-  };
-
-  const connectedWallet = getConnectedWallet();
-
   return (
     <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenu.Trigger asChild>
@@ -152,8 +128,8 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
               <Spinner size="small" className="mr-2" />
               Connecting...
             </>
-          ) : connectedWallet ? (
-            `${connectedWallet.type}: ${truncateAddress(connectedWallet.address)}`
+          ) : wallet ? (
+            `Connected: ${truncateAddress(wallet.address)}`
           ) : (
             'Connect Wallet'
           )}
@@ -173,16 +149,16 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                {connectedWallet ? (
+                {wallet ? (
                   <>
                     <div className="p-2 text-white">
-                      <p>Connected to {connectedWallet.type}</p>
-                      <p className="text-sm text-gray-400">{truncateAddress(connectedWallet.address)}</p>
+                      <p>Connected to {wallet.type}</p>
+                      <p className="text-sm text-gray-400">{truncateAddress(wallet.address)}</p>
                       {balance && <p className="mt-2">Balance: {balance} ETH</p>}
                     </div>
                     <DropdownMenu.Item 
                       className="cursor-pointer p-2 hover:bg-gray-700 text-white rounded"
-                      onSelect={disconnectWallet}
+                      onSelect={handleDisconnectWallet}
                     >
                       Disconnect Wallet
                     </DropdownMenu.Item>
@@ -192,7 +168,7 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
                     <DropdownMenu.Item 
                       key={wallet}
                       className="cursor-pointer p-2 hover:bg-gray-700 text-white rounded" 
-                      onSelect={() => connectWallet(wallet)}
+                      onSelect={() => handleConnectWallet(wallet)}
                       disabled={isConnecting}
                     >
                       <motion.div whileHover={{ x: 5 }} className="flex items-center">
@@ -201,7 +177,7 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
                           variant="ghost"
                           size="sm"
                           className="w-full justify-start text-white hover:bg-gray-700"
-                          onClick={() => connectWallet(wallet)}
+                          onClick={() => handleConnectWallet(wallet)}
                           disabled={isConnecting}
                         >
                           {isConnecting ? 'Connecting...' : `Connect ${wallet}`}

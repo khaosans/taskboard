@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Bell, Settings, MessageCircle, HardDrive } from 'lucide-react';
+import { Bell, Settings, MessageCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ChatbotModal from './ChatbotModal';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
@@ -11,32 +11,23 @@ import { Button } from '@/components/ui/button';
 import Web3SignIn from './Web3SignIn';
 import { motion } from 'framer-motion';
 import { useNotifications } from '@/hooks/useNotifications';
-import { createClerkSupabaseClient } from 'lib/supabase';
+import { useWallet } from '@/contexts/WalletContext';
 
-interface TopBarProps {
-  onWalletChange: (wallet: { address: string; type: string } | null) => void;
-  selectedWallet: { address: string; type: string } | null;
-}
-
-const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
+const TopBar: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isNudged, setIsNudged] = useState(false);
   const router = useRouter();
-  const { isLoaded, isSignedIn, user } = useUser();
+  const { isLoaded, isSignedIn } = useUser();
   const { notifications } = useNotifications();
   const unreadCount = notifications.filter(n => !n.read).length;
+  const { wallet } = useWallet();
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
   };
 
-  const handleLogoClick = () => {
-    setIsNudged(true);
-    globalThis.setTimeout(() => setIsNudged(false), 300);
-  };
-
   const handleWalletChange = (wallet: { address: string; type: string } | null) => {
-    onWalletChange(wallet);
+    console.log('Wallet changed:', wallet);
+    // Additional logic can be added here if needed
   };
 
   if (!isLoaded) {
@@ -51,19 +42,13 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         transition={{ duration: 0.5 }}
         className="flex items-center justify-between p-4 bg-gray-800 text-white"
       >
-        <Link href="/" className={`text-2xl font-bold hover:text-purple-400 transition-colors ${isNudged ? 'animate-nudge' : ''}`} onClick={handleLogoClick}>
-          <motion.span 
-            className="glow"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            Quantum Labs
-          </motion.span>
+        <Link href="/" className="text-2xl font-bold hover:text-purple-400 transition-colors">
+          Quantum Labs
         </Link>
         <nav className="flex space-x-4">
           <SignedIn>
             <motion.div className="flex space-x-4">
-              {['Portfolio','Swap'].map((item, index) => (
+              {['Portfolio', 'Swap'].map((item, index) => (
                 <motion.div
                   key={item}
                   initial={{ opacity: 0, y: -20 }}
@@ -84,18 +69,18 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
             <motion.button 
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button" 
+              className="relative hover:bg-gray-700 p-2 rounded transition-colors" 
               onClick={toggleChat}
             >
               <MessageCircle className="h-5 w-5" />
             </motion.button>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Link href="/settings" className="relative hover:bg-gray-700 p-2 rounded flex items-center transition-colors glow-button">
+              <Link href="/settings" className="relative hover:bg-gray-700 p-2 rounded flex items-center transition-colors">
                 <Settings className="h-5 w-5" />
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Link href="/notifications" className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button">
+              <Link href="/notifications" className="relative hover:bg-gray-700 p-2 rounded transition-colors">
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
                   <Badge variant="destructive" className="absolute -top-2 -right-2 px-2 py-1 text-xs">
