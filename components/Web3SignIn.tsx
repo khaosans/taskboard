@@ -11,6 +11,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useWallet as useEVMWallet } from '@/contexts/WalletContext';
 import Spinner from './Spinner';
+import { useUser } from '@clerk/nextjs'; // Import Clerk's useUser hook
 
 interface ExtendedProvider extends ethers.providers.ExternalProvider {
   isMetaMask?: boolean;
@@ -28,6 +29,7 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [balance, setBalance] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const { user, isSignedIn } = useUser();
 
   useEffect(() => {
     const checkAvailableWallets = () => {
