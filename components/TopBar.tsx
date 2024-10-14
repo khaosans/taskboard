@@ -8,10 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import ChatbotModal from './ChatbotModal';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
-import Web3SignIn from './Web3SignIn';
 import { motion } from 'framer-motion';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useWallet } from '@/contexts/WalletContext';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const TopBar: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -23,11 +23,6 @@ const TopBar: React.FC = () => {
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
-  };
-
-  const handleWalletChange = (wallet: { address: string; type: string } | null) => {
-    console.log('Wallet changed:', wallet);
-    // Additional logic can be added here if needed
   };
 
   if (!isLoaded) {
@@ -65,7 +60,7 @@ const TopBar: React.FC = () => {
         </nav>
         <div className="flex items-center space-x-4">
           <SignedIn>
-            <Web3SignIn onWalletChange={handleWalletChange} />
+            <ConnectButton />
             <motion.button 
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}

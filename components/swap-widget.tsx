@@ -1,38 +1,40 @@
-"use client"; // Mark this component as a Client Component
+"use client";
 
 import React, { useEffect, useState } from 'react';
-import { useWallet } from '@/contexts/WalletContext'; // Import useWallet
+import { useWallet } from '@/contexts/WalletContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowDownUp, Search } from "lucide-react";
 import { ethers } from 'ethers';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 type Token = {
   id: string;
   name: string;
   symbol: string;
+  address: string;
 };
 
-// Static list of tokens for demonstration
 const staticTokens: Token[] = [
-  { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC' },
-  { id: 'ethereum', name: 'Ethereum', symbol: 'ETH' },
-  { id: 'tether', name: 'Tether', symbol: 'USDT' },
-  // Add more tokens as needed
+  { id: 'ethereum', name: 'Ethereum', symbol: 'ETH', address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE' },
+  { id: 'dai', name: 'Dai Stablecoin', symbol: 'DAI', address: '0x6B175474E89094C44Da98b954EedeAC495271d0F' },
+  { id: 'usdc', name: 'USD Coin', symbol: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48' },
 ];
 
 export default function SwapWidget() {
-  const { wallet, supportedChains, selectedChain, setSelectedChain } = useWallet(); // Get wallet and supported chains from context
-  const [tokens, setTokens] = useState<Token[]>(staticTokens); // Use static tokens
+  const { wallet, supportedChains, selectedChain, setSelectedChain } = useWallet();
+  const [tokens, setTokens] = useState<Token[]>(staticTokens);
   const [amountIn, setAmountIn] = useState('');
   const [amountOut, setAmountOut] = useState('');
-  const [sellToken, setSellToken] = useState('ETH');
-  const [buyToken, setBuyToken] = useState('DAI');
+  const [sellToken, setSellToken] = useState(staticTokens[0]);
+  const [buyToken, setBuyToken] = useState(staticTokens[1]);
   const [filteredTokens, setFilteredTokens] = useState<Token[]>(tokens);
   const [searchTerm, setSearchTerm] = useState('');
   const [balance, setBalance] = useState<string | null>(null);
+  const [quote, setQuote] = useState<any>(null);
+  const [isApproved, setIsApproved] = useState(false);
 
   useEffect(() => {
     const filtered = tokens.filter(token =>
@@ -44,39 +46,47 @@ export default function SwapWidget() {
 
   useEffect(() => {
     if (wallet) {
-      fetchBalance(wallet.address); // Fetch balance when wallet is connected
+      fetchBalance(wallet.address);
     }
-  }, [wallet]);
+  }, [wallet, sellToken]);
+
+  useEffect(() => {
+    if (amountIn && sellToken && buyToken) {
+      fetchQuote();
+    }
+  }, [amountIn, sellToken, buyToken, selectedChain]);
 
   const fetchBalance = async (address: string) => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-      const balanceBigNumber = await provider.getBalance(address);
-      const balanceInEther = ethers.utils.formatEther(balanceBigNumber);
-      setBalance(parseFloat(balanceInEther).toFixed(4));
+      let balanceBigNumber;
+      if (sellToken.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+        balanceBigNumber = await provider.getBalance(address);
+      } else {
+        const tokenContract = new ethers.Contract(sellToken.address, ['function balanceOf(address) view returns (uint256)'], provider);
+        balanceBigNumber = await tokenContract.balanceOf(address);
+      }
+      const balanceInToken = ethers.utils.formatUnits(balanceBigNumber, 18);
+      setBalance(parseFloat(balanceInToken).toFixed(4));
     } catch (error) {
-      window.console.error('Error fetching balance:', error); // Use window.console
+      console.error('Error fetching balance:', error);
       setBalance(null);
     }
   };
 
-  const handleSwap = async () => {
-    const apiKey = window.process?.env.NEXT_PUBLIC_0X_API_KEY; // Use window.process
+  const fetchQuote = async () => {
+    const apiKey = process.env.NEXT_PUBLIC_0X_API_KEY;
     if (!apiKey) {
-      window.console.error('API key is not defined'); // Use window.console
+      console.error('API key is not defined');
       return;
     }
-    const chainId = selectedChain?.id; // Use the selected chain ID
-    const sellAmount = amountIn;
-    const sellTokenAddress = sellToken;
-    const buyTokenAddress = buyToken;
+    const chainId = selectedChain?.id || 1;
+    const sellAmount = ethers.utils.parseUnits(amountIn, 18).toString();
 
     try {
-      const response = await fetch(`https://api.0x.org/gasless/quote?chainId=${chainId}&sellToken=${sellTokenAddress}&buyToken=${buyTokenAddress}&sellAmount=${sellAmount}&taker=0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045`, {
-        method: 'GET',
+      const response = await fetch(`https://api.0x.org/swap/v1/quote?chainId=${chainId}&sellToken=${sellToken.address}&buyToken=${buyToken.address}&sellAmount=${sellAmount}`, {
         headers: {
           '0x-api-key': apiKey,
-          '0x-version': 'v2',
         },
       });
 
@@ -85,10 +95,59 @@ export default function SwapWidget() {
       }
 
       const data = await response.json();
-      window.console.log('Swap Quote:', data); // Use window.console
-      setAmountOut(data.buyAmount);
+      setQuote(data);
+      setAmountOut(ethers.utils.formatUnits(data.buyAmount, 18));
+      checkAllowance(data.allowanceTarget, sellAmount);
     } catch (error) {
-      window.console.error('Error fetching swap quote:', error); // Use window.console
+      console.error('Error fetching swap quote:', error);
+    }
+  };
+
+  const checkAllowance = async (spender: string, amount: string) => {
+    if (sellToken.address === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+      setIsApproved(true);
+      return;
+    }
+
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+      const signer = provider.getSigner();
+      const tokenContract = new ethers.Contract(sellToken.address, ['function allowance(address,address) view returns (uint256)'], signer);
+      const allowance = await tokenContract.allowance(await signer.getAddress(), spender);
+      setIsApproved(allowance.gte(amount));
+    } catch (error) {
+      console.error('Error checking allowance:', error);
+      setIsApproved(false);
+    }
+  };
+
+  const handleApprove = async () => {
+    if (!quote) return;
+
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+      const signer = provider.getSigner();
+      const tokenContract = new ethers.Contract(sellToken.address, ['function approve(address,uint256) returns (bool)'], signer);
+      const tx = await tokenContract.approve(quote.allowanceTarget, ethers.constants.MaxUint256);
+      await tx.wait();
+      setIsApproved(true);
+    } catch (error) {
+      console.error('Error approving token:', error);
+    }
+  };
+
+  const handleSwap = async () => {
+    if (!quote || !wallet) return;
+
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+      const signer = provider.getSigner();
+      const tx = await signer.sendTransaction(quote);
+      await tx.wait();
+      console.log('Swap successful!');
+      // Reset state or update UI as needed
+    } catch (error) {
+      console.error('Error executing swap:', error);
     }
   };
 
@@ -125,7 +184,7 @@ export default function SwapWidget() {
               placeholder="0.0"
               className="flex-grow bg-gray-700 text-white"
             />
-            <Select value={sellToken} onValueChange={setSellToken}>
+            <Select value={sellToken.symbol} onValueChange={(value) => setSellToken(tokens.find(token => token.symbol === value)!)}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select token" />
               </SelectTrigger>
@@ -159,7 +218,7 @@ export default function SwapWidget() {
               placeholder="0.0"
               className="flex-grow bg-gray-700 text-white"
             />
-            <Select value={buyToken} onValueChange={setBuyToken}>
+            <Select value={buyToken.symbol} onValueChange={(value) => setBuyToken(tokens.find(token => token.symbol === value)!)}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select token" />
               </SelectTrigger>
@@ -190,15 +249,29 @@ export default function SwapWidget() {
         )}
         {balance && (
           <div className="text-sm text-white">
-            Current Balance: <span className="font-bold">{balance}</span> {sellToken}
+            Current Balance: <span className="font-bold">{balance}</span> {sellToken.symbol}
           </div>
         )}
+        {quote && (
+          <div className="text-sm">
+            <p>Price: 1 {sellToken.symbol} = {parseFloat(ethers.utils.formatUnits(quote.price, 18)).toFixed(6)} {buyToken.symbol}</p>
+            <p>Estimated Gas: {ethers.utils.formatUnits(quote.estimatedGas, 'gwei')} Gwei</p>
+          </div>
+        )}
+        {wallet ? (
+          isApproved ? (
+            <Button className="w-full" onClick={handleSwap} disabled={!quote}>
+              Swap Tokens
+            </Button>
+          ) : (
+            <Button className="w-full" onClick={handleApprove}>
+              Approve {sellToken.symbol}
+            </Button>
+          )
+        ) : (
+          <ConnectButton />
+        )}
       </CardContent>
-      <CardFooter>
-        <Button className="w-full" onClick={handleSwap}>
-          Swap Tokens
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

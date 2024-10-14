@@ -1,21 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ethers } from 'ethers';
-
-interface Wallet {
-  address: string;
-  type: string;
-}
-
-interface Chain {
-  id: number;
-  name: string;
-}
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { Chain, mainnet } from 'wagmi/chains';
 
 interface WalletContextType {
-  wallet: Wallet | null;
+  wallet: { address: string; type: string } | null;
   supportedChains: Chain[];
-  selectedChain: Chain | null;
-  connectWallet: () => Promise<void>;
+  selectedChain: Chain;
+  connectWallet: () => void;
   disconnectWallet: () => void;
   setSelectedChain: (chain: Chain) => void;
 }
@@ -23,56 +14,41 @@ interface WalletContextType {
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [wallet, setWallet] = useState<Wallet | null>(() => {
-    const savedWallet = localStorage.getItem('connectedWallet');
-    return savedWallet ? JSON.parse(savedWallet) : null;
-  });
-  const [supportedChains, setSupportedChains] = useState<Chain[]>([]);
-  const [selectedChain, setSelectedChain] = useState<Chain | null>(null);
+  const { address, connector } = useAccount();
+  const { connect, connectors } = useConnect();
+  const { disconnect } = useDisconnect();
+  const [wallet, setWallet] = useState<{ address: string; type: string } | null>(null);
+  const [supportedChains] = useState<Chain[]>([mainnet]); // Add more chains as needed
+  const [selectedChain, setSelectedChain] = useState<Chain>(mainnet);
 
-  const fetchSupportedChains = async () => {
-    try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-      const network = await provider.getNetwork();
-      const chain = { id: network.chainId, name: network.name };
-      setSupportedChains([chain]);
-      setSelectedChain(chain); // Set the default selected chain
-    } catch (error) {
-      console.error('Error fetching supported chains:', error);
+  useEffect(() => {
+    if (address && connector) {
+      setWallet({ address, type: connector.name });
+    } else {
+      setWallet(null);
     }
-  };
+  }, [address, connector]);
 
-  const connectWallet = async () => {
-    try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-      await provider.send("eth_requestAccounts", []);
-      const accounts = await provider.listAccounts();
-      if (accounts.length > 0) {
-        const newWallet = { address: accounts[0], type: 'MetaMask' };
-        setWallet(newWallet);
-        localStorage.setItem('connectedWallet', JSON.stringify(newWallet)); // Store wallet in localStorage
-        fetchSupportedChains(); // Fetch chains after connecting
-      }
-    } catch (error) {
-      console.error('Error connecting wallet:', error);
+  const connectWallet = () => {
+    const connector = connectors[0]; // Use the first available connector
+    if (connector) {
+      connect({ connector });
     }
   };
 
   const disconnectWallet = () => {
-    setWallet(null);
-    localStorage.removeItem('connectedWallet'); // Remove wallet from localStorage
-    setSupportedChains([]); // Clear supported chains on disconnect
-    setSelectedChain(null); // Clear selected chain on disconnect
+    disconnect();
   };
 
-  useEffect(() => {
-    if (wallet) {
-      fetchSupportedChains();
-    }
-  }, [wallet]);
-
   return (
-    <WalletContext.Provider value={{ wallet, supportedChains, selectedChain, connectWallet, disconnectWallet, setSelectedChain }}>
+    <WalletContext.Provider value={{ 
+      wallet, 
+      supportedChains, 
+      selectedChain, 
+      connectWallet, 
+      disconnectWallet, 
+      setSelectedChain 
+    }}>
       {children}
     </WalletContext.Provider>
   );
