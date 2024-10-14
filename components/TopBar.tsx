@@ -63,15 +63,20 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         <nav className="flex space-x-4">
           <SignedIn>
             <motion.div className="flex space-x-4">
-              {['Portfolio', 'Wallet-data'].map((item, index) => (
+              {[
+                { name: 'Portfolio', path: '/portfolio' },
+                { name: 'Wallet Data', path: '/wallet-data' },
+                { name: 'Transaction History', path: '/transaction-history' },
+                { name: 'Taxes', path: '/taxes' }
+              ].map((item, index) => (
                 <motion.div
-                  key={item}
+                  key={item.name}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Link href={`/${item.toLowerCase().replace(' ', '-')}`} className="hover:text-purple-400 transition-colors">
-                    {item}
+                  <Link href={item.path} className="hover:text-purple-400 transition-colors">
+                    {item.name}
                   </Link>
                 </motion.div>
               ))}
