@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import * as Popover from '@radix-ui/react-popover';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ethers } from 'ethers';
@@ -115,8 +115,8 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
   };
 
   return (
-    <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenu.Trigger asChild>
+    <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
+      <Popover.Trigger asChild>
         <Button 
           variant="outline" 
           size="sm" 
@@ -129,19 +129,19 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
               Connecting...
             </>
           ) : wallet ? (
-            `Connected: ${truncateAddress(wallet.address)}`
+            `${truncateAddress(wallet.address)}`
           ) : (
             'Connect Wallet'
           )}
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
-      </DropdownMenu.Trigger>
+      </Popover.Trigger>
       <AnimatePresence>
         {isOpen && (
-          <DropdownMenu.Portal forceMount>
-            <DropdownMenu.Content 
+          <Popover.Portal forceMount>
+            <Popover.Content 
               className="bg-gray-800 rounded-md shadow-lg p-2 mt-2 border border-gray-700 w-64"
-              asChild
+              sideOffset={5}
             >
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -156,42 +156,32 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
                       <p className="text-sm text-gray-400">{truncateAddress(wallet.address)}</p>
                       {balance && <p className="mt-2">Balance: {balance} ETH</p>}
                     </div>
-                    <DropdownMenu.Item 
-                      className="cursor-pointer p-2 hover:bg-gray-700 text-white rounded"
-                      onSelect={handleDisconnectWallet}
+                    <Button 
+                      className="w-full mt-2"
+                      onClick={handleDisconnectWallet}
                     >
                       Disconnect Wallet
-                    </DropdownMenu.Item>
+                    </Button>
                   </>
                 ) : (
                   availableWallets.map((wallet) => (
-                    <DropdownMenu.Item 
+                    <Button
                       key={wallet}
-                      className="cursor-pointer p-2 hover:bg-gray-700 text-white rounded" 
-                      onSelect={() => handleConnectWallet(wallet)}
+                      variant="ghost"
+                      className="w-full justify-start text-white hover:bg-gray-700 mb-2"
+                      onClick={() => handleConnectWallet(wallet)}
                       disabled={isConnecting}
                     >
-                      <motion.div whileHover={{ x: 5 }} className="flex items-center">
-                        {isConnecting ? <Spinner size="small" className="mr-2" /> : null}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-full justify-start text-white hover:bg-gray-700"
-                          onClick={() => handleConnectWallet(wallet)}
-                          disabled={isConnecting}
-                        >
-                          {isConnecting ? 'Connecting...' : `Connect ${wallet}`}
-                        </Button>
-                      </motion.div>
-                    </DropdownMenu.Item>
+                      {isConnecting ? 'Connecting...' : `Connect ${wallet}`}
+                    </Button>
                   ))
                 )}
               </motion.div>
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
+            </Popover.Content>
+          </Popover.Portal>
         )}
       </AnimatePresence>
-    </DropdownMenu.Root>
+    </Popover.Root>
   );
 };
 

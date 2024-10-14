@@ -12,6 +12,7 @@ import { motion } from 'framer-motion';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useWallet } from '@/contexts/WalletContext';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import Web3SignIn from './Web3SignIn';
 
 const TopBar: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -60,7 +61,10 @@ const TopBar: React.FC = () => {
         </nav>
         <div className="flex items-center space-x-4">
           <SignedIn>
-            <ConnectButton />
+            <Web3SignIn onWalletChange={(wallet) => {
+              // Handle wallet change if needed
+              console.log('Wallet changed:', wallet);
+            }} />
             <motion.button 
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
