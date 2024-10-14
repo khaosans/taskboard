@@ -29,9 +29,6 @@ declare module '@rainbow-me/rainbowkit' {
   export const ConnectButton: React.FC;
   export function getDefaultWallets(config: any): { connectors: any[] };
   export function getDefaultConfig(config: any): any;
-  export function useConnectModal(): { openConnectModal: (() => void) | undefined };
-  export function useAccountModal(): { openAccountModal: (() => void) | undefined };
-  export function useChainModal(): { openChainModal: (() => void) | undefined };
 }
 
 declare module 'wagmi' {
@@ -39,7 +36,6 @@ declare module 'wagmi' {
   export function createConfig(config: any): any;
   export function useAccount(): {
     address: string | undefined;
-    isConnected: boolean;
     connector: any;
   };
   export function useConnect(): {
@@ -50,13 +46,9 @@ declare module 'wagmi' {
     disconnect: () => void;
   };
   export function useNetwork(): {
-    chain: Chain | undefined;
-    chains: Chain[];
+    chain: any;
   };
-  export function useSwitchNetwork(): {
-    chains: Chain[];
-    switchNetwork?: (chainId: number) => void;
-  };
+  export function configureChains(chains: any[], providers: any[]): { chains: any[], publicClient: any };
 }
 
 declare module 'wagmi/chains' {
