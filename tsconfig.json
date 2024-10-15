@@ -34,9 +34,9 @@
     ],
     "types": [
       "node",
-      "jest",
       "react",
-      "react-dom"
+      "react-dom",
+      "jest"
     ],
     "baseUrl": "."
   },
@@ -44,7 +44,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "global.d.ts"
   ],
   "exclude": [
     "node_modules"

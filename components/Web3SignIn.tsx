@@ -3,13 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import * as Popover from '@radix-ui/react-popover';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ethers } from 'ethers';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { useWallet as useEVMWallet } from '@/contexts/WalletContext';
+import { useWallet } from '@/contexts/WalletContext';
 import Spinner from './Spinner';
 
 interface ExtendedProvider extends ethers.providers.ExternalProvider {
@@ -22,8 +20,7 @@ interface Web3SignInProps {
 }
 
 const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
-  const { wallet: evmWallet, setWallet: setEVMWallet } = useEVMWallet();
-  const solanaWallet = useWallet();
+  const { wallet, connectWallet, disconnectWallet } = useWallet();
   const [availableWallets, setAvailableWallets] = useState<string[]>([]);
   const [isConnecting, setIsConnecting] = useState(false);
   const [balance, setBalance] = useState<string | null>(null);
@@ -34,7 +31,6 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
       const wallets = [];
       if ((window.ethereum as ExtendedProvider)?.isMetaMask) wallets.push('MetaMask');
       if ((window.ethereum as ExtendedProvider)?.isRabby || (window as any).rabby) wallets.push('Rabby');
-      wallets.push('Solana');
       setAvailableWallets(wallets);
     };
 
@@ -43,20 +39,18 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
   }, []);
 
   useEffect(() => {
-    if (solanaWallet.connected) {
-      const newWallet = { address: solanaWallet.publicKey?.toBase58() || '', type: 'Solana' };
-      setEVMWallet(newWallet);
-      onWalletChange(newWallet);
+    if (wallet) {
+      fetchBalance(wallet.address); // Fetch balance when wallet changes
+      onWalletChange(wallet); // Notify about wallet change
     }
-  }, [solanaWallet.connected, solanaWallet.publicKey]);
+  }, [wallet]);
 
   const loadConnectedWallet = () => {
     const savedWallet = localStorage.getItem('connectedWallet');
     if (savedWallet) {
-      const wallet = JSON.parse(savedWallet);
-      setEVMWallet(wallet);
-      onWalletChange(wallet);
-      fetchBalance(wallet.address);
+      const walletData = JSON.parse(savedWallet);
+      fetchBalance(walletData.address);
+      onWalletChange(walletData); // Notify about wallet change
     }
   };
 
@@ -69,30 +63,24 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
     return null;
   };
 
-  const connectWallet = async (walletType: string) => {
+  const handleConnectWallet = async (walletType: string) => {
     try {
       setIsConnecting(true);
-      if (walletType === 'Solana') {
-        //@ts-ignore
-        await solanaWallet.select('Phantom'); // or whichever wallet you want to use
-        await solanaWallet.connect();
-      } else {
-        const provider = getProvider(walletType);
-        if (!provider) {
-          throw new Error(`${walletType} provider not found`);
-        }
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        
-        await ethersProvider.send("eth_requestAccounts", []);
-        const signer = ethersProvider.getSigner();
-        const address = await signer.getAddress();
-        
-        const newWallet = { address, type: walletType };
-        setEVMWallet(newWallet);
-        localStorage.setItem('connectedWallet', JSON.stringify(newWallet));
-        onWalletChange(newWallet);
-        fetchBalance(address);
+      const provider = getProvider(walletType);
+      if (!provider) {
+        throw new Error(`${walletType} provider not found`);
       }
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+      
+      await ethersProvider.send("eth_requestAccounts", []);
+      const signer = ethersProvider.getSigner();
+      const address = await signer.getAddress();
+      
+      const newWallet = { address, type: walletType };
+      localStorage.setItem('connectedWallet', JSON.stringify(newWallet)); // Store wallet in localStorage
+      connectWallet(); // Call the context's connectWallet function
+      fetchBalance(address);
+      onWalletChange(newWallet); // Notify about wallet change
       toast.success(`${walletType} wallet connected successfully`);
     } catch (error) {
       console.error("Failed to connect wallet:", error);
@@ -102,14 +90,11 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
     }
   };
 
-  const disconnectWallet = () => {
-    setEVMWallet(null);
+  const handleDisconnectWallet = () => {
+    disconnectWallet(); // Use the context's disconnect function
     setBalance(null);
-    localStorage.removeItem('connectedWallet');
-    onWalletChange(null);
-    if (solanaWallet.connected) {
-      solanaWallet.disconnect();
-    }
+    localStorage.removeItem('connectedWallet'); // Remove wallet from localStorage
+    onWalletChange(null); // Notify about wallet change
     toast.success('Wallet disconnected');
   };
 
@@ -129,18 +114,9 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  const getConnectedWallet = () => {
-    if (solanaWallet.connected) {
-      return { type: 'Solana', address: solanaWallet.publicKey?.toBase58() || '' };
-    }
-    return evmWallet;
-  };
-
-  const connectedWallet = getConnectedWallet();
-
   return (
-    <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenu.Trigger asChild>
+    <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
+      <Popover.Trigger asChild>
         <Button 
           variant="outline" 
           size="sm" 
@@ -152,20 +128,20 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
               <Spinner size="small" className="mr-2" />
               Connecting...
             </>
-          ) : connectedWallet ? (
-            `${connectedWallet.type}: ${truncateAddress(connectedWallet.address)}`
+          ) : wallet ? (
+            `${truncateAddress(wallet.address)}`
           ) : (
             'Connect Wallet'
           )}
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
-      </DropdownMenu.Trigger>
+      </Popover.Trigger>
       <AnimatePresence>
         {isOpen && (
-          <DropdownMenu.Portal forceMount>
-            <DropdownMenu.Content 
+          <Popover.Portal forceMount>
+            <Popover.Content 
               className="bg-gray-800 rounded-md shadow-lg p-2 mt-2 border border-gray-700 w-64"
-              asChild
+              sideOffset={5}
             >
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -173,49 +149,39 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                {connectedWallet ? (
+                {wallet ? (
                   <>
                     <div className="p-2 text-white">
-                      <p>Connected to {connectedWallet.type}</p>
-                      <p className="text-sm text-gray-400">{truncateAddress(connectedWallet.address)}</p>
+                      <p>Connected to {wallet.type}</p>
+                      <p className="text-sm text-gray-400">{truncateAddress(wallet.address)}</p>
                       {balance && <p className="mt-2">Balance: {balance} ETH</p>}
                     </div>
-                    <DropdownMenu.Item 
-                      className="cursor-pointer p-2 hover:bg-gray-700 text-white rounded"
-                      onSelect={disconnectWallet}
+                    <Button 
+                      className="w-full mt-2"
+                      onClick={handleDisconnectWallet}
                     >
                       Disconnect Wallet
-                    </DropdownMenu.Item>
+                    </Button>
                   </>
                 ) : (
                   availableWallets.map((wallet) => (
-                    <DropdownMenu.Item 
+                    <Button
                       key={wallet}
-                      className="cursor-pointer p-2 hover:bg-gray-700 text-white rounded" 
-                      onSelect={() => connectWallet(wallet)}
+                      variant="ghost"
+                      className="w-full justify-start text-white hover:bg-gray-700 mb-2"
+                      onClick={() => handleConnectWallet(wallet)}
                       disabled={isConnecting}
                     >
-                      <motion.div whileHover={{ x: 5 }} className="flex items-center">
-                        {isConnecting ? <Spinner size="small" className="mr-2" /> : null}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-full justify-start text-white hover:bg-gray-700"
-                          onClick={() => connectWallet(wallet)}
-                          disabled={isConnecting}
-                        >
-                          {isConnecting ? 'Connecting...' : `Connect ${wallet}`}
-                        </Button>
-                      </motion.div>
-                    </DropdownMenu.Item>
+                      {isConnecting ? 'Connecting...' : `Connect ${wallet}`}
+                    </Button>
                   ))
                 )}
               </motion.div>
-            </DropdownMenu.Content>
-          </DropdownMenu.Portal>
+            </Popover.Content>
+          </Popover.Portal>
         )}
       </AnimatePresence>
-    </DropdownMenu.Root>
+    </Popover.Root>
   );
 };
 

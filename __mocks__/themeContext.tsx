@@ -1,8 +1,9 @@
+import { jest } from '@jest/globals';
 import React from 'react';
 
 export const ThemeContext = React.createContext({
   theme: 'light',
-  toggleTheme: () => {},
+  toggleTheme: jest.fn(),
 });
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => (

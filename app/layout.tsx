@@ -3,99 +3,57 @@
 import React from 'react';
 import { ThemeProvider } from 'next-themes';
 import '@/styles/globals.css';
-import Layout from '@/components/Layout';
-import { Web3ReactProvider } from '@web3-react/core';
-import { Web3Provider } from '@ethersproject/providers';
-import { Toaster } from 'react-hot-toast';
-import { ClerkProvider, useAuth } from '@clerk/nextjs'
-import { dark } from '@clerk/themes';
+import { ClerkProvider } from '@clerk/nextjs';
 import { WalletProvider } from '@/contexts/WalletContext';
-import { SessionContextProvider } from '@supabase/auth-helpers-react'
-import { SolanaWalletProvider } from '@/components/SolanaWalletProvider';
-import { createClient } from '@supabase/supabase-js';
+import TopBar from '@/components/TopBar';
+import { Toaster } from 'react-hot-toast';
+import { RainbowKitProvider, getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { createConfig, WagmiConfig } from 'wagmi';
+import { mainnet, polygon, optimism, arbitrum } from 'wagmi/chains';
+import { http } from 'viem';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
+const chains = [mainnet, polygon, optimism, arbitrum];
 
-function SupabaseProvider({ children }: { children: React.ReactNode }) {
-  const { getToken } = useAuth();
-  
-  const supabaseClient = React.useMemo(() => {
-    return createClient(supabaseUrl, supabaseAnonKey, {
-      global: {
-        headers: {
-          Authorization: `Bearer ${getToken({ template: 'supabase' })}`,
-        },
-      },
-    });
-  }, [getToken]);
+const { connectors } = getDefaultWallets({
+  appName: process.env.NEXT_PUBLIC_APP_NAME || 'Quantum Labs',
+  projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '',
+  chains
+});
 
-  return (
-    <SessionContextProvider supabaseClient={supabaseClient}>
-      {children}
-    </SessionContextProvider>
-  );
-}
+const wagmiConfig = createConfig({
+  chains,
+  transports: Object.fromEntries(
+    chains.map(chain => [chain.id, http()])
+  ),
+  connectors
+});
 
-export default function RootLayout({
-    children,
-}: {
-    children: React.ReactNode
-}) {
+// Create a client
+const queryClient = new QueryClient();
+
+const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (
-        <ClerkProvider appearance={{
-          baseTheme: dark,
-          variables: {
-            colorPrimary: '#611BBD',
-          },
-          elements: {
-            formButtonPrimary: {
-              fontSize: '16px',
-              textTransform: 'none',
-              backgroundColor: '#611BBD',
-              '&:hover': {
-                backgroundColor: '#49247A',
-              },
-            },
-            card: {
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-              borderRadius: '8px',
-            },
-            modalContent: {
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              minHeight: '100vh',
-            },
-            modalContentInner: {
-              width: '100%',
-              maxWidth: '400px',
-            },
-          },
-          layout: {
-            socialButtonsPlacement: 'bottom',
-            socialButtonsVariant: 'iconButton',
-          },
-        }}>
-            <html lang="en">
-                <body>
-                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-                        <Web3ReactProvider getLibrary={(provider: any) => new Web3Provider(provider)}>
-                            <WalletProvider>
-                                <SolanaWalletProvider>
-                                    <SupabaseProvider>
-                                        <Layout>
-                                            {children}
-                                            <Toaster />
-                                        </Layout>
-                                    </SupabaseProvider>
-                                </SolanaWalletProvider>
-                            </WalletProvider>
-                        </Web3ReactProvider>
-                    </ThemeProvider>
-                </body>
-            </html>
-        </ClerkProvider>
-    )
-}
+        <html lang="en" suppressHydrationWarning>
+            <body>
+                <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                    <ClerkProvider>
+                        <WagmiConfig config={wagmiConfig}>
+                            <QueryClientProvider client={queryClient}>
+                                <RainbowKitProvider chains={chains}>
+                                    <WalletProvider>
+                                        <TopBar />
+                                        {children}
+                                        <Toaster />
+                                    </WalletProvider>
+                                </RainbowKitProvider>
+                            </QueryClientProvider>
+                        </WagmiConfig>
+                    </ClerkProvider>
+                </ThemeProvider>
+            </body>
+        </html>
+    );
+};
+
+export default RootLayout;
