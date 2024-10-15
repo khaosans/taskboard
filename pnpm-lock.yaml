@@ -16807,7 +16807,7 @@ snapshots:
   '@jest/core@24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)':
     dependencies:
       '@jest/console': 24.9.0
-      '@jest/reporters': 24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)
+      '@jest/reporters': 24.9.0(supports-color@8.1.1)
       '@jest/test-result': 24.9.0
       '@jest/transform': 24.9.0(supports-color@8.1.1)
       '@jest/types': 24.9.0
@@ -16931,7 +16931,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@jest/reporters@24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)':
+  '@jest/reporters@24.9.0(supports-color@8.1.1)':
     dependencies:
       '@jest/environment': 24.9.0(supports-color@8.1.1)
       '@jest/test-result': 24.9.0
@@ -16955,9 +16955,7 @@ snapshots:
       source-map: 0.6.1
       string-length: 2.0.0
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   '@jest/reporters@29.7.0(supports-color@8.1.1)':
     dependencies:
@@ -27075,7 +27073,7 @@ snapshots:
       jest-environment-jsdom: 24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)
       jest-environment-node: 24.9.0(supports-color@8.1.1)
       jest-get-type: 24.9.0
-      jest-jasmine2: 24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)
+      jest-jasmine2: 24.9.0(supports-color@8.1.1)
       jest-regex-util: 24.9.0
       jest-resolve: 24.9.0
       jest-util: 24.9.0(supports-color@8.1.1)
@@ -27254,7 +27252,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  jest-jasmine2@24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10):
+  jest-jasmine2@24.9.0(supports-color@8.1.1):
     dependencies:
       '@babel/traverse': 7.25.7(supports-color@8.1.1)
       '@jest/environment': 24.9.0(supports-color@8.1.1)
@@ -27273,9 +27271,7 @@ snapshots:
       pretty-format: 24.9.0
       throat: 4.1.0
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   jest-leak-detector@24.9.0:
     dependencies:
@@ -27395,7 +27391,7 @@ snapshots:
       jest-config: 24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)
       jest-docblock: 24.9.0
       jest-haste-map: 24.9.0(supports-color@8.1.1)
-      jest-jasmine2: 24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)
+      jest-jasmine2: 24.9.0(supports-color@8.1.1)
       jest-leak-detector: 24.9.0
       jest-message-util: 24.9.0(supports-color@8.1.1)
       jest-resolve: 24.9.0
@@ -30816,7 +30812,7 @@ snapshots:
   react-devtools-core@5.3.2(bufferutil@4.0.8)(utf-8-validate@5.0.10):
     dependencies:
       shell-quote: 1.8.1
-      ws: 7.5.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      ws: 7.5.10(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
