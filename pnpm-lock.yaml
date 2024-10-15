@@ -336,9 +336,6 @@ importers:
       '@metamask/providers':
         specifier: ^17.2.1
         version: 17.2.1(supports-color@8.1.1)(webextension-polyfill@0.12.0)
-      '@playwright/test':
-        specifier: ^1.47.2
-        version: 1.47.2
       '@testing-library/jest-dom':
         specifier: ^5.17.0
         version: 5.17.0
@@ -17334,7 +17331,7 @@ snapshots:
   '@jest/core@24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)':
     dependencies:
       '@jest/console': 24.9.0
-      '@jest/reporters': 24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)
+      '@jest/reporters': 24.9.0(supports-color@8.1.1)
       '@jest/test-result': 24.9.0
       '@jest/transform': 24.9.0(supports-color@8.1.1)
       '@jest/types': 24.9.0
@@ -17458,7 +17455,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@jest/reporters@24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)':
+  '@jest/reporters@24.9.0(supports-color@8.1.1)':
     dependencies:
       '@jest/environment': 24.9.0(supports-color@8.1.1)
       '@jest/test-result': 24.9.0
@@ -17482,9 +17479,7 @@ snapshots:
       source-map: 0.6.1
       string-length: 2.0.0
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   '@jest/reporters@29.7.0(supports-color@8.1.1)':
     dependencies:
@@ -18501,6 +18496,7 @@ snapshots:
   '@playwright/test@1.47.2':
     dependencies:
       playwright: 1.47.2
+    optional: true
 
   '@project-serum/sol-wallet-adapter@0.2.6(@solana/web3.js@1.95.3(bufferutil@4.0.8)(encoding@0.1.13)(utf-8-validate@5.0.10))':
     dependencies:
@@ -28218,7 +28214,7 @@ snapshots:
       jest-environment-jsdom: 24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)
       jest-environment-node: 24.9.0(supports-color@8.1.1)
       jest-get-type: 24.9.0
-      jest-jasmine2: 24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)
+      jest-jasmine2: 24.9.0(supports-color@8.1.1)
       jest-regex-util: 24.9.0
       jest-resolve: 24.9.0
       jest-util: 24.9.0(supports-color@8.1.1)
@@ -28397,7 +28393,7 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  jest-jasmine2@24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10):
+  jest-jasmine2@24.9.0(supports-color@8.1.1):
     dependencies:
       '@babel/traverse': 7.25.7(supports-color@8.1.1)
       '@jest/environment': 24.9.0(supports-color@8.1.1)
@@ -28416,9 +28412,7 @@ snapshots:
       pretty-format: 24.9.0
       throat: 4.1.0
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   jest-leak-detector@24.9.0:
     dependencies:
@@ -28538,7 +28532,7 @@ snapshots:
       jest-config: 24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)
       jest-docblock: 24.9.0
       jest-haste-map: 24.9.0(supports-color@8.1.1)
-      jest-jasmine2: 24.9.0(bufferutil@4.0.8)(supports-color@8.1.1)(utf-8-validate@5.0.10)
+      jest-jasmine2: 24.9.0(supports-color@8.1.1)
       jest-leak-detector: 24.9.0
       jest-message-util: 24.9.0(supports-color@8.1.1)
       jest-resolve: 24.9.0
@@ -31124,13 +31118,15 @@ snapshots:
     dependencies:
       find-up: 3.0.0
 
-  playwright-core@1.47.2: {}
+  playwright-core@1.47.2:
+    optional: true
 
   playwright@1.47.2:
     dependencies:
       playwright-core: 1.47.2
     optionalDependencies:
       fsevents: 2.3.2
+    optional: true
 
   pn@1.1.0: {}
 
