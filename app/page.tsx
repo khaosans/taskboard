@@ -21,34 +21,29 @@ const WelcomePage: React.FC = () => {
         {isSignedIn ? (
           <div className="text-center mb-16">
             <p className="text-2xl mb-4">Hello, {user?.firstName}! Ready to dive in?</p>
-            <Link 
-              href="/dashboard" 
-              className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full inline-flex items-center text-lg transition-colors duration-300"
-            >
-              Go to Dashboard
-              <ArrowRight className="ml-2 h-5 w-5" />
+            <Link href="/dashboard">
+              <a className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full inline-flex items-center text-lg transition-colors duration-300">
+                Go to Dashboard
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </a>
             </Link>
           </div>
         ) : (
           <div className="text-center mb-16">
             <div className="space-x-4">
-              <Link 
-                href="/login"
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full inline-flex items-center text-lg transition-colors duration-300"
-              >
-                Sign In
+              <Link href="/login">
+                <a className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full inline-flex items-center text-lg transition-colors duration-300">
+                  Sign In
+                </a>
               </Link>
-              <Link 
-                href="/sign-up"
-                className="bg-transparent hover:bg-purple-700 text-purple-600 hover:text-white font-bold py-3 px-6 rounded-full inline-flex items-center text-lg border-2 border-purple-600 transition-colors duration-300"
-              >
-                Sign Up
+              <Link href="/sign-up">
+                <a className="bg-transparent hover:bg-purple-700 text-purple-600 hover:text-white font-bold py-3 px-6 rounded-full inline-flex items-center text-lg border-2 border-purple-600 transition-colors duration-300">
+                  Sign Up
+                </a>
               </Link>
             </div>
           </div>
         )}
-
-      
 
         <footer className="text-center text-gray-500">
           <p>&copy; 2023 Quantum Labs. All rights reserved.</p>
