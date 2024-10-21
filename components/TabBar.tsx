@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Bot, BarChart, Users, Plus } from 'lucide-react'; // Ensure all icons are imported correctly
-import Link from 'next/link'; // Ensure you import Link from next/link
+import { Bot, BarChart, Users, Plus } from 'lucide-react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const tabs = [

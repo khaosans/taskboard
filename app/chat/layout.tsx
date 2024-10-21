@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ThemeProvider } from '@/app/contexts/ThemeContext';
+import { useTheme } from '@/hooks/useTheme';
 import '@/styles/globals.css';
 import ChatbotModal from '@/components/ChatbotModal';
 import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper';
@@ -11,19 +11,20 @@ interface ChatLayoutProps {
 }
 
 const ChatLayout: React.FC<ChatLayoutProps> = ({ children }) => {
-  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const { theme } = useTheme();
+  const [isChatbotModalOpen, setIsChatbotModalOpen] = useState(false);
 
   return (
-    <html lang="en">
+    <html lang="en" className={theme}>
       <body>
-        <ThemeProvider>
-          <RobotTransformerWallpaper />
-          <div className="relative z-10">
-            {children}
-          
-            <ChatbotModal onClose={() => setIsChatbotOpen(false)} />
-          </div>
-        </ThemeProvider>
+        <RobotTransformerWallpaper />
+        <div className="chat-layout">
+          <button onClick={() => setIsChatbotModalOpen(true)}>Open Chatbot</button>
+          {children}
+          {isChatbotModalOpen && (
+            <ChatbotModal onClose={() => setIsChatbotModalOpen(false)} />
+          )}
+        </div>
       </body>
     </html>
   );

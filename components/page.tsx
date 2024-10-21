@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts'
+import vercelKVClient from '@/utils/vercelKV' // Import the Vercel KV client
 
 interface Coin {
   id: string
@@ -26,7 +27,15 @@ export default function CryptoDashboard() {
   useEffect(() => {
     const fetchCoins = async () => {
       try {
-        const response = await fetch(
+        // Check if data is cached
+        const cachedData = await vercelKVClient.get('crypto-coins')
+        if (cachedData) {
+          setCoins(JSON.parse(cachedData as string))
+          setLoading(false)
+          return
+        }
+
+        const response = await window.fetch(
           'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=true'
         )
         if (!response.ok) {
@@ -35,6 +44,9 @@ export default function CryptoDashboard() {
         const data = await response.json()
         setCoins(data)
         setLoading(false)
+
+        // Cache the data with a 60-minute TTL
+        await vercelKVClient.set('crypto-coins', JSON.stringify(data), { ex: 3600 })
       } catch (err) {
         setError('Failed to fetch cryptocurrency data. Please try again later.')
         setLoading(false)
@@ -96,6 +108,7 @@ export default function CryptoDashboard() {
           </tbody>
         </table>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {coins.map((coin) => (
           <Card key={coin.id}>

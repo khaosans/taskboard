@@ -7,23 +7,17 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ethers } from 'ethers';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { useWallet as useEVMWallet } from '@/contexts/WalletContext';
-import Spinner from './Spinner';
+import { useWallet } from '@/hooks/useWallet';
+
+import Spinner from '@/components/Spinner';
 
 interface ExtendedProvider extends ethers.providers.ExternalProvider {
   isMetaMask?: boolean;
   isRabby?: boolean;
 }
 
-interface Web3SignInProps {
-  onWalletChange: (wallet: { address: string; type: string } | null) => void;
-}
-
-const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
-  const { wallet: evmWallet, setWallet: setEVMWallet } = useEVMWallet();
-  const solanaWallet = useWallet();
+const Web3SignIn: React.FC = () => {
+  const [evmWallet, setEVMWallet] = useState<{ address: string; type: string } | null>(null);
   const [availableWallets, setAvailableWallets] = useState<string[]>([]);
   const [isConnecting, setIsConnecting] = useState(false);
   const [balance, setBalance] = useState<string | null>(null);
@@ -32,9 +26,8 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
   useEffect(() => {
     const checkAvailableWallets = () => {
       const wallets = [];
-      if ((window.ethereum as ExtendedProvider)?.isMetaMask) wallets.push('MetaMask');
-      if ((window.ethereum as ExtendedProvider)?.isRabby || (window as any).rabby) wallets.push('Rabby');
-      wallets.push('Solana');
+      if (typeof window !== 'undefined' && (window.ethereum as ExtendedProvider)?.isMetaMask) wallets.push('MetaMask');
+      if (typeof window !== 'undefined' && ((window.ethereum as ExtendedProvider)?.isRabby || (window as any).rabby)) wallets.push('Rabby');
       setAvailableWallets(wallets);
     };
 
@@ -42,29 +35,25 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
     loadConnectedWallet();
   }, []);
 
-  useEffect(() => {
-    if (solanaWallet.connected) {
-      const newWallet = { address: solanaWallet.publicKey?.toBase58() || '', type: 'Solana' };
-      setEVMWallet(newWallet);
-      onWalletChange(newWallet);
-    }
-  }, [solanaWallet.connected, solanaWallet.publicKey]);
-
   const loadConnectedWallet = () => {
-    const savedWallet = localStorage.getItem('connectedWallet');
-    if (savedWallet) {
-      const wallet = JSON.parse(savedWallet);
-      setEVMWallet(wallet);
-      onWalletChange(wallet);
-      fetchBalance(wallet.address);
+    if (typeof window !== 'undefined') {
+      const savedWallet = window.localStorage.getItem('connectedWallet');
+      if (savedWallet) {
+        const wallet = JSON.parse(savedWallet);
+        setEVMWallet(wallet);
+        fetchBalance(wallet.address);
+      }
     }
   };
 
   const getProvider = (type: string): ExtendedProvider | null => {
-    if (type === 'MetaMask' && (window.ethereum as ExtendedProvider)?.isMetaMask) {
-      return window.ethereum as ExtendedProvider;
-    } else if (type === 'Rabby' && ((window.ethereum as ExtendedProvider)?.isRabby || window.rabby)) {
-      return ((window as any).rabby || window.ethereum) as ExtendedProvider;
+    if (typeof window === 'undefined') return null;
+
+    const { ethereum } = window as any;
+    if (type === 'MetaMask' && ethereum?.isMetaMask) {
+      return ethereum as ExtendedProvider;
+    } else if (type === 'Rabby' && (ethereum?.isRabby || window.rabby)) {
+      return (window.rabby || ethereum) as ExtendedProvider;
     }
     return null;
   };
@@ -72,27 +61,22 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
   const connectWallet = async (walletType: string) => {
     try {
       setIsConnecting(true);
-      if (walletType === 'Solana') {
-        //@ts-ignore
-        await solanaWallet.select('Phantom'); // or whichever wallet you want to use
-        await solanaWallet.connect();
-      } else {
-        const provider = getProvider(walletType);
-        if (!provider) {
-          throw new Error(`${walletType} provider not found`);
-        }
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        
-        await ethersProvider.send("eth_requestAccounts", []);
-        const signer = ethersProvider.getSigner();
-        const address = await signer.getAddress();
-        
-        const newWallet = { address, type: walletType };
-        setEVMWallet(newWallet);
-        localStorage.setItem('connectedWallet', JSON.stringify(newWallet));
-        onWalletChange(newWallet);
-        fetchBalance(address);
+      const provider = getProvider(walletType);
+      if (!provider) {
+        throw new Error(`${walletType} provider not found`);
       }
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+      
+      await ethersProvider.send("eth_requestAccounts", []);
+      const signer = ethersProvider.getSigner();
+      const address = await signer.getAddress();
+      
+      const newWallet = { address, type: walletType };
+      setEVMWallet(newWallet);
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('connectedWallet', JSON.stringify(newWallet));
+      }
+      fetchBalance(address);
       toast.success(`${walletType} wallet connected successfully`);
     } catch (error) {
       console.error("Failed to connect wallet:", error);
@@ -105,20 +89,20 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
   const disconnectWallet = () => {
     setEVMWallet(null);
     setBalance(null);
-    localStorage.removeItem('connectedWallet');
-    onWalletChange(null);
-    if (solanaWallet.connected) {
-      solanaWallet.disconnect();
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem('connectedWallet');
     }
     toast.success('Wallet disconnected');
   };
 
   const fetchBalance = async (address: string) => {
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum as any, "any");
-      const balanceBigNumber = await provider.getBalance(address);
-      const balanceInEther = ethers.utils.formatEther(balanceBigNumber);
-      setBalance(parseFloat(balanceInEther).toFixed(4));
+      if (typeof window !== 'undefined') {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any, "any");
+        const balanceBigNumber = await provider.getBalance(address);
+        const balanceInEther = ethers.utils.formatEther(balanceBigNumber);
+        setBalance(parseFloat(balanceInEther).toFixed(4));
+      }
     } catch (error) {
       console.error('Error fetching balance:', error);
       setBalance(null);
@@ -130,9 +114,6 @@ const Web3SignIn: React.FC<Web3SignInProps> = ({ onWalletChange }) => {
   };
 
   const getConnectedWallet = () => {
-    if (solanaWallet.connected) {
-      return { type: 'Solana', address: solanaWallet.publicKey?.toBase58() || '' };
-    }
     return evmWallet;
   };
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Toast from './Toast';
+import Toast from '@components/Toast'; // Update import path
 
 const ToastContainer: React.FC = () => {
     const [toasts, setToasts] = useState<{ id: number; message: string; type: 'success' | 'error' | 'info' }[]>([]);

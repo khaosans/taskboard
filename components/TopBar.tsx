@@ -1,77 +1,56 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Bell, Settings, MessageCircle, HardDrive } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import ChatbotModal from './ChatbotModal';
+import { Bell, Settings, MessageCircle, Briefcase, BarChart2, Users, Activity, Clipboard } from 'lucide-react';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import Web3SignIn from './Web3SignIn';
 import { motion } from 'framer-motion';
-import { useNotifications } from '@/hooks/useNotifications';
-import { createClerkSupabaseClient } from 'lib/supabase';
+import { useTheme } from '@/hooks/useTheme';
+import { useChatbotModal } from '@/hooks/useChatbotModal';
+import ChatbotModal from '@/components/ChatbotModal';
 
-interface TopBarProps {
-  onWalletChange: (wallet: { address: string; type: string } | null) => void;
-  selectedWallet: { address: string; type: string } | null;
-}
-
-const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isNudged, setIsNudged] = useState(false);
-  const router = useRouter();
-  const { isLoaded, isSignedIn, user } = useUser();
-  const { notifications } = useNotifications();
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  const toggleChat = () => {
-    setIsChatOpen(!isChatOpen);
-  };
-
-  const handleLogoClick = () => {
-    setIsNudged(true);
-    globalThis.setTimeout(() => setIsNudged(false), 300);
-  };
-
-  const handleWalletChange = (wallet: { address: string; type: string } | null) => {
-    onWalletChange(wallet);
-  };
+const TopBar: React.FC = () => {
+  const { isLoaded, isSignedIn } = useUser();
+  const { theme, toggleTheme } = useTheme();
+  const { isChatbotModalOpen, openChatbotModal, closeChatbotModal } = useChatbotModal();
 
   if (!isLoaded) {
     return null;
   }
 
+  const navItems = [
+    { name: 'Portfolio', href: '/portfolio', icon: Briefcase },
+    { name: 'DeFi Dashboard', href: '/defi-dashboard', icon: BarChart2 },
+
+  ];
+
   return (
     <>
-      <motion.header 
+      <motion.header
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="flex items-center justify-between p-4 bg-gray-800 text-white"
+        className={`flex items-center justify-between p-4 bg-gray-800 text-white ${theme}`}
       >
-        <Link href="/" className={`text-2xl font-bold hover:text-purple-400 transition-colors ${isNudged ? 'animate-nudge' : ''}`} onClick={handleLogoClick}>
-          <motion.span 
-            className="glow"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            Quantum Labs
-          </motion.span>
+        <Link href="/" className="text-2xl font-bold hover:text-purple-400 transition-colors">
+          Quantum Labs
         </Link>
         <nav className="flex space-x-4">
           <SignedIn>
             <motion.div className="flex space-x-4">
-              {['Portfolio'].map((item, index) => (
+              {navItems.map((item, index) => (
                 <motion.div
-                  key={item}
+                  key={item.name}
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
+                  className="flex items-center space-x-2"
                 >
-                  <Link href={`/${item.toLowerCase().replace(' ', '-')}`} className="hover:text-purple-400 transition-colors">
-                    {item}
+                  {React.createElement(item.icon, { className: "h-5 w-5" })}
+                  <Link href={item.href} className="hover:text-purple-400 transition-colors">
+                    {item.name}
                   </Link>
                 </motion.div>
               ))}
@@ -80,12 +59,12 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         </nav>
         <div className="flex items-center space-x-4">
           <SignedIn>
-            <Web3SignIn onWalletChange={handleWalletChange} />
-            <motion.button 
+            <Web3SignIn />
+            <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button" 
-              onClick={toggleChat}
+              className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button"
+              onClick={openChatbotModal}
             >
               <MessageCircle className="h-5 w-5" />
             </motion.button>
@@ -97,11 +76,6 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Link href="/notifications" className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button">
                 <Bell className="h-5 w-5" />
-                {unreadCount > 0 && (
-                  <Badge variant="destructive" className="absolute -top-2 -right-2 px-2 py-1 text-xs">
-                    {unreadCount}
-                  </Badge>
-                )}
               </Link>
             </motion.div>
             <UserButton afterSignOutUrl="/" />
@@ -113,9 +87,10 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
               </Link>
             </motion.div>
           </SignedOut>
+          <Button onClick={toggleTheme}>Toggle Theme</Button>
         </div>
       </motion.header>
-      {isChatOpen && <ChatbotModal onClose={() => setIsChatOpen(false)} />}
+      {isChatbotModalOpen && <ChatbotModal onClose={closeChatbotModal} />}
     </>
   );
 }

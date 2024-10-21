@@ -1,13 +1,7 @@
-import { cn } from "@/utils/cn";
 import React from "react";
 
-export function Label({
-  children,
-  ...props
-}: { children: React.ReactNode } & React.JSX.IntrinsicElements["label"]) {
-  return (
-    <label className={cn("text-sm font-medium", props.className)} {...props}>
-      {children}
-    </label>
-  );
-}
+export const Label: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({ children, ...props }) => (
+  <label {...props} className="block text-sm font-medium text-gray-700">
+    {children}
+  </label>
+);

@@ -16,8 +16,8 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: #1a1a1a; /* Darker background color */
-    color: #e0e0e0; /* Lighter text color for better contrast */
+    background-color: #f0f0f0;
+    color: #333;
 }
 
 main {
@@ -41,4 +41,26 @@ footer {
     to {
         transform: rotate(360deg);
     }
+}
+
+/* Example using Tailwind CSS */
+.dark {
+    --bg-color: #1a202c;
+    --text-color: #f7fafc;
+}
+
+.light {
+    --bg-color: #f7fafc;
+    --text-color: #1a202c;
+}
+
+/* Add any other global styles here */
+
+/* Example global styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
 }

@@ -2,48 +2,26 @@
 
 import React from 'react';
 
-export const DropdownMenu: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <div className="relative inline-block text-left">
-      {children}
-    </div>
-  );
-};
+export const DropdownMenu: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="relative">{children}</div>
+);
 
-export const DropdownMenuTrigger: React.FC<{ asChild: boolean; children: React.ReactNode }> = ({ children }) => {
-  return (
-    <div>
-      {children}
-    </div>
-  );
-};
+export const DropdownMenuTrigger: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div>{children}</div>
+);
 
-export const DropdownMenuContent: React.FC<{ children: React.ReactNode; className?: string; align?: 'start' | 'end'; forceMount?: boolean }> = ({ children, className }) => {
-  return (
-    <div className={`absolute z-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 ${className}`}>
-      {children}
-    </div>
-  );
-};
+export const DropdownMenuContent: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+  <div className={`absolute mt-2 bg-white shadow-lg rounded ${className}`}>{children}</div>
+);
 
-export const DropdownMenuItem: React.FC<{ children: React.ReactNode, asChild?: boolean, onClick?: () => void }> = ({children, onClick}) => {
-  return (
-    <div className="cursor-pointer hover:bg-gray-100 px-4 py-2 text-sm text-gray-700" onClick={onClick}>
-      {children}
-    </div>
-  );
-};
+export const DropdownMenuItem: React.FC<{ children: React.ReactNode; onClick: () => void }> = ({ children, onClick }) => (
+  <div onClick={onClick} className="p-2 hover:bg-gray-100 cursor-pointer">
+    {children}
+  </div>
+);
 
-export const DropdownMenuLabel: React.FC<{ children: React.ReactNode, className?: string }> = ({children}) => {
-  return (
-    <div className="px-4 py-2 text-sm font-medium text-gray-900">
-      {children}
-    </div>
-  );
-};
+export const DropdownMenuLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="p-2 font-bold">{children}</div>
+);
 
-export const DropdownMenuSeparator: React.FC = () => {
-  return (
-    <div className="border-t border-gray-200 my-1" />
-  );
-};
+export const DropdownMenuSeparator: React.FC = () => <div className="border-t my-1" />;

@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react'; // Ensure lucide-react is installed and imported correctly
-import { createClerkSupabaseClient } from '@/lib/supabase'; // Update import
-import SkeletonLoader from './SkeletonLoader'; // Import Skeleton Loader
-import LoaderSpinner from './LoaderSpinner'; // Import Loader Spinner
+import { createClerkSupabaseClient } from '@/components/lib/supabase'; // Update import path
+import SkeletonLoader from '@/components/SkeletonLoader'; // Update import path
+import LoaderSpinner from '@/components/LoaderSpinner'; // Update import path
 
 interface ChatModalProps {
     onClose: () => void;
@@ -160,8 +160,8 @@ const ChatBotModal: React.FC<ChatModalProps> = ({ onClose }) => {
                     ))}
                     {loading && (
                         <div className="flex justify-center items-center mb-4">
-                        <LoaderSpinner /> {/* Spinner */}
-                    </div>
+                            <LoaderSpinner /> {/* Spinner */}
+                        </div>
                     )}
                     <div ref={messagesEndRef} /> {/* Empty div to scroll to */}
                 </div>
