@@ -1,0 +1,318 @@
+/* Remove these lines if Tailwind is not supported */
+/* @tailwind components; */
+/* @tailwind utilities; */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Global color variables */
+:root {
+  --primary-color: #000000;
+  --secondary-color: #6B7280;
+  --background-color: #ffffff;
+  --text-color: #000000;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark {
+  --background-color: #000000;
+  --text-color: #ffffff;
+}
+
+.container {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.card {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  border-radius: 8px;
+  padding: 16px;
+  /* Add other styles as needed */
+}
+
+.page-title {
+  color: var(--text-color);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: var(--secondary-color);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #1F2937;
+}
+
+.text-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.text-link:hover {
+  text-decoration: underline;
+}
+
+.tab-container {
+  display: flex;
+  margin-bottom: 1rem;
+  border: 1px solid #D1D5DB;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 0.75rem;
+}
+
+.tab:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.tab:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.tab.active {
+  background-color: white;
+  border-bottom: none;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table th {
+  background-color: #f9fafb;
+  color: #374151;
+}
+
+.table tbody tr:hover {
+  background-color: #f3f4f6;
+}
+
+.table.dark th {
+  background-color: #1f2937;
+  color: #d1d5db;
+}
+
+.table.dark tbody tr:hover {
+  background-color: #374151;
+}
+
+.glow {
+  text-shadow: 0 0 5px rgba(97, 27, 189, 0.7), 0 0 10px rgba(97, 27, 189, 0.5), 0 0 15px rgba(97, 27, 189, 0.3);
+}
+
+@keyframes nudge {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+.animate-nudge {
+  animation: nudge 0.3s ease-in-out;
+}
+
+.loader {
+  border-top-color: #3498db;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.dark {
+  --bg-color: #1a202c;
+  --text-color: #f7fafc;
+}
+
+.light {
+  --bg-color: #f7fafc;
+  --text-color: #1a202c;
+}
+
+/* Add this to the end of your globals.css file */
+
+.atom-spinner {
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  overflow: hidden;
+}
+
+.spinner-inner {
+  position: relative;
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.spinner-circle {
+  display: block;
+  position: absolute;
+  color: var(--color);
+  font-size: calc(var(--size) * 0.24);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.spinner-line {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  animation-duration: 1s;
+  border-left-width: calc(var(--size) / 25);
+  border-top-width: calc(var(--size) / 25);
+  border-left-color: var(--color);
+  border-left-style: solid;
+  border-top-style: solid;
+  border-top-color: transparent;
+}
+
+spinner-line:nth-child(1) {
+  animation: atom-spinner-animation-1 1s linear infinite;
+  transform: rotateZ(120deg) rotateX(66deg) rotateZ(0deg);
+}
+
+spinner-line:nth-child(2) {
+  animation: atom-spinner-animation-2 1s linear infinite;
+  transform: rotateZ(240deg) rotateX(66deg) rotateZ(0deg);
+}
+
+spinner-line:nth-child(3) {
+  animation: atom-spinner-animation-3 1s linear infinite;
+  transform: rotateZ(360deg) rotateX(66deg) rotateZ(0deg);
+}
+
+@keyframes atom-spinner-animation-1 {
+  100% {
+    transform: rotateZ(120deg) rotateX(66deg) rotateZ(360deg);
+  }
+}
+
+@keyframes atom-spinner-animation-2 {
+  100% {
+    transform: rotateZ(240deg) rotateX(66deg) rotateZ(360deg);
+  }
+}
+
+@keyframes atom-spinner-animation-3 {
+  100% {
+    transform: rotateZ(360deg) rotateX(66deg) rotateZ(360deg);
+  }
+}
+
+/* Add this to your existing globals.css file */
+
+.glow-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-button::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ff00ff, #00ff00, #0000ff, #ff00ff);
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.glow-button:hover::before {
+  opacity: 1;
+  animation: glowing 20s linear infinite;
+}
+
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
+
+/* Global dark mode styles */
+body {
+    background-color: #121212; /* Dark background */
+    color: #ffffff; /* Light text color */
+}
+
+/* Add any other global styles for dark mode here */
+
+/* Add dark mode styles */
+body.dark {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.container.dark {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+/* Add more specific styles as needed */

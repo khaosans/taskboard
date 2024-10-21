@@ -43,6 +43,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                 transition={{ duration: 0.5 }}
                 className="flex items-center justify-between p-4 bg-gray-800 text-white"
             >
+<<<<<<< HEAD
                 <Link href="/" className={`text-2xl font-bold hover:text-purple-400 transition-colors ${isNudged ? 'animate-nudge' : ''}`} onClick={handleLogoClick}>
                     <motion.span
                         className="glow"
@@ -105,6 +106,34 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
             {isChatOpen && <ChatbotModal onClose={() => setIsChatOpen(false)} />}
         </>
     );
+=======
+              <MessageCircle className="h-5 w-5" />
+            </motion.button>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Link href="/settings" className="relative hover:bg-gray-700 p-2 rounded flex items-center transition-colors">
+                <Settings className="h-5 w-5" />
+              </Link>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Link href="/notifications" className="relative hover:bg-gray-700 p-2 rounded transition-colors">
+                <Bell className="h-5 w-5" />
+              </Link>
+            </motion.div>
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn>
+          <SignedOut>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Link href="/login" className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition-colors">
+                Sign In
+              </Link>
+            </motion.div>
+          </SignedOut>
+        </div>
+      </motion.header>
+      {isChatbotModalOpen && <ChatbotModal onClose={closeChatbotModal} />}
+    </>
+  );
+>>>>>>> 37faa74 (chore: Update global styles and imports)
 }
 
 export default TopBar;

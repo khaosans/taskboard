@@ -20,7 +20,28 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+<<<<<<< HEAD
       "@/*": ["./*"]
+=======
+      "@components/*": [
+        "components/*"
+      ],
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/lib/*": [
+        "lib/*"
+      ],
+      "@/utils/*": [
+        "utils/*"
+      ],
+      "@/hooks/*": [
+        "hooks/*"
+      ],
+      "@globals.css": [
+        "globals.css"
+      ]
+>>>>>>> 37faa74 (chore: Update global styles and imports)
     },
     "typeRoots": [
       "./node_modules/@types",
