@@ -3,19 +3,21 @@
 import React from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from 'next-themes';
-import '@/styles/global.css';
+import '@/styles/globals.css';
 import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
-import TopBar from 'components/TopBar';
-import RobotTransformerWallpaper from 'components/RobotTransformerWallpaper';
+import { useTheme } from '@/hooks/useTheme';
+import TopBar from '@/components/TopBar';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const { theme } = useTheme();
+
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" className={theme}>
         <body>
-          <ThemeProvider attribute="class" defaultTheme="dark">
+          <ThemeProvider attribute="class">
             <Web3ReactProvider getLibrary={(provider) => new Web3Provider(provider)}>
               <Toaster />
               <TopBar />

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react';
-import Dropdown from '@/components/Dropdown';
+import Dropdown from '@components/Dropdown';
 
 const MenuDropdown = () => {
     const dropdownItems = [
