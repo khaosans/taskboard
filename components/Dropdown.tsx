@@ -1,14 +1,14 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+  DropdownMenuTrigger,
+} from "@components/ui/dropdown-menu";
 
 interface DropdownOption {
   label: string;

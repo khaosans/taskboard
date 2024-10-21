@@ -2,12 +2,11 @@
 
 import React, { useState } from 'react'
 import { useTheme } from '@/hooks/useTheme'
-import Chat from '@/components/ChatbotModal'
-import { Button } from '@/components/ui/button'
+import Chat from '@components/ChatbotModal'
+import { Button } from '@components/ui/button'
 import { X } from 'lucide-react'
 import Footer from "@/components/footer"
-import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper'
-import TopBar from '@/components/TopBar'
+import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper'; // Ensure this path is correct
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme()
@@ -16,12 +15,9 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isEditorOpen, setIsEditorOpen] = useState(false)
 
   return (
-    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-      <TopBar />
-      <RobotTransformerWallpaper />
-      <main className="flex-grow pb-20 pt-16">
-        {children}
-      </main>
+    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900 text-white  ' : 'bg-white text-black'}`}>
+      <RobotTransformerWallpaper /> {/* Add the wallpaper component */}
+      <main className="flex-grow pb-20">{children}</main>
       <Footer />
       <Chat onClose={() => setIsChatOpen(false)} />
       {isEditorOpen && (
