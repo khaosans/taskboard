@@ -82,7 +82,7 @@ export default function PortfolioPage() {
   const fetchProtocolData = async (chainId: string) => {
     setChainLoading(chainId);
     try {
-      const response = await fetch(`/api/debank/user/protocols?id=${wallet.address}&chain_id=${chainId}`, {
+      const response = await fetch(`/api/debank/user/protocols?id=${wallet}&chain_id=${chainId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -168,7 +168,7 @@ export default function PortfolioPage() {
             {portfolioData.chain_list
               .filter(chain => chain.usd_value > 0)
               .map((chain) => (
-                <Card key={chain.id} onClick={() => handleChainClick(chain)} className="cursor-pointer bg-gray-800 text-white">
+                <Card key={chain.id} className="cursor-pointer bg-gray-800 text-white">
                   <CardHeader>
                     <CardTitle className="flex items-center">
                       <img src={chain.logo_url} alt={chain.name} className="w-6 h-6 mr-2" />
