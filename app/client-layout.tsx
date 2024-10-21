@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react'
 import { useTheme } from '@/hooks/useTheme'
-import Chat from '@components/ChatbotModal'
-import { Button } from '@components/ui/button'
+import Chat from '@/components/ChatbotModal'
+import { Button } from '@/components/ui/button'
 import { X } from 'lucide-react'
 import Footer from "@/components/footer"
 import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper'; // Ensure this path is correct
