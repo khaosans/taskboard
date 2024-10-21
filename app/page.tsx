@@ -4,10 +4,12 @@ import React from 'react';
 import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import { ArrowRight } from 'lucide-react';
+import ChainInfo from '@/components/ChainInfo';
 import { useTheme } from '@/hooks/useTheme';
 
 const WelcomePage: React.FC = () => {
   const { isSignedIn, user } = useUser();
+  const [selectedChain, setSelectedChain] = React.useState('eth');
   const { theme } = useTheme();
 
   return (
@@ -21,23 +23,13 @@ const WelcomePage: React.FC = () => {
         {isSignedIn ? (
           <div className="text-center mb-16">
             <p className="text-2xl mb-4">Hello, {user?.firstName}! Ready to dive in?</p>
-            <div className="space-y-4">
-              <Link 
-                href="/dashboard" 
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full inline-flex items-center text-lg transition-colors duration-300"
-              >
-                Go to Dashboard
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-              <br />
-              <Link 
-                href="/portfolio" 
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full inline-flex items-center text-lg transition-colors duration-300"
-              >
-                View Portfolio
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </div>
+            <Link 
+              href="/defi-dashboard" 
+              className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full inline-flex items-center text-lg transition-colors duration-300"
+            >
+              Go to Dashboard
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
           </div>
         ) : (
           <div className="text-center mb-16">
