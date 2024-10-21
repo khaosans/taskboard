@@ -24,7 +24,7 @@ const WelcomePage: React.FC = () => {
           <div className="text-center mb-16">
             <p className="text-2xl mb-4">Hello, {user?.firstName}! Ready to dive in?</p>
             <Link 
-              href="/dashboard" 
+              href="/defi-dashboard" 
               className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full inline-flex items-center text-lg transition-colors duration-300"
             >
               Go to Dashboard

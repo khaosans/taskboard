@@ -53,6 +53,39 @@ const RobotTransformerWallpaper: React.FC = () => {
           backgroundSize: '20px 20px',
         }}
       />
+      {/* Add animated laser lines */}
+      {Array.from({ length: 5 }).map((_, index) => (
+        <motion.div
+          key={index}
+          className="absolute w-1 h-full bg-gradient-to-b from-transparent via-blue-500 to-transparent"
+          style={{ left: `${Math.random() * 100}%` }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.5, 0], y: [-100, 100] }}
+          transition={{
+            duration: Math.random() * 5 + 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+      {/* Add logo with shine and glow effect */}
+      <div className="absolute top-10 left-10">
+        <motion.img
+          src="/logo.png"
+          alt="Logo"
+          className="w-32 h-32"
+          initial={{ opacity: 0.8 }}
+          animate={{ opacity: [0.8, 1, 0.8], filter: ["brightness(1)", "brightness(1.5)", "brightness(1)"] }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          style={{
+            filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
+          }}
+        />
+      </div>
     </div>
   );
 };
