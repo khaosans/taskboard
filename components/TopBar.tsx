@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Bell, Settings, MessageCircle, HardDrive } from 'lucide-react';
+import { Bell, Settings, MessageCircle, Home, BarChart2, Briefcase, Wallet } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ChatbotModal from './ChatbotModal';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
@@ -61,42 +61,19 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                 <nav className="flex space-x-4">
                     <SignedIn>
                         <motion.div className="flex space-x-4">
-                            {['Portfolio', 'Defi-dashboard'].map((item, index) => (
-                                <motion.div
-                                    key={item}
-                                    initial={{ opacity: 0, y: -20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                >
-                                    <Link href={`/${item.toLowerCase().replace(' ', '-')}`} className="hover:text-purple-400 transition-colors">
-                                        {item}
-                                    </Link>
-                                </motion.div>
-                            ))}
+                            <IconLink href="/" icon={Home} tooltip="Home" />
+                            <IconLink href="/portfolio" icon={Briefcase} tooltip="Portfolio" />
+                            <IconLink href="/defi-dashboard" icon={BarChart2} tooltip="DeFi Dashboard" />
+                            <IconLink href="/solana-wallet" icon={Wallet} tooltip="Solana Wallet" />
                         </motion.div>
                     </SignedIn>
                 </nav>
                 <div className="flex items-center space-x-4">
                     <SignedIn>
                         <Web3SignIn />
-                        <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button"
-                            onClick={toggleChat}
-                        >
-                            <MessageCircle className="h-5 w-5" />
-                        </motion.button>
-                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                            <Link href="/settings" className="relative hover:bg-gray-700 p-2 rounded flex items-center transition-colors glow-button">
-                                <Settings className="h-5 w-5" />
-                            </Link>
-                        </motion.div>
-                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                            <Link href="/notifications" className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button">
-                                <Bell className="h-5 w-5" />
-                            </Link>
-                        </motion.div>
+                        <IconButton icon={MessageCircle} onClick={toggleChat} tooltip="Chat" />
+                        <IconLink href="/settings" icon={Settings} tooltip="Settings" />
+                        <IconLink href="/notifications" icon={Bell} tooltip="Notifications" />
                         <UserButton afterSignOutUrl="/" />
                     </SignedIn>
                     <SignedOut>
@@ -112,5 +89,25 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         </>
     );
 }
+
+const IconLink: React.FC<{ href: string; icon: React.ElementType; tooltip: string }> = ({ href, icon: Icon, tooltip }) => (
+    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+        <Link href={href} className="relative hover:bg-gray-700 p-2 rounded flex items-center transition-colors glow-button" title={tooltip}>
+            <Icon className="h-5 w-5" />
+        </Link>
+    </motion.div>
+);
+
+const IconButton: React.FC<{ icon: React.ElementType; onClick: () => void; tooltip: string }> = ({ icon: Icon, onClick, tooltip }) => (
+    <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button"
+        onClick={onClick}
+        title={tooltip}
+    >
+        <Icon className="h-5 w-5" />
+    </motion.button>
+);
 
 export default TopBar;
