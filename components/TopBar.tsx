@@ -1,8 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
+import { Button } from '@/components/ui/button';
+import Web3SignIn from './Web3SignIn';
 import { motion } from 'framer-motion';
 
 const TopBar: React.FC = () => {
