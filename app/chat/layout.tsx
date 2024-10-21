@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useTheme } from '@/hooks/useTheme';
-import '@/styles/globals.css';
+import '@/styles/global.css';
 import ChatbotModal from '@/components/ChatbotModal';
 import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper';
 
