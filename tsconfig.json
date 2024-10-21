@@ -35,8 +35,8 @@
       "@/hooks/*": [
         "hooks/*"
       ],
-      "@/styles/*": [
-        "styles/*"
+      "@globals.css": [
+        "globals.css"
       ]
     },
     "typeRoots": [
