@@ -40,7 +40,8 @@
       ],
       "@/styles/*": [
         "styles/*"
-      ]
+      ],
+      "@components/*": ["./components/*"]
     },
     "typeRoots": [
       "./node_modules/@types",
