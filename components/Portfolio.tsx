@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useWallet } from '@/contexts/WalletContext';
+import { useWallet } from '@/hooks/useWallet';
 import { ethers } from 'ethers';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Spinner from '@/components/Spinner';
@@ -14,14 +14,14 @@ interface PortfolioData {
 }
 
 const Portfolio: React.FC = () => {
-  const { wallet } = useWallet();
+  const [evmWallet, setEVMWallet] = useState<{ address: string; type: string } | null>(null);
   const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPortfolio = async () => {
-      if (!wallet) {
+      if (!evmWallet) {
         setPortfolio(null);
         setLoading(false);
         return;
@@ -53,7 +53,7 @@ const Portfolio: React.FC = () => {
     };
 
     fetchPortfolio();
-  }, [wallet]);
+  }, [evmWallet]);
 
   if (loading) {
     return (

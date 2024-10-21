@@ -5,13 +5,15 @@ import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import { ArrowRight } from 'lucide-react';
 import ChainInfo from '@/components/ChainInfo';
+import { useTheme } from '@/hooks/useTheme';
 
 const WelcomePage: React.FC = () => {
   const { isSignedIn, user } = useUser();
   const [selectedChain, setSelectedChain] = React.useState('eth');
+  const { theme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className={`min-h-screen bg-gray-900 text-white ${theme}`}>
       <div className="container mx-auto px-4 py-16">
         <header className="text-center mb-16">
           <h1 className="text-5xl font-bold mb-4">Welcome to Quantum Labs</h1>
@@ -22,7 +24,7 @@ const WelcomePage: React.FC = () => {
           <div className="text-center mb-16">
             <p className="text-2xl mb-4">Hello, {user?.firstName}! Ready to dive in?</p>
             <Link 
-              href="/dashboard" 
+              href="/defi-dashboard" 
               className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full inline-flex items-center text-lg transition-colors duration-300"
             >
               Go to Dashboard
@@ -47,11 +49,6 @@ const WelcomePage: React.FC = () => {
             </div>
           </div>
         )}
-
-        <section className="mb-16">
-          <h2 className="text-3xl font-semibold mb-8 text-center">Chain Information</h2>
-          <ChainInfo chainId={selectedChain} />
-        </section>
 
         <footer className="text-center text-gray-500">
           <p>&copy; 2023 Quantum Labs. All rights reserved.</p>

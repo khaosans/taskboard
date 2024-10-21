@@ -2,14 +2,6 @@
 
 import React from 'react';
 
-interface FormMessageProps {
-  message: string;
-}
-
-export const FormMessage: React.FC<FormMessageProps> = ({ message }) => {
-  return (
-    <div className="text-red-500 text-sm mt-2">
-      {message}
-    </div>
-  );
-};
+export const FormMessage: React.FC<{ message: string }> = ({ message }) => (
+  <p className="mt-2 text-sm text-red-600">{message}</p>
+);

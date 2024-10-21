@@ -23,7 +23,7 @@ interface DropdownProps {
 const Dropdown: React.FC<DropdownProps> = ({ label, items }) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger>
         <Button variant="outline" className="flex items-center gap-2">
           {label}
           <ChevronDown className="h-4 w-4" />

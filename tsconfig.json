@@ -18,15 +18,9 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
     "typeRoots": [
       "./node_modules/@types",
@@ -38,7 +32,11 @@
       "react",
       "react-dom"
     ],
-    "baseUrl": "."
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",

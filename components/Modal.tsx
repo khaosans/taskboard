@@ -1,49 +1,39 @@
 'use client';
 
-import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"; // Updated import
-import { Button } from "@/components/ui/button";
-import { useTheme } from '@/contexts/ThemeContext'; // Updated import
-import { X } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
   children: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
+export default function Modal({ isOpen, onClose, children }: ModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`sm:max-w-[425px] p-4 rounded-lg shadow-lg ${isDark ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'}`}>
-        <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
-          <Button
-            className="absolute top-2 right-2 p-2 text-gray-500 hover:text-gray-900"
-            variant="ghost"
-            onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </Button>
-        </DialogHeader>
-        <div className="py-4">
-          <div className={`text-base ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-            {children}
-          </div>
-        </div>
-        <DialogFooter>
-          <Button onClick={onClose} variant="secondary">
-            Close
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div ref={modalRef} className="bg-white rounded-lg p-6">
+        {children}
+      </div>
+    </div>
   );
-};
-
-export default Modal;
+}
