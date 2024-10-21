@@ -12,11 +12,21 @@ const ChatbotModal: React.FC<ChatbotModalProps> = ({ isOpen, onClose }) => {
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState<string[]>([]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (message.trim()) {
       setChatHistory([...chatHistory, `You: ${message}`]);
-      // Here you would typically send the message to your chatbot API
-      // and then add the response to the chat history
+
+      // Send the message to the chatbot API
+      const response = await fetch('/api/chatbot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      const data = await response.json();
+      setChatHistory((prev) => [...prev, `Bot: ${data.reply}`]); // Assuming the API returns a reply field
       setMessage('');
     }
   };

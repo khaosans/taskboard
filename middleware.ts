@@ -2,15 +2,11 @@ import { clerkMiddleware } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export default clerkMiddleware(async (request: NextRequest) => {
+export default clerkMiddleware((auth, request, event) => {
   const response = NextResponse.next();
   
-  // Ensure headers are accessed asynchronously
-  const headers = await request.headers;
-  
-  // You can now safely use headers here if needed
-  // For example:
-  // const someHeader = headers.get('some-header');
+  // Access headers synchronously
+  const headers = request.headers; // No need to await here
   
   return response;
 });

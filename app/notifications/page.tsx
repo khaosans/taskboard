@@ -7,6 +7,7 @@ import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper';
 import { useWallet } from '@/hooks/useWallet';
 import { useUser } from '@clerk/nextjs';
 import vercelKVClient from '@/utils/vercelKV';
+import axios from 'axios';
 
 interface Notification {
   icon: string;
@@ -18,6 +19,13 @@ interface Notification {
 const iconMap: { [key: string]: React.ElementType } = {
   Bell, Zap, Shield, Rocket, TrendingUp, TrendingDown, AlertTriangle
 };
+
+// Ensure the wallet type includes total_usd_value
+interface Wallet {
+  address: string;
+  type: string;
+  total_usd_value: number; // Ensure this property exists
+}
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -61,15 +69,17 @@ export default function NotificationsPage() {
     const newNotifications: Notification[] = [];
 
     // Fetch portfolio data
-    const portfolioResponse = await fetch(`/api/debank/user/total_balance?id=${wallet.address}`);
-    const portfolioData = await portfolioResponse.json();
+    if (wallet) {
+      const portfolioResponse = await axios.get(`/api/debank/user/total_balance?id=${wallet.address}`);
+      const portfolioData = portfolioResponse.data;
+    }
 
     // Fetch market data
-    const marketResponse = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1');
-    const marketData = await marketResponse.json();
+    const marketResponse = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1');
+    const marketData = marketResponse.data;
 
     // Generate wallet notifications
-    if (portfolioData.total_usd_value > 10000) {
+    if (wallet && wallet.total_usd_value > 10000) {
       newNotifications.push({
         icon: 'Shield',
         title: "High-Value Wallet Alert",

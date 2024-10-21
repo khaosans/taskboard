@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 interface Wallet {
+  total_usd_value: number;
   address: string;
   type: string;
 }

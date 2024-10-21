@@ -122,7 +122,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {isChatbotOpen && <ChatBotModal onClose={handleCloseChatbot} />}
+        {isChatbotOpen && <ChatBotModal onClose={handleCloseChatbot} isOpen={isChatbotOpen} />}
       </div>
     </div>
   )
@@ -153,7 +153,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, but
 
 const StepCard: React.FC<{ number: string; title: string; description: string }> = ({ number, title, description }) => (
   <Card>
-    <CardContent className="p-6 text-center">
+    <CardContent >
       <div className="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">{number}</div>
       <h3 className="text-xl font-semibold mb-2">{title}</h3>
       <p className="text-gray-600">{description}</p>
@@ -171,7 +171,7 @@ const BenefitCard: React.FC<{ icon: React.ReactNode; title: string; description:
 
 const TestimonialCard: React.FC<{ quote: string; author: string }> = ({ quote, author }) => (
   <Card>
-    <CardContent className="p-6">
+    <CardContent >
       <p className="text-lg mb-4 italic">"{quote}"</p>
       <p className="font-semibold text-right">- {author}</p>
     </CardContent>
