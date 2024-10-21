@@ -9,7 +9,6 @@ import { useWallet } from '@/hooks/useWallet';
 import Spinner from '@/components/Spinner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTheme } from 'next-themes';
-import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper';
 
 interface ChainData {
   id: string;
@@ -46,7 +45,7 @@ export default function PortfolioPage() {
       logger.info(`Fetching balance for wallet: ${wallet.address}`);
       const fetchPortfolioData = async () => {
         try {
-          const response = await window.fetch(`/api/debank/user/total_balance?id=${wallet.address}`, {
+          const response = await fetch(`/api/debank/user/total_balance?id=${wallet.address}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -83,7 +82,7 @@ export default function PortfolioPage() {
   const fetchProtocolData = async (chainId: string) => {
     setChainLoading(chainId);
     try {
-      const response = await window.fetch(`/api/debank/user/protocols?id=${wallet}&chain_id=${chainId}`, {
+      const response = await fetch(`/api/debank/user/protocols?id=${wallet.address}&chain_id=${chainId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -125,8 +124,8 @@ export default function PortfolioPage() {
   if (!isSignedIn) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-2xl font-bold mb-4 text-cyan-100">Please sign in to view your portfolio</h1>
-        <Button onClick={() => window.location.href = '/sign-in'} className="bg-cyan-500 text-black hover:bg-cyan-400">Sign In</Button>
+        <h1 className="text-2xl font-bold mb-4">Please sign in to view your portfolio</h1>
+        <Button onClick={() => window.location.href = '/sign-in'}>Sign In</Button>
       </div>
     );
   }
@@ -134,84 +133,79 @@ export default function PortfolioPage() {
   if (!wallet) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-2xl font-bold mb-4 text-cyan-100">No wallet connected</h1>
-        <p className="text-cyan-100">Please connect a wallet to view your portfolio.</p>
+        <h1 className="text-2xl font-bold mb-4">No wallet connected</h1>
+        <p>Please connect a wallet to view your portfolio.</p>
       </div>
     );
   }
 
   if (error) {
-    return <div className="text-red-400">Error: {error}</div>;
+    return <div>Error: {error}</div>;
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      <RobotTransformerWallpaper />
-      <div className="relative z-10 min-h-screen bg-gradient-to-b from-blue-900/5 to-purple-900/5 text-white font-sans">
-        <div className="container mx-auto p-4">
-          <h1 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">Your Portfolio</h1>
-          <div className="flex items-center mb-4">
-            <img src={user.imageUrl || '/default-profile.png'} alt={'User'} className="w-12 h-12 rounded-full mr-2" />
-            <h2 className="text-xl font-semibold text-cyan-100">{user.username}</h2>
+    <div className={`container mx-auto p-4 bg-background text-foreground ${theme}`}>
+      <h1 className="text-3xl font-bold mb-4">Your Portfolio</h1>
+      <div className="flex items-center mb-4">
+        <img src={user.imageUrl || '/default-profile.png'} alt={'User'} className="w-12 h-12 rounded-full mr-2" />
+        <h2 className="text-xl font-semibold">{user.username}</h2>
+      </div>
+      <p className="mb-4">Connected Wallet: {wallet.address}</p>
+      <p className="mb-4">Time Frame: Last 24 hours</p>
+      <p className="mb-8">Last Updated: {lastUpdated}</p>
+      {portfolioData ? (
+        <div>
+          <Card className="mb-4 bg-gray-800 text-white">
+            <CardHeader>
+              <CardTitle>Portfolio Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-lg font-semibold">Total Balance: ${portfolioData.total_usd_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            </CardContent>
+          </Card>
+          <h3 className="text-xl font-semibold mb-2">Chain Breakdown</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {portfolioData.chain_list
+              .filter(chain => chain.usd_value > 0)
+              .map((chain) => (
+                <Card key={chain.id} onClick={() => handleChainClick(chain)} className="cursor-pointer bg-gray-800 text-white">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <img src={chain.logo_url} alt={chain.name} className="w-6 h-6 mr-2" />
+                      {chain.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {chainLoading === chain.id ? (
+                      <Spinner />
+                    ) : (
+                      <p>${chain.usd_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
           </div>
-          <p className="mb-4 text-cyan-100">Connected Wallet: {wallet.address}</p>
-          <p className="mb-4 text-cyan-100">Time Frame: Last 24 hours</p>
-          <p className="mb-8 text-cyan-100">Last Updated: {lastUpdated}</p>
-          {portfolioData ? (
-            <div>
-              <Card className="mb-4 bg-blue-900/40 text-cyan-100">
-                <CardHeader>
-                  <CardTitle>Portfolio Overview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-lg font-semibold">Total Balance: ${portfolioData.total_usd_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                </CardContent>
-              </Card>
-              <h3 className="text-xl font-semibold mb-2 text-cyan-300">Chain Breakdown</h3>
+          {selectedChain && (
+            <div className="mt-8">
+              <h3 className="text-xl font-semibold mb-2">Protocols on {selectedChain.name}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {portfolioData.chain_list
-                  .filter(chain => chain.usd_value > 0)
-                  .map((chain) => (
-                    <Card key={chain.id} className="cursor-pointer bg-blue-900/40 text-cyan-100">
-                      <CardHeader>
-                        <CardTitle className="flex items-center">
-                          <img src={chain.logo_url} alt={chain.name} className="w-6 h-6 mr-2" />
-                          {chain.name}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {chainLoading === chain.id ? (
-                          <Spinner />
-                        ) : (
-                          <p>${chain.usd_value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
+                {protocols.map((protocol) => (
+                  <Card key={protocol.id} className="bg-gray-800 text-white">
+                    <CardHeader>
+                      <CardTitle>{protocol.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p>Balance: ${protocol.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
-              {selectedChain && (
-                <div className="mt-8">
-                  <h3 className="text-xl font-semibold mb-2 text-cyan-300">Protocols on {selectedChain.name}</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {protocols.map((protocol) => (
-                      <Card key={protocol.id} className="bg-blue-900/40 text-cyan-100">
-                        <CardHeader>
-                          <CardTitle>{protocol.name}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p>Balance: ${protocol.balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
-          ) : (
-            <Spinner />
           )}
         </div>
-      </div>
+      ) : (
+        <Spinner />
+      )}
     </div>
   );
 }
