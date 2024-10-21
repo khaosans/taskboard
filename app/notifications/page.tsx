@@ -61,11 +61,11 @@ export default function NotificationsPage() {
     const newNotifications: Notification[] = [];
 
     // Fetch portfolio data
-    const portfolioResponse = await globalThis.fetch(`/api/debank/user/total_balance?id=${wallet?.address}`);
+    const portfolioResponse = await fetch(`/api/debank/user/total_balance?id=${wallet.address}`);
     const portfolioData = await portfolioResponse.json();
 
     // Fetch market data
-    const marketResponse = await globalThis.fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1');
+    const marketResponse = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1');
     const marketData = await marketResponse.json();
 
     // Generate wallet notifications

@@ -1,14 +1,20 @@
-import { authMiddleware } from '@clerk/nextjs/server'
+import { clerkMiddleware } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export default authMiddleware({
-  publicRoutes: ['((?!^/admin).*)'],
-})
+export default clerkMiddleware(async (request: NextRequest) => {
+  const response = NextResponse.next();
+  
+  // Ensure headers are accessed asynchronously
+  const headers = await request.headers;
+  
+  // You can now safely use headers here if needed
+  // For example:
+  // const someHeader = headers.get('some-header');
+  
+  return response;
+});
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
-}
+  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
+};
