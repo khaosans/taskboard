@@ -1,33 +1,50 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { User } from '@supabase/supabase-js';
+import React, { ReactNode, useEffect, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import Layout from '@/components/Layout';
 import { createClerkSupabaseClient } from '@/components/lib/supabase';
+import Spinner from '@/components/Spinner';
 
-const AuthorizedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
-    const router = useRouter();
+interface AuthorizedLayoutProps {
+  children: ReactNode;
+}
 
-    useEffect(() => {
-        const checkSession = async () => {
-            const client = await createClerkSupabaseClient();
-            const { data: { user } } = await client.auth.getUser();
-            if (!user) {
-                router.push('/login');
-            } else {
-                setUser(user);
-                setLoading(false);
-            }
-        };
+const AuthorizedLayout: React.FC<AuthorizedLayoutProps> = ({ children }) => {
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname();
 
-        checkSession();
-    }, [router]);
+  useEffect(() => {
+    const checkAuthorization = async () => {
+      const client = await createClerkSupabaseClient();
+      const { data: { user } } = await client.auth.getUser();
+      
+      if (user) {
+        setIsAuthorized(true);
+      } else {
+        router.push('/login');
+      }
+      setLoading(false);
+    };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    checkAuthorization();
+  }, [router]);
 
-    return <>{children}</>;
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-screen">
+          <Spinner size="large" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!isAuthorized) {
+    return null;
+  }
+
+  return <Layout>{children}</Layout>;
 };
 
 export default AuthorizedLayout;

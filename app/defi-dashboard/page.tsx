@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react'
 import Spinner from '@/components/Spinner'
 import { useTheme } from 'next-themes'
+import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper'
 
 interface Coin {
   id: string
@@ -60,43 +61,48 @@ export default function CryptoDashboard() {
   }
 
   return (
-    <div className={`container mx-auto px-4 py-8 ${theme}`}>
-      <h1 className="text-3xl font-bold text-center mb-2">Crypto Dashboard</h1>
-      <p className="text-center mb-8 text-muted-foreground">Top 20 cryptocurrencies by market cap</p>
-      <p className="text-center mb-4">Time Frame: Last 24 hours</p>
-      <p className="text-center mb-8">Last Updated: {lastUpdated}</p>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-md">
-          <thead>
-            <tr className="bg-gray-100 dark:bg-gray-900">
-              <th className="py-3 px-4 text-left">#</th>
-              <th className="py-3 px-4 text-left">Coin</th>
-              <th className="py-3 px-4 text-right">Price</th>
-              <th className="py-3 px-4 text-right">24h Change</th>
-              <th className="py-3 px-4 text-right">Market Cap</th>
-            </tr>
-          </thead>
-          <tbody>
-            {coins.map((coin, index) => (
-              <tr key={coin.id} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
-                <td className="py-3 px-4">{index + 1}</td>
-                <td className="py-3 px-4 flex items-center">
-                  <img src={coin.image} alt={coin.name} className="w-6 h-6 mr-2" />
-                  <span className="font-medium">{coin.name}</span>
-                  <span className="text-muted-foreground ml-2 hidden sm:inline">{coin.symbol.toUpperCase()}</span>
-                </td>
-                <td className="py-3 px-4 text-right">${coin.current_price.toLocaleString()}</td>
-                <td className={`py-3 px-4 text-right ${coin.price_change_percentage_24h > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  <div className="flex items-center justify-end">
-                    {coin.price_change_percentage_24h > 0 ? <ArrowUpIcon className="w-4 h-4 mr-1" /> : <ArrowDownIcon className="w-4 h-4 mr-1" />}
-                    {Math.abs(coin.price_change_percentage_24h).toFixed(2)}%
-                  </div>
-                </td>
-                <td className="py-3 px-4 text-right">${coin.market_cap.toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="relative min-h-screen overflow-hidden">
+      <RobotTransformerWallpaper />
+      <div className="relative z-10 min-h-screen bg-gradient-to-b from-blue-900/5 to-purple-900/5 text-white font-sans">
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-3xl font-bold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">Crypto Dashboard</h1>
+          <p className="text-center mb-8 text-cyan-100">Top 20 cryptocurrencies by market cap</p>
+          <p className="text-center mb-4 text-cyan-100">Time Frame: Last 24 hours</p>
+          <p className="text-center mb-8 text-cyan-100">Last Updated: {lastUpdated}</p>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-blue-900/40 rounded-lg shadow-md">
+              <thead>
+                <tr className="bg-blue-900/60">
+                  <th className="py-3 px-4 text-left text-cyan-300">#</th>
+                  <th className="py-3 px-4 text-left text-cyan-300">Coin</th>
+                  <th className="py-3 px-4 text-right text-cyan-300">Price</th>
+                  <th className="py-3 px-4 text-right text-cyan-300">24h Change</th>
+                  <th className="py-3 px-4 text-right text-cyan-300">Market Cap</th>
+                </tr>
+              </thead>
+              <tbody>
+                {coins.map((coin, index) => (
+                  <tr key={coin.id} className="border-b border-blue-900/20 hover:bg-blue-900/20">
+                    <td className="py-3 px-4 text-cyan-100">{index + 1}</td>
+                    <td className="py-3 px-4 flex items-center">
+                      <img src={coin.image} alt={coin.name} className="w-6 h-6 mr-2" />
+                      <span className="font-medium text-cyan-100">{coin.name}</span>
+                      <span className="text-cyan-300 ml-2 hidden sm:inline">{coin.symbol.toUpperCase()}</span>
+                    </td>
+                    <td className="py-3 px-4 text-right text-cyan-100">${coin.current_price.toLocaleString()}</td>
+                    <td className={`py-3 px-4 text-right ${coin.price_change_percentage_24h > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <div className="flex items-center justify-end">
+                        {coin.price_change_percentage_24h > 0 ? <ArrowUpIcon className="w-4 h-4 mr-1" /> : <ArrowDownIcon className="w-4 h-4 mr-1" />}
+                        {Math.abs(coin.price_change_percentage_24h).toFixed(2)}%
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-right text-cyan-100">${coin.market_cap.toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
