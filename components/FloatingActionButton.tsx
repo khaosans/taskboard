@@ -1,7 +1,7 @@
 'use client';
 
 import { Plus } from 'lucide-react';
-import { Button } from "@components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export default function FloatingActionButton() {
   const isVisible = false; // Set this to true when you want to show the button
