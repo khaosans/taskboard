@@ -85,7 +85,6 @@ const TopBar: React.FC = () => {
               </Link>
             </motion.div>
           </SignedOut>
-          <Button onClick={toggleTheme}>Toggle Theme</Button>
         </div>
       </motion.header>
       {isChatbotModalOpen && <ChatbotModal onClose={closeChatbotModal} />}
