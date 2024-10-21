@@ -14,7 +14,6 @@ const RobotTransformerWallpaper: React.FC = () => {
         </filter>
         <rect width="100%" height="100%" filter="url(#noise)" opacity="0.05"/>
       </svg>
-<<<<<<< HEAD
       <div className="absolute inset-0">
         {/* Starship hull panels */}
         {Array.from({ length: 20 }).map((_, index) => (
@@ -64,50 +63,6 @@ const RobotTransformerWallpaper: React.FC = () => {
             }}
           />
         ))}
-=======
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #2a2a2a 1px, transparent 1px),
-            linear-gradient(to bottom, #2a2a2a 1px, transparent 1px)
-          `,
-          backgroundSize: '20px 20px',
-        }}
-      />
-      {/* Add animated laser lines */}
-      {Array.from({ length: 5 }).map((_, index) => (
-        <motion.div
-          key={index}
-          className="absolute w-1 h-full bg-gradient-to-b from-transparent via-blue-500 to-transparent"
-          style={{ left: `${Math.random() * 100}%` }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.5, 0], y: [-100, 100] }}
-          transition={{
-            duration: Math.random() * 5 + 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-      {/* Add logo with shine and glow effect */}
-      <div className="absolute top-10 left-10">
-        <motion.img
-          src="/logo.png"
-          alt="Logo"
-          className="w-32 h-32"
-          initial={{ opacity: 0.8 }}
-          animate={{ opacity: [0.8, 1, 0.8], filter: ["brightness(1)", "brightness(1.5)", "brightness(1)"] }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{
-            filter: 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))',
-          }}
-        />
->>>>>>> 6bc7109 (Refactor: Update link in WelcomePage and add animated laser lines and logo effects in RobotTransformerWallpaper)
       </div>
     </div>
   );
