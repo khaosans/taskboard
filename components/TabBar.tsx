@@ -2,29 +2,38 @@
 
 import React from 'react';
 import { Bot, BarChart, Users, Plus } from 'lucide-react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
 
 const tabs = [
-  { name: 'AI Agents', href: '/ai-agents', icon: Bot },
-  { name: 'Members', href: '/members', icon: Users }, // Keep Members link
-  { name: 'Analytics', href: '/analytics', icon: BarChart }, // Keep Analytics link
-  { name: 'Task Manager', href: '/task-manager', icon: Plus }, // Keep Task Manager link
-  // Removed broken links
+  { name: 'AI Agents', icon: Bot },
+  { name: 'Members', icon: Users },
+  { name: 'Analytics', icon: BarChart },
+  { name: 'Task Manager', icon: Plus },
 ];
 
 export default function TabBar() {
   const pathname = usePathname();
+  const { theme, resolvedTheme } = useTheme();
+
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  const currentTheme = theme === 'system' ? resolvedTheme : theme;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+    <nav className={`fixed bottom-0 left-0 right-0 border-t ${currentTheme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
       <ul className="flex justify-around">
         {tabs.map((tab) => (
           <li key={tab.name}>
-            <Link href={tab.href} className={`flex flex-col items-center p-2 ${pathname === tab.href ? 'text-primary' : 'text-muted-foreground'}`}>
-              {React.createElement(tab.icon, { className: "h-6 w-6" })} {/* Use React.createElement for dynamic icons */}
+            <div className={`flex flex-col items-center p-2 cursor-not-allowed opacity-50 ${pathname === tab.name.toLowerCase().replace(' ', '-') ? 'text-primary' : 'text-muted-foreground'}`}>
+              {React.createElement(tab.icon, { className: "h-6 w-6" })}
               <span className="text-xs mt-1">{tab.name}</span>
-            </Link>
+            </div>
           </li>
         ))}
       </ul>

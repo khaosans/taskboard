@@ -1,227 +1,179 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Brain, Shield, Coins } from 'lucide-react';
+import React, { useState } from 'react'
+import { Wallet, ChartBar, Globe, MessageSquare, Shield, Zap, Users, Rocket } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import ChatBotModal from '@/components/ChatbotModal'
+import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper'
+import { motion } from 'framer-motion'
 
 export default function LandingPage() {
-  const [scrollY, setScrollY] = useState(0);
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false)
 
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const handleOpenChatbot = () => setIsChatbotOpen(true)
+  const handleCloseChatbot = () => setIsChatbotOpen(false)
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-900 text-white overflow-hidden">
-      <div className="circuit-background"></div>
-      <header 
-        className="px-4 lg:px-6 h-14 flex items-center fixed w-full z-50 transition-colors duration-300"
-        style={{ 
-          backgroundColor: `rgba(17, 24, 39, ${Math.min(scrollY / 500, 0.9)})`,
-          boxShadow: scrollY > 50 ? '0 2px 4px rgba(0,0,0,.1)' : 'none'
-        }}
-      >
-        <div className="logo-container mr-4">
-          <svg className="w-32 h-8" viewBox="0 0 128 32">
-            <defs>
-              <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#8B5CF6">
-                  <animate attributeName="stop-color" values="#8B5CF6; #D8B4FE; #8B5CF6" dur="4s" repeatCount="indefinite" />
-                </stop>
-                <stop offset="100%" stopColor="#D8B4FE">
-                  <animate attributeName="stop-color" values="#D8B4FE; #8B5CF6; #D8B4FE" dur="4s" repeatCount="indefinite" />
-                </stop>
-              </linearGradient>
-            </defs>
-            <text x="0" y="25" fontSize="24" fontWeight="bold" fill="url(#logo-gradient)">BlockFlow</text>
-          </svg>
-        </div>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-sm font-medium hover:text-purple-400 transition-colors" href="#features">
-            Features
-          </Link>
-          <Link className="text-sm font-medium hover:text-purple-400 transition-colors" href="#about">
-            About
-          </Link>
-          <Link className="text-sm font-medium hover:text-purple-400 transition-colors" href="#pricing">
-            Pricing
-          </Link>
-        </nav>
-      </header>
-      <main className="flex-1 pt-14">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 relative">
-          <div className="container px-4 md:px-6 relative z-10">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                  Revolutionize Your Workflow with BlockFlow
-                </h1>
-                <p className="mx-auto max-w-[700px] text-gray-300 md:text-xl">
-                  Harness the power of AI, blockchain, and DeFi for unparalleled project management and productivity.
-                </p>
-              </div>
-              <div className="w-full max-w-sm space-y-2">
-                <form className="flex space-x-2">
-                  <Input
-                    className="max-w-lg flex-1 bg-gray-800 text-white border-gray-700"
-                    placeholder="Enter your email"
-                    type="email"
-                  />
-                  <Button className="bg-purple-600 hover:bg-purple-700" type="submit">
-                    Get Started
-                  </Button>
-                </form>
-                <p className="text-xs text-gray-400">
-                  Start your free 14-day trial. No credit card required.
-                </p>
-              </div>
+    <div className="relative min-h-screen overflow-hidden">
+      <RobotTransformerWallpaper />
+      <div className="relative z-10 min-h-screen bg-gradient-to-b from-blue-900/5 to-purple-900/5 text-white font-sans">
+        {/* Hero Section */}
+        <section className="py-20 px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            className="max-w-4xl mx-auto text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
+              Welcome to DeFi Starship
+            </h1>
+            <p className="text-lg sm:text-xl md:text-2xl mb-10 leading-relaxed text-cyan-100">
+              Navigate the decentralized finance universe with our advanced control deck.
+            </p>
+            <div className="space-x-4">
+              <Button size="lg" className="bg-cyan-500 text-black hover:bg-cyan-400 transition-all duration-300 transform hover:scale-105">
+                Launch Mission
+              </Button>
+              <Button size="lg" variant="outline" className="text-cyan-400 border-cyan-400 hover:bg-cyan-400/20 transition-all duration-300 transform hover:scale-105">
+                Explore Systems
+              </Button>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-20 bg-blue-900/40 text-cyan-100">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-cyan-300">Onboard Systems</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <FeatureCard
+                icon={<Wallet className="h-8 w-8 text-cyan-400" />}
+                title="Quantum Vault"
+                description="Secure your assets with our advanced multi-dimensional storage system."
+                buttonText="Access Vault"
+                buttonColor="bg-cyan-500 hover:bg-cyan-400"
+              />
+              <FeatureCard
+                icon={<ChartBar className="h-8 w-8 text-cyan-400" />}
+                title="Hyperdrive Analytics"
+                description="Navigate market trends at lightspeed with our predictive AI algorithms."
+                buttonText="Engage Hyperdrive"
+                buttonColor="bg-cyan-500 hover:bg-cyan-400"
+              />
+              <FeatureCard
+                icon={<Globe className="h-8 w-8 text-cyan-400" />}
+                title="Galactic Exchange"
+                description="Trade across multiple blockchain galaxies from a single interface."
+                buttonText="Start Trading"
+                buttonColor="bg-cyan-500 hover:bg-cyan-400"
+              />
             </div>
           </div>
         </section>
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-gray-800">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl mb-4">Key Features</h2>
-            <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
-              <div className="flex flex-col items-center space-y-2 border-gray-700 p-4 rounded-lg">
-                <Brain className="h-8 w-8 text-purple-500" />
-                <h3 className="text-xl font-bold">AI-Powered Assistance</h3>
-                <p className="text-gray-300 text-center">Intelligent task prioritization and resource allocation.</p>
-              </div>
-              <div className="flex flex-col items-center space-y-2 border-gray-700 p-4 rounded-lg">
-                <Shield className="h-8 w-8 text-purple-500" />
-                <h3 className="text-xl font-bold">Blockchain Security</h3>
-                <p className="text-gray-300 text-center">Immutable task records and enhanced data integrity.</p>
-              </div>
-              <div className="flex flex-col items-center space-y-2 border-gray-700 p-4 rounded-lg">
-                <Coins className="h-8 w-8 text-purple-500" />
-                <h3 className="text-xl font-bold">DeFi Integration</h3>
-                <p className="text-gray-300 text-center">Tokenized rewards and decentralized project funding.</p>
-              </div>
+
+        {/* How It Works Section */}
+        <section className="py-20 bg-purple-900/40 text-cyan-100">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-cyan-300">Mission Protocol</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <StepCard number="01" title="Dock Your Wallet" description="Connect your crypto wallet to our secure docking station." />
+              <StepCard number="02" title="Chart Your Course" description="Explore DeFi opportunities across the crypto universe." />
+              <StepCard number="03" title="Engage Autopilot" description="Let our AI co-pilot optimize your DeFi strategy." />
             </div>
           </div>
         </section>
-        <section id="about" className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl mb-8">About BlockFlow</h2>
-            <div className="grid gap-10 lg:grid-cols-2">
-              <div className="space-y-4">
-                <h3 className="text-2xl font-bold">Our Mission</h3>
-                <p className="text-gray-300">
-                  At BlockFlow, we're on a mission to transform project management through cutting-edge technology. 
-                  By combining AI, blockchain, and DeFi, we're creating a platform that not only enhances productivity 
-                  but also ensures security, transparency, and fair rewards for all team members.
-                </p>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-2xl font-bold">Why Choose BlockFlow?</h3>
-                <ul className="space-y-2">
-                  <li className="flex items-center">
-                    <Brain className="h-5 w-5 text-purple-500 mr-2" />
-                    <span>AI-driven insights for smarter decision making</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Shield className="h-5 w-5 text-purple-500 mr-2" />
-                    <span>Unparalleled security with blockchain technology</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Coins className="h-5 w-5 text-purple-500 mr-2" />
-                    <span>Innovative reward system with DeFi integration</span>
-                  </li>
-                </ul>
-              </div>
+
+        {/* Benefits Section */}
+        <section className="py-20 bg-blue-900/40 text-cyan-100">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-cyan-300">Starship Advantages</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <BenefitCard
+                icon={<Shield className="h-8 w-8 text-cyan-400" />}
+                title="Quantum Encryption"
+                description="Your assets are protected by state-of-the-art security protocols."
+              />
+              <BenefitCard
+                icon={<Zap className="h-8 w-8 text-cyan-400" />}
+                title="Warp-Speed Updates"
+                description="Receive real-time notifications faster than the speed of light."
+              />
+              <BenefitCard
+                icon={<Users className="h-8 w-8 text-cyan-400" />}
+                title="Intergalactic Community"
+                description="Join a thriving network of DeFi explorers and innovators."
+              />
             </div>
           </div>
         </section>
-        <section id="pricing" className="w-full py-12 md:py-24 lg:py-32 bg-gray-800">
-          <div className="container px-4 md:px-6">
-            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl mb-4">Pricing Plans</h2>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="flex flex-col p-6 bg-gray-900 rounded-lg">
-                <h3 className="text-2xl font-bold mb-4">Starter</h3>
-                <p className="text-4xl font-bold mb-4">$19<span className="text-xl font-normal">/month</span></p>
-                <ul className="mb-6 space-y-2">
-                  <li className="flex items-center">
-                    <Brain className="h-5 w-5 text-purple-500 mr-2" />
-                    <span>Basic AI task prioritization</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Shield className="h-5 w-5 text-purple-500 mr-2" />
-                    <span>Blockchain-secured task records</span>
-                  </li>
-                </ul>
-                <Button className="mt-auto bg-purple-600 hover:bg-purple-700">Get Started</Button>
-              </div>
-              <div className="flex flex-col p-6 bg-gray-900 rounded-lg border-2 border-purple-500">
-                <h3 className="text-2xl font-bold mb-4">Pro</h3>
-                <p className="text-4xl font-bold mb-4">$49<span className="text-xl font-normal">/month</span></p>
-                <ul className="mb-6 space-y-2">
-                  <li className="flex items-center">
-                    <Brain className="h-5 w-5 text-purple-500 mr-2" />
-                    <span>Advanced AI agents</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Shield className="h-5 w-5 text-purple-500 mr-2" />
-                    <span>Smart contract integration</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Coins className="h-5 w-5 text-purple-500 mr-2" />
-                    <span>Basic DeFi features</span>
-                  </li>
-                </ul>
-                <Button className="mt-auto bg-purple-600 hover:bg-purple-700">Get Started</Button>
-              </div>
-              <div className="flex flex-col p-6 bg-gray-900 rounded-lg">
-                <h3 className="text-2xl font-bold mb-4">Enterprise</h3>
-                <p className="text-4xl font-bold mb-4">Custom</p>
-                <ul className="mb-6 space-y-2">
-                  <li className="flex items-center">
-                    <Brain className="h-5 w-5 text-purple-500 mr-2" />
-                    <span>Custom AI model training</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Shield className="h-5 w-5 text-purple-500 mr-2" />
-                    <span>Advanced blockchain features</span>
-                  </li>
-                  <li className="flex items-center">
-                    <Coins className="h-5 w-5 text-purple-500 mr-2" />
-                    <span>Full DeFi suite with custom token</span>
-                  </li>
-                </ul>
-                <Button className="mt-auto bg-purple-600 hover:bg-purple-700">Contact Sales</Button>
-              </div>
-            </div>
+
+        {/* CTA Section */}
+        <section className="py-20 bg-gradient-to-r from-blue-900/60 to-purple-900/60 text-cyan-100">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-cyan-300">Ready to Launch?</h2>
+            <p className="text-lg sm:text-xl mb-8">
+              Initiate your DeFi journey with our AI-powered navigation system.
+            </p>
+            <Button size="lg" className="bg-cyan-500 hover:bg-cyan-400 text-black transition-all duration-300 transform hover:scale-105" onClick={handleOpenChatbot}>
+              <Rocket className="mr-2 h-5 w-5" /> Activate AI Co-pilot
+            </Button>
           </div>
         </section>
-      </main>
-      <footer className="w-full py-6 bg-gray-800 border-t border-gray-700">
-        <div className="container px-4 md:px-6 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-sm text-gray-400">© 2024 BlockFlow. All rights reserved.</p>
-          <nav className="flex gap-4 sm:gap-6 mt-4 sm:mt-0">
-            <Link className="text-sm text-gray-400 hover:text-purple-400 transition-colors" href="#">
-              Terms of Service
-            </Link>
-            <Link className="text-sm text-gray-400 hover:text-purple-400 transition-colors" href="#">
-              Privacy Policy
-            </Link>
-          </nav>
-        </div>
-      </footer>
-      <style jsx>{`
-        .circuit-background {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M50 50h50v50H50z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-          background-size: cover;
-          opacity: 0.1;
-        }
-      `}</style>
+
+        {isChatbotOpen && <ChatBotModal onClose={handleCloseChatbot} />}
+      </div>
     </div>
-  );
+  )
 }
+
+interface FeatureCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  buttonText: string;
+  buttonColor: string;
+}
+
+const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, buttonText, buttonColor }) => (
+  <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <CardHeader>
+      <CardTitle className="flex items-center text-2xl font-bold">
+        {icon}
+        <span className="ml-4">{title}</span>
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="mb-6 text-gray-600">{description}</p>
+      <Button className={`w-full ${buttonColor} text-white`}>{buttonText}</Button>
+    </CardContent>
+  </Card>
+)
+
+const StepCard: React.FC<{ number: string; title: string; description: string }> = ({ number, title, description }) => (
+  <Card>
+    <CardContent className="p-6 text-center">
+      <div className="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">{number}</div>
+      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-gray-600">{description}</p>
+    </CardContent>
+  </Card>
+)
+
+const BenefitCard: React.FC<{ icon: React.ReactNode; title: string; description: string }> = ({ icon, title, description }) => (
+  <div className="text-center bg-white/10 p-6 rounded-lg">
+    <div className="mb-4 flex justify-center">{icon}</div>
+    <h3 className="text-xl font-semibold mb-2">{title}</h3>
+    <p>{description}</p>
+  </div>
+)
+
+const TestimonialCard: React.FC<{ quote: string; author: string }> = ({ quote, author }) => (
+  <Card>
+    <CardContent className="p-6">
+      <p className="text-lg mb-4 italic">"{quote}"</p>
+      <p className="font-semibold text-right">- {author}</p>
+    </CardContent>
+  </Card>
+)
