@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: false, // Disable minification for debugging
+  swcMinify: true,
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
