@@ -2,8 +2,7 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 import vercelKVClient from './vercelKV';
 
-const heliusRpcUrl = process.env.NEXT_PUBLIC_HELIUS_RPC_HTTPS as string;
-const connection = new Connection(heliusRpcUrl);
+const connection = new Connection('https://api.mainnet-beta.solana.com');
 
 const CACHE_TTL = 60 * 1000; // 1 minute cache
 
@@ -29,22 +28,20 @@ async function rateLimitedRequest<T>(key: string, fn: () => Promise<T>): Promise
 
 export async function getAccountInfo(publicKey: string): Promise<any> {
   return rateLimitedRequest(`accountInfo:${publicKey}`, async () => {
-    const account = new PublicKey(publicKey);
-    return connection.getAccountInfo(account);
+    const pubKey = new PublicKey(publicKey);
+    return await connection.getAccountInfo(pubKey);
   });
 }
 
 export async function getBalance(publicKey: string): Promise<number> {
   return rateLimitedRequest(`balance:${publicKey}`, async () => {
-    const account = new PublicKey(publicKey);
-    const balance = await connection.getBalance(account);
-    return balance / 1e9; // Convert lamports to SOL
+    const pubKey = new PublicKey(publicKey);
+    return await connection.getBalance(pubKey);
   });
 }
 
 export async function getRecentBlockhash(): Promise<string> {
   return rateLimitedRequest('recentBlockhash', async () => {
-    const { blockhash } = await connection.getLatestBlockhash();
-    return blockhash;
+    return await connection.getRecentBlockhash();
   });
 }

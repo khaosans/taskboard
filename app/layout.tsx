@@ -8,10 +8,18 @@ import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
 import TopBar from 'components/TopBar';
+import { Inter } from 'next/font/google'
 
 interface Wallet {
   address: string;
   type: string;
+}
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata = {
+  title: 'Task Flow',
+  description: 'Manage your tasks efficiently',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -24,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="en">
-        <body>
+        <body className={inter.className}>
           <ThemeProvider attribute="class" defaultTheme="dark">
             <Web3ReactProvider getLibrary={(provider) => new Web3Provider(provider)}>
               <Toaster />

@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import { NextRequest, NextResponse } from 'next/server';
 import * as SolanaApi from 'utils/solanaApi';
+import { Connection, PublicKey } from '@solana/web3.js';
 
 type SolanaAction = keyof typeof SolanaApi;
 

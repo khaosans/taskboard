@@ -1,10 +1,9 @@
 /* eslint-disable no-undef */
-import { Redis } from '@upstash/redis';
+import { kv } from '@vercel/kv';
 
-// Initialize Upstash Redis client
-const vercelKVClient = new Redis({
-  url: process.env.UPSTASH_REDIS_URL!,
-  token: process.env.UPSTASH_REDIS_TOKEN!
+const redis = kv({
+  url: process.env.UPSTASH_REDIS_URL,
+  token: process.env.UPSTASH_REDIS_TOKEN,
 });
 
-export default vercelKVClient;
+export default redis;
