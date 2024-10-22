@@ -1,26 +1,38 @@
 'use client';
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 
-export const DropdownMenu: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+interface DropdownMenuProps {
+  children: ReactNode;
+}
+
+interface DropdownMenuContentProps extends DropdownMenuProps {
+  className?: string;
+}
+
+interface DropdownMenuItemProps extends DropdownMenuProps {
+  onClick: () => void;
+}
+
+export const DropdownMenu: React.FC<DropdownMenuProps> = ({ children }) => (
   <div className="relative">{children}</div>
 );
 
-export const DropdownMenuTrigger: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+export const DropdownMenuTrigger: React.FC<DropdownMenuProps> = ({ children }) => (
   <div>{children}</div>
 );
 
-export const DropdownMenuContent: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+export const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({ children, className }) => (
   <div className={`absolute mt-2 bg-white shadow-lg rounded ${className}`}>{children}</div>
 );
 
-export const DropdownMenuItem: React.FC<{ children: React.ReactNode; onClick: () => void }> = ({ children, onClick }) => (
+export const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({ children, onClick }) => (
   <div onClick={onClick} className="p-2 hover:bg-gray-100 cursor-pointer">
     {children}
   </div>
 );
 
-export const DropdownMenuLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+export const DropdownMenuLabel: React.FC<DropdownMenuProps> = ({ children }) => (
   <div className="p-2 font-bold">{children}</div>
 );
 

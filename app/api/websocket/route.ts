@@ -1,33 +1,9 @@
-import { Server } from 'socket.io'
+import { NextRequest, NextResponse } from 'next/server';
 
-let io: Server | null = null;
-
-export async function GET(req: Request) {
-  if (!io) {
-    if (typeof window !== 'undefined') {
-      window.console.log('Socket is initializing')
-    }
-    io = new Server((global as any).server)
-
-    io.on('connection', (socket: any) => {
-      socket.on('wallet-update', (msg: any) => {
-        socket.broadcast.emit('wallet-update', msg)
-      })
-    })
-  } else {
-    if (typeof window !== 'undefined') {
-      window.console.log('Socket is already running')
-    }
-  }
-
-  return new Response(JSON.stringify({ message: 'WebSocket initialized' }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
-  })
+export async function GET(req: NextRequest) {
+  // Your logic here
+  return NextResponse.json({ message: 'WebSocket route' });
 }
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
+// Use the new runtime configuration
+export const runtime = 'edge'; // or 'nodejs' based on your requirement

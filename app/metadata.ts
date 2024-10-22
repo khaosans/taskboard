@@ -1,6 +1,6 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'QuantumLabs',
-  description: 'Manage your tasks and projects efficiently with QuantumLabs',
+  title: 'Task Flow',
+  description: 'Manage your tasks efficiently',
 }

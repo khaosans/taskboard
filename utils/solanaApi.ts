@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { Connection, PublicKey } from '@solana/web3.js';
-import vercelKVClient from './vercelKV';
+import vercelKVClient from '@/utils/vercelKV';
 
 const connection = new Connection('https://api.mainnet-beta.solana.com');
 
@@ -10,7 +10,7 @@ async function rateLimitedRequest<T>(key: string, fn: () => Promise<T>): Promise
   const now = Date.now();
   const lastRequestTime = await vercelKVClient.get(`ratelimit:${key}`);
 
-  if (lastRequestTime && now - parseInt(lastRequestTime as string) < 100) { // 100ms between requests
+  if (lastRequestTime && now - parseInt(lastRequestTime as string) < 100) {
     throw new Error('Rate limit exceeded');
   }
 
@@ -26,22 +26,23 @@ async function rateLimitedRequest<T>(key: string, fn: () => Promise<T>): Promise
   return result;
 }
 
-export async function getAccountInfo(publicKey: string): Promise<any> {
+export const getAccountInfo = async (publicKey: string): Promise<any> => {
   return rateLimitedRequest(`accountInfo:${publicKey}`, async () => {
     const pubKey = new PublicKey(publicKey);
     return await connection.getAccountInfo(pubKey);
   });
-}
+};
 
-export async function getBalance(publicKey: string): Promise<number> {
+export const getBalance = async (publicKey: string): Promise<number> => {
   return rateLimitedRequest(`balance:${publicKey}`, async () => {
     const pubKey = new PublicKey(publicKey);
     return await connection.getBalance(pubKey);
   });
-}
+};
 
-export async function getRecentBlockhash(): Promise<string> {
+export const getRecentBlockhash = async (): Promise<string> => {
   return rateLimitedRequest('recentBlockhash', async () => {
-    return await connection.getRecentBlockhash();
+    const { blockhash } = await connection.getLatestBlockhash();
+    return blockhash;
   });
-}
+};

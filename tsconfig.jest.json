@@ -2,6 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "types": ["jest", "node"] // Include Jest types
+  },
+  "include": ["**/*.test.ts", "**/*.test.tsx"] // Include test files
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Modal,  Button } from '@geist-ui/react'; //
+import Modal from '@/components/ui/modal'; // Change to default import
 import { useTheme } from 'next-themes';
+
 const Footer: React.FC = () => {
   const { theme } = useTheme();
   const [showAbout, setShowAbout] = useState(false);
@@ -25,25 +26,38 @@ const Footer: React.FC = () => {
       </div>
 
       {/* About Modal */}
-      <Modal visible={showAbout} onClose={() => setShowAbout(false)}>
-        <Modal.Title>About Us</Modal.Title>
-        <Modal.Content>
+      <Modal onClose={() => setShowAbout(false)} isOpen={showAbout} title={'About Us'}>
+        <div>
           <p>QuantumLabs is a cutting-edge technology company specializing in task management solutions. Our mission is to empower individuals and teams to achieve their full potential through innovative productivity tools.</p>
-        </Modal.Content>
-        <Modal  onClick={() => setShowAbout(false)}>Close</Modal>
+        </div>
+        <div>
+          <button onClick={() => setShowAbout(false)}>Close</button>
+        </div>
       </Modal>
 
-      <Modal visible={showContact} onClose={() => setShowContact(false)} title="Contact Us">
-        <p>We're here to help! Reach out to us through any of the following channels:</p>
-        <p className="mt-2">Email: contact@quantumlabs.com</p>
-        <p>Phone: +1 (555) 123-4567</p>
-        <p>Address: 123 Tech Street, Innovation City, QU 12345</p>
+      <Modal onClose={() => setShowContact(false)} isOpen={showContact} title="Contact Us">
+        <div>Contact Us</div>
+        <div>
+          <p>We're here to help! Reach out to us through any of the following channels:</p>
+          <p className="mt-2">Email: contact@quantumlabs.com</p>
+          <p>Phone: +1 (555) 123-4567</p>
+          <p>Address: 123 Tech Street, Innovation City, QU 12345</p>
+        </div>
+        <div>
+          <button onClick={() => setShowContact(false)}>Close</button>
+        </div>
       </Modal>
 
-      <Modal visible={showPrivacy} onClose={() => setShowPrivacy(false)} title="Privacy Policy">
-        <p>At QuantumLabs, we take your privacy seriously. This policy outlines how we collect, use, and protect your personal information.</p>
-        <p className="mt-2">We collect only essential data to provide our services and improve your experience. Your data is never sold or shared with third parties without your explicit consent.</p>
-        <p className="mt-2">For more details, please visit our full privacy policy page.</p>
+      <Modal onClose={() => setShowPrivacy(false)} isOpen={showPrivacy} title="Privacy Policy">
+        <div>Privacy Policy</div>
+        <div>
+          <p>At QuantumLabs, we take your privacy seriously. This policy outlines how we collect, use, and protect your personal information.</p>
+          <p className="mt-2">We collect only essential data to provide our services and improve your experience. Your data is never sold or shared with third parties without your explicit consent.</p>
+          <p className="mt-2">For more details, please visit our full privacy policy page.</p>
+        </div>
+        <div>
+          <button onClick={() => setShowPrivacy(false)}>Close</button>
+        </div>
       </Modal>
     </footer>
   );
