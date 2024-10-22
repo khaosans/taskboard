@@ -13,7 +13,9 @@
 - [AI Disclosure](#ai-disclosure)
 - [Contributing](#contributing)
 - [License](#license)
+
 ![alt text](public/images/TaskFlow.gif)
+
 ## Overview
 The **QuantumLabs Task Management Application** is a powerful and intuitive task management board designed to help users efficiently create, manage, and organize tasks. With features like drag-and-drop functionality and customizable task cards, users can easily track progress and collaborate effectively. 🌟
 
@@ -52,6 +54,10 @@ To set up the project locally, follow these steps:
      ```plaintext
      SUPABASE_URL=<your-supabase-url>
      SUPABASE_ANON_KEY=<your-supabase-anon-key>
+     NEXT_PUBLIC_RPC_URL=<your-rpc-url>
+     NEXT_PUBLIC_INFURA_API_KEY=<your-infura-api-key>
+     UPSTASH_REDIS_URL=<your-upstash-redis-url>
+     UPSTASH_REDIS_TOKEN=<your-upstash-redis-token>
      ```
 
 ## Usage
