@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ethers } from 'ethers';
 import { useWallet } from '@/hooks/useWallet';
 
 import Spinner from '@/components/Spinner';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 interface ExtendedProvider extends ethers.providers.ExternalProvider {
   isMetaMask?: boolean;
@@ -26,8 +26,8 @@ const Web3SignIn: React.FC = () => {
   useEffect(() => {
     const checkAvailableWallets = () => {
       const wallets = [];
-      if (typeof window !== 'undefined' && (window.ethereum as ExtendedProvider)?.isMetaMask) wallets.push('MetaMask');
-      if (typeof window !== 'undefined' && ((window.ethereum as ExtendedProvider)?.isRabby || (window as any).rabby)) wallets.push('Rabby');
+      if ((window as any).ethereum?.isMetaMask) wallets.push('MetaMask');
+      if ((window as any).ethereum?.isRabby || (window as any).rabby) wallets.push('Rabby');
       setAvailableWallets(wallets);
     };
 
@@ -36,8 +36,8 @@ const Web3SignIn: React.FC = () => {
   }, []);
 
   const loadConnectedWallet = () => {
-    if (typeof window !== 'undefined') {
-      const savedWallet = window.localStorage.getItem('connectedWallet');
+    if ((window as any)) {
+      const savedWallet = (window as any).localStorage.getItem('connectedWallet');
       if (savedWallet) {
         const wallet = JSON.parse(savedWallet);
         setEVMWallet(wallet);
@@ -47,13 +47,14 @@ const Web3SignIn: React.FC = () => {
   };
 
   const getProvider = (type: string): ExtendedProvider | null => {
-    if (typeof window === 'undefined') return null;
-
-    const { ethereum } = window as any;
-    if (type === 'MetaMask' && ethereum?.isMetaMask) {
-      return ethereum as ExtendedProvider;
-    } else if (type === 'Rabby' && (ethereum?.isRabby || window.rabby)) {
-      return (window.rabby || ethereum) as ExtendedProvider;
+    if ((window as any)) {
+      const { ethereum } = (window as any);
+      if (type === 'MetaMask' && ethereum?.isMetaMask) {
+        return ethereum as ExtendedProvider;
+      } else if (type === 'Rabby' && (ethereum?.isRabby || (window as any).rabby)) {
+        return (window as any).rabby || ethereum as ExtendedProvider;
+      }
+      return null;
     }
     return null;
   };
@@ -73,13 +74,13 @@ const Web3SignIn: React.FC = () => {
       
       const newWallet = { address, type: walletType };
       setEVMWallet(newWallet);
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem('connectedWallet', JSON.stringify(newWallet));
+      if ((window as any)) {
+        (window as any).localStorage.setItem('connectedWallet', JSON.stringify(newWallet));
       }
       fetchBalance(address);
       toast.success(`${walletType} wallet connected successfully`);
     } catch (error) {
-      console.error("Failed to connect wallet:", error);
+      (window as any).console.error("Failed to connect wallet:", error);
       toast.error("Failed to connect wallet. Please try again.");
     } finally {
       setIsConnecting(false);
@@ -89,22 +90,22 @@ const Web3SignIn: React.FC = () => {
   const disconnectWallet = () => {
     setEVMWallet(null);
     setBalance(null);
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem('connectedWallet');
+    if ((window as any)) {
+      (window as any).localStorage.removeItem('connectedWallet');
     }
     toast.success('Wallet disconnected');
   };
 
   const fetchBalance = async (address: string) => {
     try {
-      if (typeof window !== 'undefined') {
-        const provider = new ethers.providers.Web3Provider(window.ethereum as any, "any");
+      if ((window as any)) {
+        const provider = new ethers.providers.Web3Provider((window as any).ethereum, "any");
         const balanceBigNumber = await provider.getBalance(address);
         const balanceInEther = ethers.utils.formatEther(balanceBigNumber);
         setBalance(parseFloat(balanceInEther).toFixed(4));
       }
     } catch (error) {
-      console.error('Error fetching balance:', error);
+      (window as any).console.error('Error fetching balance:', error);
       setBalance(null);
     }
   };

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -61,7 +62,7 @@ export default function NotificationsPage() {
     const newNotifications: Notification[] = [];
 
     // Fetch portfolio data
-    const portfolioResponse = await fetch(`/api/debank/user/total_balance?id=${wallet.address}`);
+    const portfolioResponse = await fetch(`/api/debank/user/total_balance?id=${wallet?.address || ''}`);
     const portfolioData = await portfolioResponse.json();
 
     // Fetch market data

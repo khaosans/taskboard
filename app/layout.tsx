@@ -8,9 +8,19 @@ import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
 import TopBar from 'components/TopBar';
-import RobotTransformerWallpaper from 'components/RobotTransformerWallpaper';
+
+interface Wallet {
+  address: string;
+  type: string;
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [selectedWallet, setSelectedWallet] = React.useState<Wallet | null>(null);
+
+  const handleWalletChange = (wallet: Wallet | null) => {
+    setSelectedWallet(wallet);
+  };
+
   return (
     <ClerkProvider>
       <html lang="en">
@@ -18,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider attribute="class" defaultTheme="dark">
             <Web3ReactProvider getLibrary={(provider) => new Web3Provider(provider)}>
               <Toaster />
-              <TopBar />
+              <TopBar onWalletChange={handleWalletChange} selectedWallet={selectedWallet} />
               {children}
             </Web3ReactProvider>
           </ThemeProvider>

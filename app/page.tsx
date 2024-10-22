@@ -6,6 +6,7 @@ import { useUser } from '@clerk/nextjs';
 import { ArrowRight } from 'lucide-react';
 import ChainInfo from '@/components/ChainInfo';
 import { useTheme } from '@/hooks/useTheme';
+import SolanaDataFetcher from 'components/SolanaDataFetcher';
 
 const WelcomePage: React.FC = () => {
   const { isSignedIn, user } = useUser();

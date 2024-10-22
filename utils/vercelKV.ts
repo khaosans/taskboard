@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Redis } from '@upstash/redis';
 
 // Initialize Upstash Redis client

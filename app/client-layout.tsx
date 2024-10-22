@@ -17,7 +17,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-      <TopBar />
+      <TopBar onWalletChange={() => {}} selectedWallet={null} />
       <RobotTransformerWallpaper />
       <main className="flex-grow pb-20 pt-16">
         {children}

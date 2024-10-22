@@ -12,13 +12,8 @@ import { Button } from "@/components/ui/button"
 import { useTheme } from 'next-themes'
 import Spinner from '@/components/Spinner'
 
-// Dynamically import styles
-const StyleWrapper = ({ children }: { children: React.ReactNode }) => {
-  React.useEffect(() => {
-    import('@solana/wallet-adapter-react-ui/styles.css')
-  }, [])
-  return <>{children}</>
-}
+// Import styles directly
+import '@solana/wallet-adapter-react-ui/styles.css'
 
 function WalletBalance() {
   const { publicKey } = useWallet()
@@ -62,8 +57,10 @@ function WalletBalance() {
           }))
         }
       } catch (err) {
-        console.error('Error fetching wallet data:', err)
-        setError('Failed to fetch wallet data. Please try again later.')
+        if (err instanceof Error) {
+          console.error('Error fetching wallet data:', err.message)
+          setError('Failed to fetch wallet data. Please try again later.')
+        }
       } finally {
         setLoading(false)
       }
@@ -108,34 +105,32 @@ export default function SolanaWalletPage() {
   const { theme } = useTheme()
 
   return (
-    <StyleWrapper>
-      <ConnectionProvider endpoint={endpoint}>
-        <WalletProvider wallets={wallets} autoConnect>
-          <WalletModalProvider>
-            <Layout>
-              <div className="relative min-h-screen">
-                <div className={`relative z-10 min-h-screen bg-gradient-to-b ${theme === 'dark' ? 'from-blue-900/5 to-purple-900/5' : 'from-gray-100 to-gray-200'} text-${theme === 'dark' ? 'white' : 'gray-800'} font-sans`}>
-                  <div className="container mx-auto px-4 py-8">
-                    <h1 className={`text-3xl font-bold mb-8 ${theme === 'dark' ? 'bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500' : 'text-blue-600'}`}>Solana Wallet Connection</h1>
-                    <div className="flex flex-col items-center justify-center space-y-4">
-                      <Card className={`${theme === 'dark' ? 'bg-blue-900/40 text-cyan-100' : 'bg-white text-gray-800'} w-full max-w-md`}>
-                        <CardHeader>
-                          <CardTitle>Connect Your Wallet</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="mb-4">Click the button below to connect your Phantom wallet</p>
-                          <WalletMultiButton className={`${theme === 'dark' ? 'bg-cyan-500 hover:bg-cyan-600' : 'bg-blue-500 hover:bg-blue-600'} text-white font-bold py-2 px-4 rounded w-full`} />
-                        </CardContent>
-                      </Card>
-                      <WalletBalance />
-                    </div>
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={wallets} autoConnect>
+        <WalletModalProvider>
+          <Layout>
+            <div className="relative min-h-screen">
+              <div className={`relative z-10 min-h-screen bg-gradient-to-b ${theme === 'dark' ? 'from-blue-900/5 to-purple-900/5' : 'from-gray-100 to-gray-200'} text-${theme === 'dark' ? 'white' : 'gray-800'} font-sans`}>
+                <div className="container mx-auto px-4 py-8">
+                  <h1 className={`text-3xl font-bold mb-8 ${theme === 'dark' ? 'bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500' : 'text-blue-600'}`}>Solana Wallet Connection</h1>
+                  <div className="flex flex-col items-center justify-center space-y-4">
+                    <Card className={`${theme === 'dark' ? 'bg-blue-900/40 text-cyan-100' : 'bg-white text-gray-800'} w-full max-w-md`}>
+                      <CardHeader>
+                        <CardTitle>Connect Your Wallet</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="mb-4">Click the button below to connect your Phantom wallet</p>
+                        <WalletMultiButton className={`${theme === 'dark' ? 'bg-cyan-500 hover:bg-cyan-600' : 'bg-blue-500 hover:bg-blue-600'} text-white font-bold py-2 px-4 rounded w-full`} />
+                      </CardContent>
+                    </Card>
+                    <WalletBalance />
                   </div>
                 </div>
               </div>
-            </Layout>
-          </WalletModalProvider>
-        </WalletProvider>
-      </ConnectionProvider>
-    </StyleWrapper>
+            </div>
+          </Layout>
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
   )
 }
