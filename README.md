@@ -13,23 +13,24 @@
 - [AI Disclosure](#ai-disclosure)
 - [Contributing](#contributing)
 - [License](#license)
+- [Changelog](#changelog)
 
 ![alt text](public/images/TaskFlow.gif)
 
 ## Overview
-The **QuantumLabs Task Management Application** is a powerful and intuitive task management board designed to help users efficiently create, manage, and organize tasks. With features like drag-and-drop functionality and customizable task cards, users can easily track progress and collaborate effectively. 🌟
+The **QuantumLabs Task Management Application** is a comprehensive task management tool designed to streamline task creation, management, and organization. It features a user-friendly interface with drag-and-drop functionality and customizable task cards, enabling efficient progress tracking and collaboration. 🌟
 
 ## Features
-- **Task Management**: Create, edit, and delete tasks with essential fields such as title, description, priority, and due date. 📝
-- **Drag-and-Drop Functionality**: Seamlessly move tasks between lists (To Do, In Progress, Done) to update their status. 🔄
-- **User Authentication**: Secure login and signup using Supabase Auth for user management. 🔐
-- **Real-time Updates**: Changes are reflected in real-time across the application, enhancing collaboration. ⏱️
-- **Responsive Design**: Built with Tailwind CSS, ensuring a clean and intuitive user interface that works on all devices. 📱💻
-- **Custom Jobs**: Define and manage custom job types tailored to specific project needs, allowing for greater flexibility and organization. ⚙️
+- **Task Management**: Create, edit, and delete tasks with fields such as title, description, priority, and due date. 📝
+- **Drag-and-Drop Functionality**: Move tasks between lists (To Do, In Progress, Done) to update their status. 🔄
+- **User Authentication**: Secure login and signup using Supabase Auth. 🔐
+- **Real-time Updates**: Instant reflection of changes across the application for enhanced collaboration. ⏱️
+- **Responsive Design**: Built with Tailwind CSS for a clean interface on all devices. 📱💻
+- **Custom Jobs**: Manage custom job types for specific project needs. ⚙️
 
 ## Backend Database
-- **Supabase**: The application utilizes Supabase as the backend database, providing a PostgreSQL database with real-time capabilities. 🗄️
-- **Database Setup**: Ensure that your Supabase project is configured with the necessary tables and schemas to support task management features.
+- **Supabase**: Utilizes Supabase for a PostgreSQL database with real-time capabilities. 🗄️
+- **Database Setup**: Ensure your Supabase project is configured with necessary tables and schemas.
 
 ## Installation
 To set up the project locally, follow these steps:
@@ -78,8 +79,6 @@ pnpm test
 Make sure all tests pass before making any changes to the codebase. ✅
 
 ## To Do
-- ~~**Fix Authentication**: Review and resolve any issues related to user authentication with Supabase.~~ ✔️
-- ~~**Enhance Unit Testing**: Add more tests to cover edge cases and ensure robust functionality.~~ ✔️
 - **Implement AI Agent System**: Integrate AI capabilities for task management and automation. 🤖
 - **Add Task Dependencies**: Allow users to set dependencies between tasks. 🔗
 - **Milestone Tracking**: Enable users to define and track project milestones. 🎯
@@ -107,3 +106,7 @@ Contributions are welcome! Please follow these steps to contribute:
 
 ## License
 This project is licensed under the MIT License. 📄
+
+## Changelog
+- **v1.0.1**: Updated README to reflect current project state and added changelog section.
+- **v1.0.0**: Initial release with core task management features.
