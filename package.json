@@ -47,6 +47,7 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@jest/globals": "^29.7.0",
     "@playwright/test": "^1.48.1",
     "@testing-library/react": "^16.0.1",
