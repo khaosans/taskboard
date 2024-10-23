@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Modal,  Button } from '@geist-ui/react'; //
+import { useState } from 'react';
 import { useTheme } from 'next-themes';
+import { Modal } from '@geist-ui/react'
+
 const Footer: React.FC = () => {
   const { theme } = useTheme();
   const [showAbout, setShowAbout] = useState(false);
