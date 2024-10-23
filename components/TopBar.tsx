@@ -2,16 +2,11 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Bell, Settings, MessageCircle, HardDrive } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import ChatbotModal from './ChatbotModal';
+import { Bell, Settings, MessageCircle } from 'lucide-react';
+import ChatbotModal from '@/components/ChatbotModal';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
-import { Button } from '@/components/ui/button';
-import Web3SignIn from './Web3SignIn';
+import Web3SignIn from '@/components/Web3SignIn';
 import { motion } from 'framer-motion';
-import { useNotifications } from '@/hooks/useNotifications';
-import { createClerkSupabaseClient } from 'lib/supabase';
 
 interface TopBarProps {
     onWalletChange: (wallet: { address: string; type: string } | null) => void;
@@ -21,8 +16,7 @@ interface TopBarProps {
 const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isNudged, setIsNudged] = useState(false);
-    const router = useRouter();
-    const { isLoaded, isSignedIn, user } = useUser();
+    const { isLoaded } = useUser();
 
     const toggleChat = () => {
         setIsChatOpen(!isChatOpen);

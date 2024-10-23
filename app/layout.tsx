@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider attribute="class" defaultTheme="dark">
             <Web3ReactProvider getLibrary={(provider) => new Web3Provider(provider)}>
               <Toaster />
-              <TopBar />
+              <TopBar onWalletChange={() => {}} selectedWallet={null} />
               {children}
             </Web3ReactProvider>
           </ThemeProvider>

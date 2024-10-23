@@ -3,7 +3,7 @@ import React from 'react';
 const LoaderSpinner: React.FC = () => {
     return (
         <div className="loader">
-            <style jsx>{`
+            <style>{`
                 .loader {
                     border: 4px solid rgba(255, 255, 255, 0.3);
                     border-top: 4px solid #ffffff;

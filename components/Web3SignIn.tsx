@@ -7,7 +7,6 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ethers } from 'ethers';
-import { useWallet } from '@/hooks/useWallet';
 
 import Spinner from '@/components/Spinner';
 
@@ -26,8 +25,14 @@ const Web3SignIn: React.FC = () => {
   useEffect(() => {
     const checkAvailableWallets = () => {
       const wallets = [];
-      if (typeof window !== 'undefined' && (window.ethereum as ExtendedProvider)?.isMetaMask) wallets.push('MetaMask');
-      if (typeof window !== 'undefined' && ((window.ethereum as ExtendedProvider)?.isRabby || (window as any).rabby)) wallets.push('Rabby');
+      if (typeof window !== 'undefined') {
+        if (window.ethereum) {
+          wallets.push('MetaMask');
+        }
+        if (window.rabby) {
+          wallets.push('Rabby');
+        }
+      }
       setAvailableWallets(wallets);
     };
 

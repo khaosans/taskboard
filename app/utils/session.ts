@@ -7,7 +7,7 @@ function parseSessionCookie(sessionCookie: string | null) {
     return null;
 }
 
-export const getSession = () => {
-    const sessionCookie = cookies().get('supabaseSession')?.value as string | null;
+export const getSession = async () => {
+    const sessionCookie = (await cookies()).get('supabaseSession')?.value as string | null;
     return parseSessionCookie(sessionCookie);
 };

@@ -10,8 +10,8 @@ export default function WalletView({ address }: WalletViewProps) {
 
   useEffect(() => {
     const fetchBalance = async () => {
-      if (typeof window !== 'undefined' && window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+      if (typeof window !== 'undefined' && (window as any).ethereum) {
+        const provider = new ethers.providers.Web3Provider((window as any).ethereum);
         try {
           const balance = await provider.getBalance(address);
           setBalance(ethers.utils.formatEther(balance));
