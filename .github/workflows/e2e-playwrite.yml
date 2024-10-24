@@ -8,6 +8,7 @@ jobs:
   run-e2e-tests:
     if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,7 +27,7 @@ jobs:
       - name: Wait for preview deployment
         run: |
           echo "Waiting for preview deployment to be ready..."
-          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' ${{ github.event.deployment_status.target_url }})" != "200" ]]; do sleep 5; done' || false
+          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w "%{http_code}" "${{ github.event.deployment_status.target_url }}")" != "200" ]]; do sleep 5; done'
           echo "Preview deployment is ready!"
 
       - name: Run Playwright E2E Tests
@@ -38,7 +39,8 @@ jobs:
           E2E_CLERK_USER_PASSWORD: ${{ secrets.E2E_CLERK_USER_PASSWORD }}
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-report
