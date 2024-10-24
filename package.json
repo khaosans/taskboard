@@ -9,7 +9,7 @@
     "lint": "next lint",
     "test": "jest",
     "test:e2e": "playwright test",
-    "test:all": "pnpm install && pnpm build && pnpm test && concurrently \"pnpm run dev\" \"npx playwright test\" --kill-others --success first",
+    "test:all": "pnpm install && pnpm build && pnpm test && pnpm start & wait-on http://localhost:3000 && pnpm test:e2e",
     "test:playwright": "npx playwright test e2e"
   },
   "dependencies": {
