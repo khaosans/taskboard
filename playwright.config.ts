@@ -1,12 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
+import { PlaywrightTestConfig } from '@playwright/test';
 
 // Load environment variables from .env.local
 dotenv.config({ path: '.env.local' });
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 
-export default defineConfig({
+const config: PlaywrightTestConfig = {
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -14,7 +15,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: BASE_URL,
+    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || BASE_URL,
     trace: 'on-first-retry',
   },
   projects: [
@@ -38,4 +39,6 @@ export default defineConfig({
         url: BASE_URL,
         reuseExistingServer: !process.env.CI,
       },
-});
+};
+
+export default config;
