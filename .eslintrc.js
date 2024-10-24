@@ -14,7 +14,7 @@ module.exports = {
     },
   ],
   rules: {
-    'no-console': 'off',
+    'no-console': ['error', { allow: ['warn', 'error'] }],
     'no-process-env': 'off',
   },
   globals: {

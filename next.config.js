@@ -1,5 +1,3 @@
-const { withClerkMiddleware } = require("@clerk/nextjs/next");
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -12,4 +10,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withClerkMiddleware(nextConfig);
+module.exports = nextConfig;
