@@ -1,13 +1,22 @@
 import { test, expect } from '@playwright/test';
 
+<<<<<<< HEAD
 // Use a constant for the base URL instead of accessing process.env directly
 const BASE_URL = 'http://localhost:3000';
+=======
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+>>>>>>> ccd4115 (Feature/sol (#56))
 
 test.describe('Clerk Authentication', () => {
   test('should navigate to sign-in page', async ({ page }) => {
     // Set the test timeout to 5000 seconds
     test.setTimeout(5000000);
 
+<<<<<<< HEAD
+=======
+    console.log(`Testing against URL: ${BASE_URL}`);
+
+>>>>>>> ccd4115 (Feature/sol (#56))
     // Navigate to the home page
     await page.goto(BASE_URL);
 
