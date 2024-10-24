@@ -22,7 +22,7 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({ children }) => {
           <button onClick={() => setIsChatbotModalOpen(true)}>Open Chatbot</button>
           {children}
           {isChatbotModalOpen && (
-            <ChatbotModal onClose={() => setIsChatbotModalOpen(false)} />
+            <ChatbotModal onClose={() => setIsChatbotModalOpen(false)} isOpen={isChatbotModalOpen} />
           )}
         </div>
       </body>

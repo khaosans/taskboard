@@ -5,6 +5,11 @@ export interface TokenBalance {
   decimals: number;
   usdValue: number;
   logo?: string;
+  metadata?: {
+    name: string;
+    symbol: string;
+  };
+  priceChange24h?: string;
 }
 
 export interface Transaction {

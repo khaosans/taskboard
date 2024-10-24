@@ -12,10 +12,18 @@ import {
   getTokenTransfers,
   getNFTEvents
 } from '@/utils/heliusApi';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, TokenBalance } from '@solana/web3.js';
 import { useUser } from '@clerk/nextjs';
 import { WalletData } from '@/utils/dataSchema';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
+
+interface TokenBalanceWithMetadata extends TokenBalance {
+  metadata?: {
+    name: string;
+    symbol: string;
+  };
+  priceChange24h?: string;
+}
 
 const SolanaWalletView: React.FC = () => {
     const { connected, publicKey } = useWallet();
@@ -55,7 +63,7 @@ const SolanaWalletView: React.FC = () => {
                     const metadata = await getTokenMetadata(tokenMints);
 
                     // Fetch NFT floor prices
-                    const nftsWithFloorPrices = await Promise.all(fetchedNfts.map(async (nft) => {
+                    const nftsWithFloorPrices = await Promise.all(fetchedNfts.map(async (nft: any) => {
                         const events = await getNFTEvents(nft.mint);
                         const floorPrice = events.find((event: any) => event.type === 'LIST')?.amount || 'N/A';
                         return { ...nft, floorPrice };
@@ -65,9 +73,12 @@ const SolanaWalletView: React.FC = () => {
                         userId: user.id,
                         walletAddress: address,
                         nativeBalance: balances.nativeBalance,
-                        tokenBalances: balances.tokens.map((token: any, index: number) => ({
+                        tokenBalances: balances.tokens.map((token: TokenBalance, index: number) => ({
                             ...token,
-                            metadata: metadata[index],
+                            symbol: metadata[index].symbol,
+                            amount: token.uiTokenAmount.amount,
+                            decimals: metadata[index].decimals,
+                            usdValue: metadata[index].usdValue,
                             priceChange24h: (Math.random() * 20 - 10).toFixed(2) // Mock data, replace with actual API call
                         })),
                         recentTransactions: transactions,
@@ -119,7 +130,7 @@ const SolanaWalletView: React.FC = () => {
                             {walletData.tokenBalances.map((token) => (
                                 <li key={token.mint} className="mb-1">
                                     {token.metadata?.name || token.mint} ({token.metadata?.symbol}): {token.amount} (${token.usdValue.toFixed(2)})
-                                    <span className={`ml-2 ${parseFloat(token.priceChange24h) >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                                    <span className={`ml-2 ${parseFloat(token.priceChange24h || '0') >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                                         {token.priceChange24h}%
                                     </span>
                                 </li>

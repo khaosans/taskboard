@@ -19,7 +19,7 @@ const ChatPage: React.FC = () => {
             >
                 {isChatOpen ? 'Close Chat' : 'Open Chat'}
             </button>
-            {isChatOpen && <ChatbotModal onClose={toggleChat} />}
+            {isChatOpen && <ChatbotModal onClose={toggleChat} isOpen={isChatOpen} />}
         </div>
     );
 };

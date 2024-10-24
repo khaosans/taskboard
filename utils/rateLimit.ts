@@ -1,13 +1,17 @@
-import { Connection } from '@solana/web3.js';
+import { Connection, ConnectionConfig } from '@solana/web3.js';
 
 class RateLimitedConnection extends Connection {
   private lastRequestTime: number = 0;
   private requestsInLastSecond: number = 0;
   private readonly maxRequestsPerSecond: number = 50; // Adjust this value based on Helius' rate limit
 
+  constructor(endpoint: string, config?: ConnectionConfig) {
+    super(endpoint, config);
+  }
+
   async sendRequest(method: string, params: any[]): Promise<any> {
     await this.waitForRateLimit();
-    return super.sendRequest(method, params);
+    return super['_rpcRequest'](method, params);
   }
 
   private async waitForRateLimit(): Promise<void> {
@@ -27,6 +31,6 @@ class RateLimitedConnection extends Connection {
   }
 }
 
-export function createRateLimitedConnection(endpoint: string): RateLimitedConnection {
-  return new RateLimitedConnection(endpoint);
+export function createRateLimitedConnection(endpoint: string, config?: ConnectionConfig): RateLimitedConnection {
+  return new RateLimitedConnection(endpoint, config);
 }

@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 
 // Mock data for notifications
 const mockNotifications = [
@@ -7,10 +7,10 @@ const mockNotifications = [
     { id: '3', message: 'Team meeting scheduled for tomorrow', createdAt: new Date(Date.now() - 172800000).toISOString() },
 ];
 
-export default async function getNotifications(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest) {
     // Simulate a delay to mimic API call
     await new Promise(resolve => setTimeout(resolve, 500));
 
     // Return mock notifications
-    res.status(200).json({ notifications: mockNotifications });
+    return NextResponse.json({ notifications: mockNotifications });
 }
