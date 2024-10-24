@@ -1,22 +1,36 @@
+/* eslint-disable no-console */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Bell, Settings, MessageCircle } from 'lucide-react';
-import ChatbotModal from '@/components/ChatbotModal';
+import ChatbotModal from './ChatbotModal';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
-import Web3SignIn from '@/components/Web3SignIn';
 import { motion } from 'framer-motion';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import { getWalletTokenBalances, getWalletTransactions } from '@/utils/heliusApi';
+import Web3SignIn from './Web3SignIn';
+import { storeWalletData } from '@/utils/supabase';
+
+const networks = [
+  { name: 'Mainnet', value: WalletAdapterNetwork.Mainnet },
+  { name: 'Devnet', value: WalletAdapterNetwork.Devnet },
+  { name: 'Testnet', value: WalletAdapterNetwork.Testnet },
+];
 
 interface TopBarProps {
-    onWalletChange: (wallet: { address: string; type: string } | null) => void;
-    selectedWallet: { address: string; type: string } | null;
+  onNetworkChange: (network: WalletAdapterNetwork) => void;
 }
 
-const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
+const TopBar: React.FC<TopBarProps> = ({ onNetworkChange }) => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isNudged, setIsNudged] = useState(false);
-    const { isLoaded } = useUser();
+    const { isLoaded, user } = useUser();
+    const { publicKey, connected } = useWallet();
+    const { connection } = useConnection();
+    const [selectedNetwork, setSelectedNetwork] = useState(networks[0]);
 
     const toggleChat = () => {
         setIsChatOpen(!isChatOpen);
@@ -27,9 +41,40 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         globalThis.setTimeout(() => setIsNudged(false), 300);
     };
 
-    const handleWalletChange = (wallet: { address: string; type: string } | null) => {
-        onWalletChange(wallet);
+    const handleNetworkChange = (network: typeof networks[0]) => {
+        setSelectedNetwork(network);
+        onNetworkChange(network.value);
     };
+
+    useEffect(() => {
+        async function fetchAndStoreWalletData() {
+            if (connected && publicKey && user) {
+                try {
+                    const balances = await getWalletTokenBalances(publicKey.toString());
+                    const transactions = await getWalletTransactions(publicKey.toString(), 5);
+
+                    // Store the data in Supabase
+                    await storeWalletData({
+                        userId: user.id,
+                        walletAddress: publicKey.toString(),
+                        nativeBalance: balances.nativeBalance,
+                        tokenBalances: balances.tokens,
+                        recentTransactions: transactions,
+                        nftHoldings: [],
+                        defiInteractions: [],
+                        lastUpdated: new Date().toISOString(),
+                    });
+
+                    console.log('Connected to Solana wallet:', publicKey.toBase58());
+                    console.log('Selected network:', selectedNetwork.name);
+                } catch (error) {
+                    console.error('Error fetching or storing wallet data:', error);
+                }
+            }
+        }
+
+        fetchAndStoreWalletData();
+    }, [connected, publicKey, selectedNetwork, user]);
 
     if (!isLoaded) {
         return null;
@@ -55,7 +100,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                 <nav className="flex space-x-4">
                     <SignedIn>
                         <motion.div className="flex space-x-4">
-                            {['Portfolio', 'Defi-dashboard'].map((item, index) => (
+                            {['Portfolio', 'Defi-dashboard', 'Solana Wallet'].map((item, index) => (
                                 <motion.div
                                     key={item}
                                     initial={{ opacity: 0, y: -20 }}
@@ -72,12 +117,24 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                 </nav>
                 <div className="flex items-center space-x-4">
                     <SignedIn>
+                        <select
+                            value={selectedNetwork.name}
+                            onChange={(e) => handleNetworkChange(networks.find(n => n.name === e.target.value)!)}
+                            className="bg-gray-700 text-white rounded-lg py-2 px-3"
+                        >
+                            {networks.map((network) => (
+                                <option key={network.name} value={network.name}>
+                                    {network.name}
+                                </option>
+                            ))}
+                        </select>
                         <Web3SignIn />
+                        <WalletMultiButton />
                         <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button"
-                            onClick={toggleChat}
+                            onClick={() => setIsChatOpen(true)}
                         >
                             <MessageCircle className="h-5 w-5" />
                         </motion.button>
@@ -102,7 +159,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                     </SignedOut>
                 </div>
             </motion.header>
-            {isChatOpen && <ChatbotModal onClose={() => setIsChatOpen(false)} />}
+            <ChatbotModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
         </>
     );
 }
