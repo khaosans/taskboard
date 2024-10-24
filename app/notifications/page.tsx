@@ -59,20 +59,17 @@ export default function NotificationsPage() {
 
   const generateNotifications = async (): Promise<Notification[]> => {
     const newNotifications: Notification[] = [];
-    let portfolioData, marketData;
 
-    if (typeof window !== 'undefined' && wallet) {
-      // Fetch portfolio data
-      const portfolioResponse = await window.fetch(`/api/debank/user/total_balance?id=${wallet}`);
-      portfolioData = await portfolioResponse.json();
+    // Fetch portfolio data
+    const portfolioResponse = await globalThis.fetch(`/api/debank/user/total_balance?id=${wallet?.address}`);
+    const portfolioData = await portfolioResponse.json();
 
-      // Fetch market data
-      const marketResponse = await window.fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1');
-      marketData = await marketResponse.json();
-    }
+    // Fetch market data
+    const marketResponse = await globalThis.fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1');
+    const marketData = await marketResponse.json();
 
     // Generate wallet notifications
-    if (portfolioData && portfolioData.total_usd_value > 10000) {
+    if (portfolioData.total_usd_value > 10000) {
       newNotifications.push({
         icon: 'Shield',
         title: "High-Value Wallet Alert",
@@ -82,25 +79,23 @@ export default function NotificationsPage() {
     }
 
     // Generate market notifications
-    if (marketData) {
-      marketData.forEach((coin: any) => {
-        if (coin.price_change_percentage_24h > 10) {
-          newNotifications.push({
-            icon: 'TrendingUp',
-            title: `${coin.symbol.toUpperCase()} Surge`,
-            message: `${coin.name} has increased by ${coin.price_change_percentage_24h.toFixed(2)}% in the last 24 hours.`,
-            timestamp: Date.now()
-          });
-        } else if (coin.price_change_percentage_24h < -10) {
-          newNotifications.push({
-            icon: 'TrendingDown',
-            title: `${coin.symbol.toUpperCase()} Drop`,
-            message: `${coin.name} has decreased by ${Math.abs(coin.price_change_percentage_24h).toFixed(2)}% in the last 24 hours.`,
-            timestamp: Date.now()
-          });
-        }
-      });
-    }
+    marketData.forEach((coin: any) => {
+      if (coin.price_change_percentage_24h > 10) {
+        newNotifications.push({
+          icon: 'TrendingUp',
+          title: `${coin.symbol.toUpperCase()} Surge`,
+          message: `${coin.name} has increased by ${coin.price_change_percentage_24h.toFixed(2)}% in the last 24 hours.`,
+          timestamp: Date.now()
+        });
+      } else if (coin.price_change_percentage_24h < -10) {
+        newNotifications.push({
+          icon: 'TrendingDown',
+          title: `${coin.symbol.toUpperCase()} Drop`,
+          message: `${coin.name} has decreased by ${Math.abs(coin.price_change_percentage_24h).toFixed(2)}% in the last 24 hours.`,
+          timestamp: Date.now()
+        });
+      }
+    });
 
     return newNotifications;
   };
