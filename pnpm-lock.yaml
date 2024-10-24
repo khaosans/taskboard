@@ -2086,8 +2086,8 @@ packages:
     resolution: {integrity: sha512-1ugFO1UoirU2esS3juZanS/Fo8C8XYocCuBpfZI5N7ECtoG+zu0wF+uWZASik6CkO6w9n/Iebt4iI4pT0vptpg==}
     engines: {node: '>=16.0.0'}
 
-  '@metamask/rpc-errors@7.0.0':
-    resolution: {integrity: sha512-KDkqwL+MgGMOex6KHntbMQsHGlW29QeH5vpaG/bzovsf1r8xFwxk5f5vnP7/AGpzR9EojNhP8aKeBSJ44rvDMw==}
+  '@metamask/rpc-errors@7.0.1':
+    resolution: {integrity: sha512-EeQGYioq845w2iBmiR9LHYqHhYIaeDTmxprHpPE3BTlkLB74P0xLv/TivOn4snNLowiC5ekOXfcUzCQszTDmSg==}
     engines: {node: ^18.20 || ^20.17 || >=22}
 
   '@metamask/safe-event-emitter@3.1.2':
@@ -2097,6 +2097,10 @@ packages:
   '@metamask/superstruct@3.1.0':
     resolution: {integrity: sha512-N08M56HdOgBfRKkrgCMZvQppkZGcArEop3kixNEtVbJKm6P9Cfg0YkI6X0s1g78sNrj2fWUwvJADdZuzJgFttA==}
     engines: {node: '>=16.0.0'}
+
+  '@metamask/utils@10.0.0':
+    resolution: {integrity: sha512-EoNZJijLqBbir8ikuiHBHfhCqE1s8Odae3bhtRAd8itJB109xmfFF84djY/iaQI+EAp59Sy7iwengfRohaTK8A==}
+    engines: {node: ^18.18 || ^20.14 || >=22}
 
   '@metamask/utils@5.0.2':
     resolution: {integrity: sha512-yfmE79bRQtnMzarnKfX7AEJBwFTxvTyw3nBQlu/5rmGXrjAeAMltoGxO62TFurxrQAFMNa/fEjIHNvungZp0+g==}
@@ -17150,7 +17154,7 @@ snapshots:
 
   '@metamask/json-rpc-engine@10.0.0':
     dependencies:
-      '@metamask/rpc-errors': 7.0.0
+      '@metamask/rpc-errors': 7.0.1
       '@metamask/safe-event-emitter': 3.1.2
       '@metamask/utils': 9.3.0
     transitivePeerDependencies:
@@ -17209,9 +17213,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@metamask/rpc-errors@7.0.0':
+  '@metamask/rpc-errors@7.0.1':
     dependencies:
-      '@metamask/utils': 9.3.0
+      '@metamask/utils': 10.0.0
       fast-safe-stringify: 2.1.1
     transitivePeerDependencies:
       - supports-color
@@ -17219,6 +17223,20 @@ snapshots:
   '@metamask/safe-event-emitter@3.1.2': {}
 
   '@metamask/superstruct@3.1.0': {}
+
+  '@metamask/utils@10.0.0':
+    dependencies:
+      '@ethereumjs/tx': 4.2.0
+      '@metamask/superstruct': 3.1.0
+      '@noble/hashes': 1.5.0
+      '@scure/base': 1.1.9
+      '@types/debug': 4.1.12
+      debug: 4.3.7(supports-color@6.1.0)
+      pony-cause: 2.1.11
+      semver: 7.6.3
+      uuid: 9.0.1
+    transitivePeerDependencies:
+      - supports-color
 
   '@metamask/utils@5.0.2':
     dependencies:
