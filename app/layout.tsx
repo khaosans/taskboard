@@ -21,8 +21,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
             </Web3ReactProvider>
           </ThemeProvider>
-        </ClerkProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
