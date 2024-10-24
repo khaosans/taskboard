@@ -11,11 +11,11 @@ import TopBar from 'components/TopBar';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <ClerkProvider>
+    <ClerkProvider>
+      <html lang="en">
+        <body>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Web3ReactProvider getLibrary={(provider: any) => new Web3Provider(provider)}>
+            <Web3ReactProvider getLibrary={(provider) => new Web3Provider(provider)}>
               <Toaster />
               <TopBar onWalletChange={() => {}} selectedWallet={null} />
               {children}
