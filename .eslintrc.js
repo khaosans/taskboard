@@ -11,10 +11,14 @@ module.exports = {
       env: {
         jest: true,
       },
-      globals: {
-        process: 'readonly',
-        console: 'readonly',
-      },
     },
   ],
+  rules: {
+    'no-console': 'off',
+    'no-process-env': 'off',
+  },
+  globals: {
+    process: 'readonly',
+    console: 'readonly',
+  },
 };

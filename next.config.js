@@ -5,6 +5,7 @@ const nextConfig = {
     if (!isServer) {
       config.externals = [...config.externals, 'socket.io-client'];
     }
+    config.cache = false;
     return config;
   },
 };

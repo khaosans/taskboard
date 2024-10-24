@@ -83,7 +83,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button"
-                            onClick={toggleChat}
+                            onClick={() => setIsChatOpen(true)}
                         >
                             <MessageCircle className="h-5 w-5" />
                         </motion.button>
@@ -108,7 +108,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                     </SignedOut>
                 </div>
             </motion.header>
-            {isChatOpen && <ChatbotModal onClose={() => setIsChatOpen(false)} />}
+            <ChatbotModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
         </>
     );
 }
