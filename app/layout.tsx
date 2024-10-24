@@ -9,6 +9,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
 import TopBar from 'components/TopBar';
 import RobotTransformerWallpaper from 'components/RobotTransformerWallpaper';
+import Navigation from '../components/Navigation';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,11 +17,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <html lang="en">
         <body>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Web3ReactProvider getLibrary={(provider) => new Web3Provider(provider)}>
-              <Toaster />
-              <TopBar onWalletChange={() => {}} selectedWallet={null} />
-              {children}
-            </Web3ReactProvider>
+            <Navigation />
+            {children}
           </ThemeProvider>
         </body>
       </html>
