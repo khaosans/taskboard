@@ -1,6 +1,20 @@
 module.exports = {
-  extends: ['next/core-web-vitals'],
-  rules: {
-    // Add any custom rules here
+  extends: ['next', 'next/core-web-vitals'],
+  env: {
+    node: true,
+    browser: true,
+    es6: true,
   },
+  overrides: [
+    {
+      files: ['tests/**/*.ts', 'tests/**/*.tsx'],
+      env: {
+        jest: true,
+      },
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+      },
+    },
+  ],
 };
