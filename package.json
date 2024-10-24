@@ -8,14 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "type-check": "tsc --noEmit",
-    "clean": "rm -rf .next",
-    "clean:build": "npm run clean && npm run build",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
     "test:all": "pnpm install && pnpm build && pnpm test && concurrently \"pnpm run dev\" \"npx playwright test\" --kill-others --success first",
-    "test:playwright": "npx playwright test"
+    "test:playwright": "npx playwright test e2e"
   },
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.18.6",

@@ -8,22 +8,21 @@ import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
 import TopBar from 'components/TopBar';
-import RobotTransformerWallpaper from 'components/RobotTransformerWallpaper';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body>
+    <html lang="en">
+      <body>
+        <ClerkProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Web3ReactProvider getLibrary={(provider) => new Web3Provider(provider)}>
+            <Web3ReactProvider getLibrary={(provider: any) => new Web3Provider(provider)}>
               <Toaster />
               <TopBar onWalletChange={() => {}} selectedWallet={null} />
               {children}
             </Web3ReactProvider>
           </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
