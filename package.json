@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.7.5",
-    "@clerk/themes": "^2.1.38",
+    "@clerk/themes": "^2.1.39",
     "@ethersproject/providers": "^5.7.2",
     "@geist-ui/react": "^2.2.5",
     "@hookform/resolvers": "^3.9.0",
@@ -104,7 +104,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.5.2",
-    "@types/jest": "^29.5.13",
+    "@types/jest": "^29.5.14",
     "@types/node": "20.16.14",
     "@types/react": "18.3.11",
     "@types/react-beautiful-dnd": "^13.1.8",
