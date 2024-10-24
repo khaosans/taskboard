@@ -21,10 +21,7 @@ interface TokenBalance {
   mint: string;
   owner: string;
   amount: TokenAmount;
-  uiTokenAmount: {
-    amount: string;
-    decimals: number;
-  };
+  uiTokenAmount: TokenAmount;
   metadata?: {
     name: string;
     symbol: string;
