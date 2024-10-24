@@ -1,6 +1,6 @@
 import { Server } from 'socket.io'
 import { NextApiRequest } from 'next'
-import { NextApiResponseServerIO } from '@/types/next'
+import { NextApiResponseServerIO } from '../../types/next'
 
 const SocketHandler = (req: NextApiRequest, res: NextApiResponseServerIO) => {
   if (res.socket.server.io) {
@@ -11,8 +11,8 @@ const SocketHandler = (req: NextApiRequest, res: NextApiResponseServerIO) => {
     res.socket.server.io = io
 
     io.on('connection', socket => {
-      socket.on('wallet-update', msg => {
-        socket.broadcast.emit('wallet-update', msg)
+      socket.on('input-change', msg => {
+        socket.broadcast.emit('update-input', msg)
       })
     })
   }
