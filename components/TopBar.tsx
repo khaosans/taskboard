@@ -63,7 +63,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                 <nav className="flex space-x-4">
                     <SignedIn>
                         <motion.div className="flex space-x-4">
-                            {['Portfolio', 'Wallet-data'].map((item, index) => (
+                            {['Portfolio', 'Defi-Dashboard'].map((item, index) => (
                                 <motion.div
                                     key={item}
                                     initial={{ opacity: 0, y: -20 }}
