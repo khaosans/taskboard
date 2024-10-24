@@ -103,7 +103,7 @@ const SolanaWalletView: React.FC = () => {
                     })));
 
                 } catch (error) {
-                    logger.error('Error fetching wallet data:', error);
+                    console.error('Error fetching wallet data:', error);
                 } finally {
                     setIsLoading(false);
                 }
