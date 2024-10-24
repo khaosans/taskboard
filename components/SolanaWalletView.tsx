@@ -14,7 +14,7 @@ import {
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { useUser } from '@clerk/nextjs';
 import { WalletData } from '@/utils/dataSchema';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } frm 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 const SolanaWalletView: React.FC = () => {
     const { connected, publicKey } = useWallet();
