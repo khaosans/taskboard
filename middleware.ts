@@ -1,20 +1,12 @@
-import { clerkMiddleware } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { withClerkMiddleware } from '@clerk/nextjs/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export default clerkMiddleware(async (request: NextRequest) => {
+export default withClerkMiddleware((request: NextRequest) => {
   const response = NextResponse.next();
-  
-  // Ensure headers are accessed asynchronously
-  const headers = await request.headers;
-  
-  // You can now safely use headers here if needed
-  // For example:
-  // const someHeader = headers.get('some-header');
-  
+  // Add any custom logic here
   return response;
 });
 
 export const config = {
-  matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
+  matcher: '/((?!_next/image|_next/static|favicon.ico).*)',
 };

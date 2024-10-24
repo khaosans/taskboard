@@ -8,7 +8,7 @@ import ChatBotModal from '@/components/ChatbotModal'
 import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper'
 import { motion } from 'framer-motion'
 
-export default function LandingPage() {
+const LandingPage: React.FC = () => {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false)
 
   const handleOpenChatbot = () => setIsChatbotOpen(true)
@@ -122,7 +122,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {isChatbotOpen && <ChatBotModal onClose={handleCloseChatbot} isOpen={isChatbotOpen} />}
+        {isChatbotOpen && <ChatBotModal isOpen={isChatbotOpen} onClose={handleCloseChatbot} />}
       </div>
     </div>
   )
@@ -177,3 +177,8 @@ const TestimonialCard: React.FC<{ quote: string; author: string }> = ({ quote, a
     </CardContent>
   </Card>
 )
+
+// Ensure CardContent component supports className prop
+const CardContent: React.FC<{ className?: string }> = ({ children, className }) => (
+  <div className={className}>{children}</div>
+);
