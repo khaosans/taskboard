@@ -14,8 +14,8 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { createClerkSupabaseClient } from 'lib/supabase';
 
 interface TopBarProps {
-    onWalletChange: (wallet: { address: string; type: string } | null) => void;
-    selectedWallet: { address: string; type: string } | null;
+    onWalletChange?: (wallet: { address: string; type: string } | null) => void;
+    selectedWallet?: { address: string; type: string } | null;
 }
 
 const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
@@ -34,7 +34,9 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
     };
 
     const handleWalletChange = (wallet: { address: string; type: string } | null) => {
-        onWalletChange(wallet);
+        if (onWalletChange) {
+            onWalletChange(wallet);
+        }
     };
 
     if (!isLoaded) {

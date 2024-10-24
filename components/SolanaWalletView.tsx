@@ -12,17 +12,25 @@ import {
   getTokenTransfers,
   getNFTEvents
 } from '@/utils/heliusApi';
-import { LAMPORTS_PER_SOL, TokenBalance } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, TokenAmount } from '@solana/web3.js';
 import { useUser } from '@clerk/nextjs';
 import { WalletData } from '@/utils/dataSchema';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
-interface TokenBalanceWithMetadata extends TokenBalance {
+interface TokenBalance {
+  mint: string;
+  owner: string;
+  amount: TokenAmount;
+  uiTokenAmount: {
+    amount: string;
+    decimals: number;
+  };
   metadata?: {
     name: string;
     symbol: string;
   };
   priceChange24h?: string;
+  usdValue: number;
 }
 
 const SolanaWalletView: React.FC = () => {
@@ -76,8 +84,8 @@ const SolanaWalletView: React.FC = () => {
                         tokenBalances: balances.tokens.map((token: TokenBalance, index: number) => ({
                             ...token,
                             symbol: metadata[index].symbol,
-                            amount: token.uiTokenAmount.amount,
-                            decimals: metadata[index].decimals,
+                            amount: parseFloat(token.uiTokenAmount.amount),
+                            decimals: token.uiTokenAmount.decimals,
                             usdValue: metadata[index].usdValue,
                             priceChange24h: (Math.random() * 20 - 10).toFixed(2) // Mock data, replace with actual API call
                         })),
