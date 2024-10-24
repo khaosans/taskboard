@@ -30,14 +30,6 @@ interface TokenBalance {
   usdValue: number;
 }
 
-const logger = {
-  error: (...args: any[]) => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error(...args);
-    }
-  }
-};
-
 const SolanaWalletView: React.FC = () => {
     const { connected, publicKey } = useWallet();
     const { user } = useUser();
