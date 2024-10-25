@@ -2,7 +2,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 
-// Load environment variables from .env.local
+// Load environment variables from .env.local for local development
 dotenv.config({ path: '.env.local' });
 
 export default defineConfig({
@@ -13,7 +13,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'https://the-front-3kgeifi5i-quantum-agents.vercel.app',
+    baseURL: process.env.DEPLOYMENT_URL || process.env.BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
     headless: true,
   },

@@ -25,9 +25,18 @@ test.describe('Clerk Authentication', () => {
 
     await page.waitForLoadState('networkidle');
 
+    const username = process.env.TEST_USERNAME;
+    const password = process.env.TEST_PASSWORD;
+
+    if (!username || !password) {
+      console.warn('TEST_USERNAME or TEST_PASSWORD is not set. Skipping sign-in test.');
+      test.skip();
+      return;
+    }
+
     // Fill in the sign-in form
-    await page.fill('input[name="identifier"]', process.env.E2E_CLERK_USER_USERNAME || '');
-    await page.fill('input[name="password"]', process.env.E2E_CLERK_USER_PASSWORD || '');
+    await page.fill('input[name="identifier"]', username);
+    await page.fill('input[name="password"]', password);
 
     // Submit the form
     await page.click('button[type="submit"]');
