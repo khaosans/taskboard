@@ -86,6 +86,7 @@ jobs:
           PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
           E2E_CLERK_USER_USERNAME: ${{ secrets.E2E_CLERK_USER_USERNAME }}
           E2E_CLERK_USER_PASSWORD: ${{ secrets.E2E_CLERK_USER_PASSWORD }}
+          CI: true
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v3
