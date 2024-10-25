@@ -1,22 +1,20 @@
 'use client'
 
 import React from 'react'
-import { useTheme } from '@/hooks/useTheme'
-import Footer from "@/components/footer"
-import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper'
-import TopBar from '@/components/TopBar'
 
-export function ClientLayout({ children }: { children: React.ReactNode }) {
-  const { theme } = useTheme()
-
+const ClientLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-      <TopBar />
-      <RobotTransformerWallpaper />
-      <main className="flex-grow pb-20 pt-16">
-        {children}
-      </main>
-      <Footer />
+    <div className="client-layout">
+      {/* You can add a header, footer, or any other common components here */}
+      <header className="header">
+        <h1>Client Layout Header</h1>
+      </header>
+      <main>{children}</main>
+      <footer className="footer">
+        <p>Footer Content</p>
+      </footer>
     </div>
   )
 }
+
+export default ClientLayout
