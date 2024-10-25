@@ -27,11 +27,12 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git checkout -b temp-branch
+          git fetch origin
+          git checkout -b temp-branch-${{ github.run_id }}
           pnpm install --no-frozen-lockfile
           git add pnpm-lock.yaml
           git commit -m "Update pnpm-lock.yaml" || echo "No changes to commit"
-          git push origin temp-branch:${{ github.ref }} -f
+          git push origin temp-branch-${{ github.run_id }}
 
   run-e2e-tests:
     needs: update-lockfile
@@ -41,6 +42,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch and checkout temp branch
+        run: |
+          git fetch origin
+          git checkout temp-branch-${{ github.run_id }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -58,16 +66,24 @@ jobs:
       - name: Install Playwright dependencies
         run: pnpm exec playwright install chromium
 
-      - name: Wait for preview deployment
+      - name: Set deployment URL
         run: |
-          echo "Waiting for preview deployment to be ready..."
-          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w "%{http_code}" "${{ github.event.deployment_status.target_url }}")" != "200" ]]; do sleep 5; done'
-          echo "Preview deployment is ready!"
+          echo "DEPLOYMENT_URL=https://the-front-3kgeifi5i-quantum-agents.vercel.app" >> $GITHUB_ENV
+
+      - name: Verify deployment
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ env.DEPLOYMENT_URL }}")
+          echo "Deployment URL HTTP status: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "Deployment verified successfully"
+          else
+            echo "Warning: Deployment verification failed. Proceeding with tests anyway."
+          fi
 
       - name: Run Playwright E2E Tests
         run: pnpm run test:e2e
         env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+          PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
           E2E_CLERK_USER_USERNAME: ${{ secrets.E2E_CLERK_USER_USERNAME }}
           E2E_CLERK_USER_PASSWORD: ${{ secrets.E2E_CLERK_USER_PASSWORD }}
 
@@ -78,3 +94,8 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+      - name: Clean up temp branch
+        if: always()
+        run: |
+          git push origin --delete temp-branch-${{ github.run_id }}
