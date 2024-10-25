@@ -15,7 +15,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.DEPLOYMENT_URL || 'http://localhost:3000',
+    baseURL: process.env.DEPLOYMENT_URL,
     trace: 'on-first-retry',
     headless: true,
   },
