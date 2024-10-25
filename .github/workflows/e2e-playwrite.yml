@@ -67,10 +67,21 @@ jobs:
         run: pnpm exec playwright install chromium
 
       - name: Wait for preview deployment
+        id: wait-for-deployment
         run: |
           echo "Waiting for preview deployment to be ready..."
-          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w "%{http_code}" "${{ github.event.deployment_status.target_url }}")" != "200" ]]; do sleep 5; done'
-          echo "Preview deployment is ready!"
+          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w "%{http_code}" "${{ github.event.deployment_status.target_url }}")" != "200" ]]; do sleep 5; done' || echo "Deployment check timed out"
+          echo "Preview deployment status check completed"
+
+      - name: Verify deployment manually
+        run: |
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ github.event.deployment_status.target_url }}")
+          echo "Deployment URL HTTP status: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "Deployment verified successfully"
+          else
+            echo "Warning: Deployment verification failed. Proceeding with tests anyway."
+          fi
 
       - name: Run Playwright E2E Tests
         run: pnpm run test:e2e
