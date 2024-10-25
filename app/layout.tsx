@@ -27,12 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Web3ReactProvider getLibrary={(provider) => new Web3Provider(provider)}>
               <Toaster />
-              <TopBar onWalletChange={(wallet) => {
-                if (typeof window !== 'undefined') {
-                  // eslint-disable-next-line no-console
-                  console.log('Wallet changed:', wallet);
-                }
-              }} selectedWallet={null} />
+              <TopBar />
               {children}
             </Web3ReactProvider>
           </ThemeProvider>

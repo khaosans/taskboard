@@ -1,113 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import { UserButton } from "@clerk/nextjs";
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Bell, Settings, MessageCircle, HardDrive } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import ChatbotModal from './ChatbotModal';
-import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
-import { Button } from '@/components/ui/button';
-import Web3SignIn from './Web3SignIn';
-import { motion } from 'framer-motion';
-import { useNotifications } from '@/hooks/useNotifications';
-import { createClerkSupabaseClient } from 'lib/supabase';
 
-interface TopBarProps {
-    onWalletChange: (wallet: { address: string; type: string } | null) => void;
-    selectedWallet: { address: string; type: string } | null;
-}
-
-const TopBar: React.FC<TopBarProps> = () => {
-    const [isChatOpen, setIsChatOpen] = useState(false);
-    const [isNudged, setIsNudged] = useState(false);
-    const router = useRouter();
-    const { isLoaded, isSignedIn, user } = useUser();
-
-    const toggleChat = () => {
-        setIsChatOpen(!isChatOpen);
-    };
-
-    const handleLogoClick = () => {
-        setIsNudged(true);
-        globalThis.setTimeout(() => setIsNudged(false), 300);
-    };
-
-
-    if (!isLoaded) {
-        return null;
-    }
-
+const TopBar: React.FC = () => {
     return (
-        <>
-            <motion.header
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="flex items-center justify-between p-4 bg-gray-800 text-white"
-            >
-                <Link href="/" className={`text-2xl font-bold hover:text-purple-400 transition-colors ${isNudged ? 'animate-nudge' : ''}`} onClick={handleLogoClick}>
-                    <motion.span
-                        className="glow"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                    >
-                        Quantum Labs
-                    </motion.span>
+        <nav className="bg-gray-800 p-4 fixed top-0 left-0 right-0 z-10">
+            <div className="container mx-auto flex justify-between items-center">
+                <Link href="/" className="text-white text-xl font-bold">
+                    TaskFlow
                 </Link>
-                <nav className="flex space-x-4">
-                    <SignedIn>
-                        <motion.div className="flex space-x-4">
-                            {['Portfolio', 'Defi-Dashboard'].map((item, index) => (
-                                <motion.div
-                                    key={item}
-                                    initial={{ opacity: 0, y: -20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                >
-                                    <Link href={`/${item.toLowerCase().replace(' ', '-')}`} className="hover:text-purple-400 transition-colors">
-                                        {item}
-                                    </Link>
-                                </motion.div>
-                            ))}
-                        </motion.div>
-                    </SignedIn>
-                </nav>
-                <div className="flex items-center space-x-4">
-                    <SignedIn>
-                        <Web3SignIn />
-                        <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button"
-                            onClick={toggleChat}
-                        >
-                            <MessageCircle className="h-5 w-5" />
-                        </motion.button>
-                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                            <Link href="/settings" className="relative hover:bg-gray-700 p-2 rounded flex items-center transition-colors glow-button">
-                                <Settings className="h-5 w-5" />
-                            </Link>
-                        </motion.div>
-                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                            <Link href="/notifications" className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button">
-                                <Bell className="h-5 w-5" />
-                            </Link>
-                        </motion.div>
-                        <UserButton afterSignOutUrl="/" />
-                    </SignedIn>
-                    <SignedOut>
-                        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                            <Link href="/login" className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition-colors">
-                                Sign In
-                            </Link>
-                        </motion.div>
-                    </SignedOut>
+                <div className="flex items-center">
+                    <UserButton afterSignOutUrl="/" />
                 </div>
-            </motion.header>
-            {isChatOpen && <ChatbotModal isOpen={isChatOpen} />}
-        </>
+            </div>
+        </nav>
     );
-}
+};
 
 export default TopBar;
