@@ -66,16 +66,13 @@ jobs:
       - name: Install Playwright dependencies
         run: pnpm exec playwright install chromium
 
-      - name: Wait for preview deployment
-        id: wait-for-deployment
+      - name: Set deployment URL
         run: |
-          echo "Waiting for preview deployment to be ready..."
-          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w "%{http_code}" "${{ github.event.deployment_status.target_url }}")" != "200" ]]; do sleep 5; done' || echo "Deployment check timed out"
-          echo "Preview deployment status check completed"
+          echo "DEPLOYMENT_URL=https://the-front-3kgeifi5i-quantum-agents.vercel.app" >> $GITHUB_ENV
 
-      - name: Verify deployment manually
+      - name: Verify deployment
         run: |
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ github.event.deployment_status.target_url }}")
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ env.DEPLOYMENT_URL }}")
           echo "Deployment URL HTTP status: $HTTP_STATUS"
           if [ "$HTTP_STATUS" = "200" ]; then
             echo "Deployment verified successfully"
@@ -86,7 +83,7 @@ jobs:
       - name: Run Playwright E2E Tests
         run: pnpm run test:e2e
         env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+          PLAYWRIGHT_TEST_BASE_URL: ${{ env.DEPLOYMENT_URL }}
           E2E_CLERK_USER_USERNAME: ${{ secrets.E2E_CLERK_USER_USERNAME }}
           E2E_CLERK_USER_PASSWORD: ${{ secrets.E2E_CLERK_USER_PASSWORD }}
 
