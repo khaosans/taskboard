@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { useTheme } from '@/hooks/useTheme'
-import TopBar from '@/components/TopBar'
 import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper'
 
 interface ClientLayoutProps {
@@ -14,9 +13,8 @@ const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
 
   return (
     <div className={`min-h-screen flex flex-col ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-      <TopBar />
       <RobotTransformerWallpaper />
-      <main className="flex-grow pb-20 pt-16">
+      <main className="flex-grow">
         {children}
       </main>
     </div>

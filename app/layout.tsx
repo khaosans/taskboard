@@ -26,9 +26,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <body suppressHydrationWarning>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Web3ReactProvider getLibrary={(provider) => new Web3Provider(provider)}>
+              <div className="flex flex-col min-h-screen">
+                <TopBar />
+                <main className="flex-grow">
+                  {children}
+                </main>
+              </div>
               <Toaster />
-              <TopBar />
-              {children}
             </Web3ReactProvider>
           </ThemeProvider>
         </body>
