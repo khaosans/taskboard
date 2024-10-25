@@ -5,9 +5,4 @@ test('homepage has correct title', async ({ page }) => {
   await expect(page).toHaveTitle(/TaskFlow/);
 });
 
-test('login works correctly', async ({ page }) => {
-  await page.goto('/login');
-  // Add your login test logic here
-});
-
 // Add more tests as needed

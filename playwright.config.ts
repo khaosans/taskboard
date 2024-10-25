@@ -13,7 +13,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL,
+    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'https://the-front-3kgeifi5i-quantum-agents.vercel.app',
     trace: 'on-first-retry',
     headless: true,
   },
@@ -23,5 +23,4 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  // Remove the webServer configuration as we're using the deployed URL
 });
