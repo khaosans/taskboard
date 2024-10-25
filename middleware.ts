@@ -7,6 +7,8 @@ if (!publishableKey) {
     throw new Error('NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not defined in the environment variables.');
 }
 
+console.log('Publishable Key:', publishableKey); // Debugging line
+
 export default authMiddleware({
   publicRoutes: ['((?!^/admin).*)'],
 })
