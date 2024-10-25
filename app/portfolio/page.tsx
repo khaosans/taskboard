@@ -18,8 +18,25 @@ interface PortfolioData {
 export default function PortfolioPage() {
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session) {
+        console.error('Error fetching user session:', error);
+        setUser(null);
+        return;
+      }
+      setUser(session.user);
+    };
+
+    checkUser();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
     const fetchPortfolioData = async () => {
       try {
         const { data, error } = await supabase
@@ -35,11 +52,16 @@ export default function PortfolioPage() {
         setLoading(false);
       }
     };
+
     fetchPortfolioData();
-  }, []);
+  }, [user]);
 
   if (loading) {
     return <Spinner />;
+  }
+
+  if (!user) {
+    return <div>Please sign in to view your portfolio.</div>;
   }
 
   if (!portfolioData) {

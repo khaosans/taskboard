@@ -3,12 +3,11 @@
 import React from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from 'next-themes';
-import './styles/globals.css'; // Ensure this path is correct
+import '../styles/global.css'; // Ensure this path is correct
 import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
-import TopBar from 'components/TopBar';
-import RobotTransformerWallpaper from 'components/RobotTransformerWallpaper';
+import TopBar from '@/components/TopBar';
 import { useWallet } from '@/hooks/useWallet';
 
 function getLibrary(provider: any): Web3Provider {
@@ -29,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 onWalletChange={(wallet: any) => {
                   // Implement your wallet change logic here
                 }}
-                selectedWallet={wallet} // Ensure wallet is defined and has the correct type
+                selectedWallet={wallet}
               />
               {children}
             </Web3ReactProvider>

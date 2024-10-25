@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES6",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
+    "allowJs": false,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
@@ -37,6 +37,9 @@
       ],
       "@globals.css": [
         "globals.css"
+      ],
+      "@/styles/*": [
+        "styles/*"
       ]
     },
     "typeRoots": [
