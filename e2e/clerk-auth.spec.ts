@@ -2,10 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Clerk Authentication', () => {
   test('should navigate to sign-in page', async ({ page }) => {
-    // Use the baseURL from the configuration instead of hardcoding it
     await page.goto('/');
     
-    // Wait for the page to load
     await page.waitForLoadState('networkidle');
 
     // Look for a sign-in link or button and click it
@@ -23,10 +21,8 @@ test.describe('Clerk Authentication', () => {
   });
 
   test('should sign in successfully', async ({ page }) => {
-    // Navigate to the sign-in page
     await page.goto('/sign-in');
 
-    // Wait for the page to load
     await page.waitForLoadState('networkidle');
 
     // Fill in the sign-in form

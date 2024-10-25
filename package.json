@@ -12,7 +12,7 @@
     "type-check": "tsc --noEmit",
     "clean": "rm -rf .next",
     "clean:build": "npm run clean && npm run build",
-    "test:e2e": "playwright test --ui",
+    "test:e2e": "playwright test",
     "test:all": "pnpm install && pnpm build && pnpm test && concurrently \"pnpm run dev\" \"npx playwright test\" --kill-others --success first",
     "test:playwright": "npx playwright test"
   },

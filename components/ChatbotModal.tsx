@@ -6,6 +6,7 @@ import Modal from './Modal';
 interface ChatbotModalProps {
   isOpen: boolean;
   onClose: () => void;
+  // Add any other props your component needs
 }
 
 const ChatbotModal: React.FC<ChatbotModalProps> = ({ isOpen, onClose }) => {
