@@ -25,11 +25,11 @@ test.describe('Clerk Authentication', () => {
 
     await page.waitForLoadState('networkidle');
 
-    const username = process.env.E2E_CLERK_USER_USERNAME;
-    const password = process.env.E2E_CLERK_USER_PASSWORD;
+    const username = process.env.TEST_USERNAME;
+    const password = process.env.TEST_PASSWORD;
 
     if (!username || !password) {
-      console.warn('E2E_CLERK_USER_USERNAME or E2E_CLERK_USER_PASSWORD is not set. Skipping sign-in test.');
+      console.warn('TEST_USERNAME or TEST_PASSWORD is not set. Skipping sign-in test.');
       test.skip();
       return;
     }
