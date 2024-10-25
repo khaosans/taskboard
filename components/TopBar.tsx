@@ -1,13 +1,23 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
-import { Button } from '@/components/ui/button';
-import Web3SignIn from './Web3SignIn';
+import { Button } from '../ui/button'; // Updated import path to use relative path
 import { motion } from 'framer-motion';
 
-const TopBar: React.FC = () => {
+interface Wallet { // Added Wallet interface definition
+  total_usd_value: number;
+  address: string;
+  type: string;
+}
+
+interface TopBarProps {
+  onWalletChange: (wallet: Wallet | null) => void; // Updated type for wallet
+  selectedWallet: Wallet | null; // Ensure Wallet type is defined
+}
+
+const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
   const { isLoaded, isSignedIn } = useUser();
 
   if (!isLoaded) {

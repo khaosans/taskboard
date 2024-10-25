@@ -26,6 +26,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Web3ReactProvider getLibrary={getLibrary}>
               <Toaster />
               <TopBar 
+                onWalletChange={(wallet: any) => {
+                  // Implement your wallet change logic here
+                }} 
+                selectedWallet={wallet} // Ensure wallet is defined and has the correct type
               />
               {children}
             </Web3ReactProvider>
