@@ -25,9 +25,16 @@ test.describe('Clerk Authentication', () => {
 
     await page.waitForLoadState('networkidle');
 
+    const username = process.env.E2E_CLERK_USER_USERNAME;
+    const password = process.env.E2E_CLERK_USER_PASSWORD;
+
+    if (!username || !password) {
+      throw new Error('E2E_CLERK_USER_USERNAME or E2E_CLERK_USER_PASSWORD is not set');
+    }
+
     // Fill in the sign-in form
-    await page.fill('input[name="identifier"]', process.env.E2E_CLERK_USER_USERNAME || '');
-    await page.fill('input[name="password"]', process.env.E2E_CLERK_USER_PASSWORD || '');
+    await page.fill('input[name="identifier"]', username);
+    await page.fill('input[name="password"]', password);
 
     // Submit the form
     await page.click('button[type="submit"]');
