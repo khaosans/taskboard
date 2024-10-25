@@ -3,9 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 
 // Load environment variables from .env.local for local development
-if (process.env.NODE_ENV !== 'production') {
-  dotenv.config({ path: '.env.local' });
-}
+dotenv.config({ path: '.env.local' });
 
 export default defineConfig({
   testDir: './tests',
@@ -15,7 +13,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.DEPLOYMENT_URL,
+    baseURL: process.env.DEPLOYMENT_URL || process.env.BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
     headless: true,
   },
