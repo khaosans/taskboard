@@ -29,7 +29,9 @@ test.describe('Clerk Authentication', () => {
     const password = process.env.E2E_CLERK_USER_PASSWORD;
 
     if (!username || !password) {
-      throw new Error('E2E_CLERK_USER_USERNAME or E2E_CLERK_USER_PASSWORD is not set');
+      console.warn('E2E_CLERK_USER_USERNAME or E2E_CLERK_USER_PASSWORD is not set. Skipping sign-in test.');
+      test.skip();
+      return;
     }
 
     // Fill in the sign-in form
