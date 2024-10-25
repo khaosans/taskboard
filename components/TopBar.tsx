@@ -2,27 +2,18 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Bell, Settings, MessageCircle, HardDrive } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Bell, Settings, MessageCircle, Wallet } from 'lucide-react';
 import ChatbotModal from './ChatbotModal';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
-import { Button } from '@/components/ui/button';
-import Web3SignIn from './Web3SignIn';
 import { motion } from 'framer-motion';
-import { useNotifications } from '@/hooks/useNotifications';
-import { createClerkSupabaseClient } from 'lib/supabase';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { useWallet } from '@solana/wallet-adapter-react';
 
-interface TopBarProps {
-    onWalletChange?: (wallet: { address: string; type: string } | null) => void;
-    selectedWallet?: { address: string; type: string } | null;
-}
-
-const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
+const TopBar: React.FC = () => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isNudged, setIsNudged] = useState(false);
-    const router = useRouter();
     const { isLoaded, isSignedIn, user } = useUser();
+    const { connected, publicKey } = useWallet();
 
     const toggleChat = () => {
         setIsChatOpen(!isChatOpen);
@@ -31,12 +22,6 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
     const handleLogoClick = () => {
         setIsNudged(true);
         globalThis.setTimeout(() => setIsNudged(false), 300);
-    };
-
-    const handleWalletChange = (wallet: { address: string; type: string } | null) => {
-        if (onWalletChange) {
-            onWalletChange(wallet);
-        }
     };
 
     if (!isLoaded) {
@@ -63,7 +48,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                 <nav className="flex space-x-4">
                     <SignedIn>
                         <motion.div className="flex space-x-4">
-                            {['Portfolio', 'Defi-Dashboard'].map((item, index) => (
+                            {['Portfolio', 'Defi-Dashboard', 'Solana Wallet'].map((item, index) => (
                                 <motion.div
                                     key={item}
                                     initial={{ opacity: 0, y: -20 }}
@@ -80,12 +65,12 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                 </nav>
                 <div className="flex items-center space-x-4">
                     <SignedIn>
-                        <Web3SignIn />
+                        <WalletMultiButton />
                         <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button"
-                            onClick={() => setIsChatOpen(true)}
+                            onClick={toggleChat}
                         >
                             <MessageCircle className="h-5 w-5" />
                         </motion.button>
