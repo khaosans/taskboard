@@ -8,6 +8,11 @@ const nextConfig = {
     config.cache = false;
     return config;
   },
+  // Add these lines
+  experimental: {
+    appDir: true,
+    serverComponentsExternalPackages: ['@clerk/nextjs'],
+  },
 };
 
 module.exports = nextConfig;
