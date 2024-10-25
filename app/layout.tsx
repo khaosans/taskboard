@@ -3,7 +3,7 @@
 import React from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from 'next-themes';
-import '@/styles/global.css';
+import './styles/globals.css'; // Ensure this path is correct
 import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
@@ -25,10 +25,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Web3ReactProvider getLibrary={getLibrary}>
               <Toaster />
-              <TopBar 
+              <TopBar
                 onWalletChange={(wallet: any) => {
                   // Implement your wallet change logic here
-                }} 
+                }}
                 selectedWallet={wallet} // Ensure wallet is defined and has the correct type
               />
               {children}

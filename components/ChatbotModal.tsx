@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import Modal from './Modal';
 
 interface ChatbotModalProps {
-  isOpen: boolean;
   onClose: () => void;
+  isOpen: boolean;
 }
 
-const ChatbotModal: React.FC<ChatbotModalProps> = ({ isOpen, onClose }) => {
+const ChatbotModal: React.FC<ChatbotModalProps> = ({ onClose, isOpen }) => {
+  if (!isOpen) return null;
+
   const [message, setMessage] = useState('');
   const [chatHistory, setChatHistory] = useState<string[]>([]);
 

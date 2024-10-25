@@ -1,25 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-interface Wallet {
-  total_usd_value: number;
+export interface Wallet {
   address: string;
   type: string;
+  total_usd_value: number;
 }
 
-interface WalletState {
+export interface WalletState {
   wallet: Wallet | null;
-  setWallet: (wallet: Wallet | null) => void;
+  connectWallet: () => void;
+  disconnectWallet: () => void;
 }
 
-export function useWallet(): WalletState {
+export const useWallet = (): WalletState => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
 
-  useEffect(() => {
-    const savedWallet = localStorage.getItem('connectedWallet');
-    if (savedWallet) {
-      setWallet(JSON.parse(savedWallet));
-    }
-  }, []);
+  const connectWallet = () => {
+    // Implement your wallet connection logic here
+    // For example:
+    setWallet({
+      address: '0x1234...5678',
+      type: 'Ethereum',
+      total_usd_value: 1000
+    });
+  };
 
-  return { wallet, setWallet };
-}
+  const disconnectWallet = () => {
+    setWallet(null);
+  };
+
+  return { wallet, connectWallet, disconnectWallet };
+};

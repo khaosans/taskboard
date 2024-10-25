@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
-import { Button } from '../ui/button'; // Updated import path to use relative path
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
 interface Wallet { // Added Wallet interface definition

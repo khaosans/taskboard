@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { useTheme } from '@/hooks/useTheme';
-import '@/styles/global.css';
 import ChatbotModal from '@/components/ChatbotModal';
+
+import '../../styles/global.css';
 import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper';
 
 interface ChatLayoutProps {

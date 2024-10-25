@@ -2,7 +2,7 @@ import React from 'react';
 import { useWallet } from '@/hooks/useWallet';
 
 const WalletInfo: React.FC = () => {
-  const { wallet, setWallet } = useWallet();
+  const { wallet, connectWallet, disconnectWallet } = useWallet();
 
   return (
     <div>
@@ -10,9 +10,13 @@ const WalletInfo: React.FC = () => {
         <div>
           <p>Address: {wallet.address}</p>
           <p>Type: {wallet.type}</p>
+          <button onClick={disconnectWallet}>Disconnect Wallet</button>
         </div>
       ) : (
-        <p>No wallet connected.</p>
+        <div>
+          <p>No wallet connected.</p>
+          <button onClick={connectWallet}>Connect Wallet</button>
+        </div>
       )}
     </div>
   );
