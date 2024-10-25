@@ -2,11 +2,14 @@
 
 import React from 'react'
 import { useTheme } from '@/hooks/useTheme'
-import Footer from "@/components/footer"
-import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper'
 import TopBar from '@/components/TopBar'
+import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper'
 
-export function ClientLayout({ children }: { children: React.ReactNode }) {
+interface ClientLayoutProps {
+  children: React.ReactNode
+}
+
+const ClientLayout: React.FC<ClientLayoutProps> = ({ children }) => {
   const { theme } = useTheme()
 
   return (
@@ -16,7 +19,8 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
       <main className="flex-grow pb-20 pt-16">
         {children}
       </main>
-      <Footer />
     </div>
   )
 }
+
+export default ClientLayout
