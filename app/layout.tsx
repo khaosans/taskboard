@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex flex-col min-h-screen">
-            <TopBar onWalletChange={() => {}} selectedWallet={null} />
+            <TopBar selectedWallet={null} />
             <main className="flex-grow">
               {children}
             </main>
