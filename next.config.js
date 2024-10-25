@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -8,11 +9,14 @@ const nextConfig = {
     config.cache = false;
     return config;
   },
-  // Add these lines
   experimental: {
     appDir: true,
     serverComponentsExternalPackages: ['@clerk/nextjs'],
   },
+  env: {
+    BASE_URL: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
+  },
 };
 
 module.exports = nextConfig;
+/* eslint-enable no-undef */

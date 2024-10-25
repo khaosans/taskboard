@@ -29,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Toaster />
               <TopBar onWalletChange={(wallet) => {
                 if (typeof window !== 'undefined') {
+                  // eslint-disable-next-line no-console
                   console.log('Wallet changed:', wallet);
                 }
               }} selectedWallet={null} />

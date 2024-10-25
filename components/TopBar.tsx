@@ -14,11 +14,11 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { createClerkSupabaseClient } from 'lib/supabase';
 
 interface TopBarProps {
-    onWalletChange?: (wallet: { address: string; type: string } | null) => void;
-    selectedWallet?: { address: string; type: string } | null;
+    onWalletChange: (wallet: { address: string; type: string } | null) => void;
+    selectedWallet: { address: string; type: string } | null;
 }
 
-const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
+const TopBar: React.FC<TopBarProps> = () => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isNudged, setIsNudged] = useState(false);
     const router = useRouter();
@@ -33,11 +33,6 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
         globalThis.setTimeout(() => setIsNudged(false), 300);
     };
 
-    const handleWalletChange = (wallet: { address: string; type: string } | null) => {
-        if (onWalletChange) {
-            onWalletChange(wallet);
-        }
-    };
 
     if (!isLoaded) {
         return null;
@@ -85,7 +80,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button"
-                            onClick={() => setIsChatOpen(true)}
+                            onClick={toggleChat}
                         >
                             <MessageCircle className="h-5 w-5" />
                         </motion.button>
@@ -110,7 +105,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                     </SignedOut>
                 </div>
             </motion.header>
-            <ChatbotModal isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+            {isChatOpen && <ChatbotModal isOpen={isChatOpen} />}
         </>
     );
 }
