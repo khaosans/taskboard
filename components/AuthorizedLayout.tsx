@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 import { createClerkSupabaseClient } from '@/components/lib/supabase';
+import logger from '@/lib/logger';
 
 const AuthorizedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
@@ -10,13 +11,18 @@ const AuthorizedLayout: React.FC<{ children: React.ReactNode }> = ({ children })
 
     useEffect(() => {
         const checkSession = async () => {
-            const client = await createClerkSupabaseClient();
-            const { data: { user } } = await client.auth.getUser();
-            if (!user) {
+            try {
+                const client = await createClerkSupabaseClient();
+                const { data: { user } } = await client.auth.getUser();
+                if (!user) {
+                    router.push('/login');
+                } else {
+                    setUser(user);
+                    setLoading(false);
+                }
+            } catch (error) {
+                logger.error('Error checking session:', (error as Error).message);
                 router.push('/login');
-            } else {
-                setUser(user);
-                setLoading(false);
             }
         };
 
