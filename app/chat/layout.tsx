@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { useTheme } from '@/hooks/useTheme';
-import '@/styles/global.css';
 import ChatbotModal from '@/components/ChatbotModal';
+
+import '../../styles/global.css';
 import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper';
 
 interface ChatLayoutProps {
@@ -22,10 +23,7 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({ children }) => {
           <button onClick={() => setIsChatbotModalOpen(true)}>Open Chatbot</button>
           {children}
           {isChatbotModalOpen && (
-            <ChatbotModal 
-              isOpen={isChatbotModalOpen} 
-              onClose={() => setIsChatbotModalOpen(false)} 
-            />
+            <ChatbotModal isOpen={isChatbotModalOpen} onClose={() => setIsChatbotModalOpen(false)}/>
           )}
         </div>
       </body>

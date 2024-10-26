@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useWallet } from '@/hooks/useWallet';
+import useWallet from '@/hooks/useWallet';
 import { ethers } from 'ethers';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Spinner from '@/components/Spinner';

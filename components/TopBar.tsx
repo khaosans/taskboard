@@ -1,21 +1,28 @@
 'use client';
 
-import React from 'react';
-import { UserButton } from "@clerk/nextjs";
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Bell, Settings, MessageCircle, HardDrive } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import ChatbotModal from './ChatbotModal';
+import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
+import { Button } from '@/components/ui/button';
+import Web3SignIn from './Web3SignIn';
+import { motion } from 'framer-motion';
+import { useNotifications } from '@/hooks/useNotifications';
+import { createClerkSupabaseClient } from 'lib/supabase';
 
-const TopBar: React.FC = () => {
+interface TopBarProps {
+    onWalletChange: (wallet: any) => void;
+    selectedWallet: any;
+}
+
+const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
     return (
-        <nav className="bg-gray-800 p-4 fixed top-0 left-0 right-0 z-10">
-            <div className="container mx-auto flex justify-between items-center">
-                <Link href="/" className="text-white text-xl font-bold">
-                    TaskFlow
-                </Link>
-                <div className="flex items-center">
-                    <UserButton afterSignOutUrl="/" />
-                </div>
-            </div>
-        </nav>
+        <div>
+            {/* TopBar content */}
+        </div>
     );
 };
 

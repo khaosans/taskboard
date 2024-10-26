@@ -17,3 +17,7 @@ export interface Agent {
   expertise: string;
 }
 
+export interface Wallet {
+  address: string;
+  total_usd_value: number;
+}

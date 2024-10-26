@@ -1,24 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
+import { Wallet } from '../app/types';
 
-interface Wallet {
-  address: string;
-  type: string;
-}
-
-interface WalletState {
-  wallet: Wallet | null;
-  setWallet: (wallet: Wallet | null) => void;
-}
-
-export function useWallet(): WalletState {
+const useWallet = () => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
 
   useEffect(() => {
-    const savedWallet = localStorage.getItem('connectedWallet');
-    if (savedWallet) {
-      setWallet(JSON.parse(savedWallet));
-    }
+    // Fetch wallet data here
+    // For example:
+    // const fetchWallet = async () => {
+    //   const response = await fetch('/api/wallet');
+    //   const data = await response.json();
+    //   setWallet(data);
+    // };
+    // fetchWallet();
   }, []);
 
-  return { wallet, setWallet };
-}
+  return { wallet };
+};
+
+export default useWallet;

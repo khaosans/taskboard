@@ -2,10 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
 import { Redis } from '@upstash/redis';
 
-// Add these lines
-import 'server-only';
-import { headers } from 'next/headers';
-
 // Initialize Upstash Redis client
 const redis = new Redis({
   url: 'https://viable-ladybird-24042.upstash.io',

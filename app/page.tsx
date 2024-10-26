@@ -5,7 +5,9 @@ import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import { ArrowRight } from 'lucide-react';
 import ChainInfo from '@/components/ChainInfo';
-import { useTheme } from '@/hooks/useTheme';
+import { useTheme } from '../hooks/useTheme';
+import Footer from '../components/footer';
+import Header from '../components/Header'; // Ensure this import is correct
 
 const WelcomePage: React.FC = () => {
   const { isSignedIn, user } = useUser();
@@ -14,6 +16,7 @@ const WelcomePage: React.FC = () => {
 
   return (
     <div className={`min-h-screen bg-gray-900 text-white ${theme}`}>
+      <Header />
       <div className="container mx-auto px-4 py-16">
         <header className="text-center mb-16">
           <h1 className="text-5xl font-bold mb-4">Welcome to Quantum Labs</h1>
@@ -54,6 +57,7 @@ const WelcomePage: React.FC = () => {
           <p>&copy; 2023 Quantum Labs. All rights reserved.</p>
         </footer>
       </div>
+      <Footer />
     </div>
   );
 };

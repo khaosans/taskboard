@@ -15,7 +15,7 @@ const signOut = async () => {
   console.log('User signed out');
 };
 
-export function Header() {
+const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
@@ -82,4 +82,6 @@ export function Header() {
       </div>
     </header>
   );
-}
+};
+
+export default Header;

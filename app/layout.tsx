@@ -1,33 +1,40 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from 'next-themes';
-import '@/styles/global.css';
+import '../styles/global.css'; // Ensure this path is correct
 import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
-import TopBar from 'components/TopBar';
+import TopBar from '@/components/TopBar';
+import useWallet from "@/hooks/useWallet";
+
+// Import the useWallet hook
+
+
+function getLibrary(provider: any): Web3Provider {
+  return new Web3Provider(provider);
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false);
+//use wallet hook
+    const { wallet } = useWallet();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body suppressHydrationWarning>
+      <html lang="en">
+        <body>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Web3ReactProvider getLibrary={(provider) => new Web3Provider(provider)}>
+            <Web3ReactProvider getLibrary={getLibrary}>
               <Toaster />
-              <TopBar />
+              <TopBar
+                onWalletChange={(wallet: any) => {
+                  // Implement your wallet change logic here
+                }}
+                selectedWallet={wallet}
+              />
               {children}
             </Web3ReactProvider>
           </ThemeProvider>

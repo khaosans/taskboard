@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Settings, Bell, Lock, Moon } from 'lucide-react'
 import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper'
+import TopBar from '../../components/TopBar'
 
 export default function SettingsPage() {
     return (
@@ -72,6 +73,7 @@ export default function SettingsPage() {
                     </div>
                 </div>
             </div>
+            <TopBar onWalletChange={() => {}} selectedWallet={null} />
         </div>
     );
 }

@@ -1,19 +1,14 @@
 import React from 'react';
-import { useWallet } from '@/hooks/useWallet';
+import { Wallet } from '../app/types';
 
-const WalletInfo: React.FC = () => {
-  const { wallet, setWallet } = useWallet();
+interface WalletInfoProps {
+  wallet: Wallet | null;
+}
 
+const WalletInfo: React.FC<WalletInfoProps> = ({ wallet }) => {
   return (
     <div>
-      {wallet ? (
-        <div>
-          <p>Address: {wallet.address}</p>
-          <p>Type: {wallet.type}</p>
-        </div>
-      ) : (
-        <p>No wallet connected.</p>
-      )}
+      {wallet ? <p>Wallet Address: {wallet.address}</p> : <p>No wallet connected</p>}
     </div>
   );
 };

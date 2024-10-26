@@ -4,9 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell, Zap, Shield, Rocket, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
 import RobotTransformerWallpaper from '@/components/RobotTransformerWallpaper';
-import { useWallet } from '@/hooks/useWallet';
+import useWallet from '@/hooks/useWallet';
 import { useUser } from '@clerk/nextjs';
 import vercelKVClient from '@/utils/vercelKV';
+import axios from 'axios';
+import { Wallet } from '../types';
 
 interface Notification {
   icon: string;
@@ -19,7 +21,7 @@ const iconMap: { [key: string]: React.ElementType } = {
   Bell, Zap, Shield, Rocket, TrendingUp, TrendingDown, AlertTriangle
 };
 
-export default function NotificationsPage() {
+export default async function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { wallet } = useWallet();
   const { isLoaded, isSignedIn, user } = useUser();
@@ -61,15 +63,17 @@ export default function NotificationsPage() {
     const newNotifications: Notification[] = [];
 
     // Fetch portfolio data
-    const portfolioResponse = await globalThis.fetch(`/api/debank/user/total_balance?id=${wallet?.address}`);
-    const portfolioData = await portfolioResponse.json();
+    if (wallet) {
+      const portfolioResponse = await axios.get(`/api/debank/user/total_balance?id=${wallet.address}`);
+      const portfolioData = portfolioResponse.data;
+    }
 
     // Fetch market data
-    const marketResponse = await globalThis.fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1');
-    const marketData = await marketResponse.json();
+    const marketResponse = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1');
+    const marketData = marketResponse.data;
 
     // Generate wallet notifications
-    if (portfolioData.total_usd_value > 10000) {
+    if (wallet && typeof wallet.total_usd_value === 'number' && wallet.total_usd_value > 10000) {
       newNotifications.push({
         icon: 'Shield',
         title: "High-Value Wallet Alert",
