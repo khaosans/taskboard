@@ -73,7 +73,7 @@ export default async function NotificationsPage() {
     const marketData = marketResponse.data;
 
     // Generate wallet notifications
-    if (wallet && 'total_usd_value' in wallet && wallet.total_usd_value > 10000) {
+    if (wallet && typeof wallet.total_usd_value === 'number' && wallet.total_usd_value > 10000) {
       newNotifications.push({
         icon: 'Shield',
         title: "High-Value Wallet Alert",

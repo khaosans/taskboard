@@ -5,11 +5,12 @@ import { useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import logger from '@/lib/logger';
-import { useWallet } from '@/hooks/useWallet';
+import useWallet from '@/hooks/useWallet';
 import Spinner from '@/components/Spinner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTheme } from 'next-themes';
 import { Wallet } from '../types';
+import { useRouter } from 'next/navigation';
 
 interface ChainData {
   id: string;
@@ -41,6 +42,7 @@ export default function PortfolioPage() {
   const { wallet } = useWallet();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -131,7 +133,7 @@ export default function PortfolioPage() {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <h1 className="text-2xl font-bold mb-4">Please sign in to view your portfolio</h1>
-        <Button onClick={() => window.location.href = '/sign-in'}>Sign In</Button>
+        <Button onClick={() => router.push('/sign-in')}>Sign In</Button>
       </div>
     );
   }
