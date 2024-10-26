@@ -5,9 +5,13 @@ import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import { ArrowRight } from 'lucide-react';
 import ChainInfo from '@/components/ChainInfo';
+<<<<<<< HEAD
 import { useTheme } from '../hooks/useTheme';
 import Footer from '../components/footer';
 import Header from '../components/Header'; // Ensure this import is correct
+=======
+import { useTheme } from '@/hooks/useTheme';
+>>>>>>> e53f5bc (Feature/market view (#51))
 
 const WelcomePage: React.FC = () => {
   const { isSignedIn, user } = useUser();
