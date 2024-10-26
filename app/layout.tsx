@@ -8,14 +8,19 @@ import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { Toaster } from 'react-hot-toast';
 import TopBar from '@/components/TopBar';
-import { useWallet } from '@/hooks/useWallet';
+import useWallet from "@/hooks/useWallet";
+
+// Import the useWallet hook
+
 
 function getLibrary(provider: any): Web3Provider {
   return new Web3Provider(provider);
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const { wallet } = useWallet();
+//use wallet hook
+    const { wallet } = useWallet();
+
 
   return (
     <ClerkProvider>

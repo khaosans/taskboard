@@ -1,23 +1,13 @@
 import React from 'react';
-import { useWallet } from '@/hooks/useWallet';
+import useWallet from '@/hooks/useWallet';
 
 const WalletInfo: React.FC = () => {
-  const { wallet, connectWallet, disconnectWallet } = useWallet();
+  const { wallet } = useWallet();
 
   return (
     <div>
-      {wallet ? (
-        <div>
-          <p>Address: {wallet.address}</p>
-          <p>Type: {wallet.type}</p>
-          <button onClick={disconnectWallet}>Disconnect Wallet</button>
-        </div>
-      ) : (
-        <div>
-          <p>No wallet connected.</p>
-          <button onClick={connectWallet}>Connect Wallet</button>
-        </div>
-      )}
+      {/* Display wallet information */}
+      {wallet ? <p>Wallet Address: {wallet}</p> : <p>No wallet connected</p>}
     </div>
   );
 };

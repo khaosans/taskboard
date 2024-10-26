@@ -1,43 +1,29 @@
-import { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import axios from 'axios';
 
-export async function POST(req: NextRequest) {
-  const { message, model } = await req.json();
+export async function POST(req: Request) {
+  const { message } = await req.json();
 
-  const response = await fetch('http://localhost:11434/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: 'user', content: message }],
-      stream: true,
-    }),
-  });
+  const headers = req.headers;
+  let getHeaders = await headers;
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch from Ollama');
-  }
-
-  const stream = new ReadableStream({
-    async start(controller) {
-      const reader = response.body?.getReader();
-      while (true) {
-        const { done, value } = await reader!.read();
-        if (done) break;
-        const chunk = new TextDecoder().decode(value);
-        try {
-          const parsed = JSON.parse(chunk);
-          if (parsed.message?.content) {
-            controller.enqueue(parsed.message.content);
-          }
-        } catch (e) {
-          console.error('Error parsing JSON:', e);
+    console.log(getHeaders);
+  try {
+    const response = await axios.post(
+        'https://api-inference.huggingface.co/models/ollama/chatbot',
+        { inputs: message },
+        {
+          headers: {
+            Authorization: `Bearer YOUR_HUGGING_FACE_API_KEY`,
+          },
         }
-      }
-      controller.close();
-    },
-  });
+    );
 
-  return new Response(stream, {
-    headers: { 'Content-Type': 'text/plain' },
-  });
+    const reply = response.data.generated_text;
+
+    return NextResponse.json({ reply });
+  } catch (error) {
+    console.error('Error in chatbot API:', error);
+    return NextResponse.json({ error: 'An error occurred while processing your request.' }, { status: 500 });
+  }
 }

@@ -9,6 +9,7 @@ import { useWallet } from '@/hooks/useWallet';
 import Spinner from '@/components/Spinner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTheme } from 'next-themes';
+import { Wallet } from '../types';
 
 interface ChainData {
   id: string;
@@ -38,7 +39,12 @@ export default function PortfolioPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const { wallet } = useWallet();
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isUserLoaded && isSignedIn && user && wallet) {
@@ -82,7 +88,7 @@ export default function PortfolioPage() {
   const fetchProtocolData = async (chainId: string) => {
     setChainLoading(chainId);
     try {
-      const response = await fetch(`/api/debank/user/protocols?id=${wallet}&chain_id=${chainId}`, {
+      const response = await fetch(`/api/debank/user/protocols?id=${wallet?.address}&chain_id=${chainId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -141,6 +147,10 @@ export default function PortfolioPage() {
 
   if (error) {
     return <div>Error: {error}</div>;
+  }
+
+  if (!mounted) {
+    return null; // Render nothing on the server
   }
 
   return (
