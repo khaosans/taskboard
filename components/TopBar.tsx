@@ -2,11 +2,15 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Bell, Settings, MessageCircle } from 'lucide-react';
-import ChatbotModal from '@/components/ChatbotModal';
+import { Badge } from '@/components/ui/badge';
+import ChatbotModal from './ChatbotModal';
 import { UserButton, SignedIn, SignedOut, useUser } from '@clerk/nextjs';
-import Web3SignIn from '@/components/Web3SignIn';
+import { Button } from '@/components/ui/button';
+import Web3SignIn from './Web3SignIn';
 import { motion } from 'framer-motion';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface TopBarProps {
     onWalletChange: (wallet: { address: string; type: string } | null) => void;
@@ -16,7 +20,9 @@ interface TopBarProps {
 const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isNudged, setIsNudged] = useState(false);
-    const { isLoaded } = useUser();
+    const router = useRouter();
+    const { isLoaded, isSignedIn, user } = useUser();
+    const unreadCount = useNotifications();
 
     const toggleChat = () => {
         setIsChatOpen(!isChatOpen);
@@ -55,7 +61,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                 <nav className="flex space-x-4">
                     <SignedIn>
                         <motion.div className="flex space-x-4">
-                            {['Portfolio', 'Defi-dashboard'].map((item, index) => (
+                            {['Members', 'Task Manager', 'Agent Manager', 'Portfolio'].map((item, index) => (
                                 <motion.div
                                     key={item}
                                     initial={{ opacity: 0, y: -20 }}
@@ -72,7 +78,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                 </nav>
                 <div className="flex items-center space-x-4">
                     <SignedIn>
-                        <Web3SignIn />
+                        <Web3SignIn/>
                         <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
@@ -89,6 +95,8 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                             <Link href="/notifications" className="relative hover:bg-gray-700 p-2 rounded transition-colors glow-button">
                                 <Bell className="h-5 w-5" />
+                                <Badge variant="destructive" className="absolute -top-2 -right-2 px-2 py-1 text-xs">
+                                </Badge>
                             </Link>
                         </motion.div>
                         <UserButton afterSignOutUrl="/" />
@@ -102,7 +110,7 @@ const TopBar: React.FC<TopBarProps> = ({ onWalletChange, selectedWallet }) => {
                     </SignedOut>
                 </div>
             </motion.header>
-            {isChatOpen && <ChatbotModal onClose={() => setIsChatOpen(false)}  isOpen={isChatOpen}/>}
+            {isChatOpen && <ChatbotModal onClose={() => setIsChatOpen(false)} isOpen={isChatOpen} />}
         </>
     );
 }
