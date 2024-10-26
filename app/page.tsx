@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import ChainInfo from '@/components/ChainInfo';
 import { useTheme } from '../hooks/useTheme';
 import Footer from '../components/footer';
-import Header from '../components/Header'; // Ensure this import is correct
+import Header from '../components/Header';
 
 const WelcomePage: React.FC = () => {
   const { isSignedIn, user } = useUser();

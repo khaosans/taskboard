@@ -21,7 +21,7 @@ const AuthorizedLayout: React.FC<{ children: React.ReactNode }> = ({ children })
                     setLoading(false);
                 }
             } catch (error) {
-                logger.error('Error checking session:', (error as Error).message);
+                logger.error('Error checking session:', error);
                 router.push('/login');
             }
         };

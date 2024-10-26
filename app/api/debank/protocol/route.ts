@@ -4,9 +4,9 @@ import vercelKVClient from '@/utils/vercelKV';
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
-    const chainId = searchParams.get('chain_id');
+    const url = new URL(req.url);
+    const id = url.searchParams.get('id');
+    const chainId = url.searchParams.get('chain_id');
 
     if (!id) {
       logger.info('Missing protocol id in request');
@@ -33,12 +33,12 @@ export async function GET(req: NextRequest) {
     // If not in cache, fetch from DeBank API
     logger.info(`Cache miss for ${cacheKey}, fetching from DeBank API`);
     
-    let url = `https://pro-openapi.debank.com/v1/protocol?id=${id}`;
+    let apiUrl = `https://pro-openapi.debank.com/v1/protocol?id=${id}`;
     if (chainId) {
-      url += `&chain_id=${chainId}`;
+      apiUrl += `&chain_id=${chainId}`;
     }
 
-    const response = await fetch(url, {
+    const response = await fetch(apiUrl, {
       headers: { 'AccessKey': apiKey }
     });
 
@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(protocolData);
   } catch (error) {
-    logger.error(`Error fetching protocol data: ${(error as Error).message}`);
+    logger.error('Error fetching protocol data', { error: (error as Error).message });
     return NextResponse.json({ error: 'Failed to fetch protocol data' }, { status: 500 });
   }
 }

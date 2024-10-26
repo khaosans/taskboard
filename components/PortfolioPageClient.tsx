@@ -9,13 +9,18 @@ import useWallet from '@/hooks/useWallet';
 import Spinner from '@/components/Spinner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTheme } from 'next-themes';
-import { Wallet } from '../types';
 import { useRouter } from 'next/navigation';
-
-// ... (keep all interfaces as they are)
+import { PortfolioData, ProtocolData } from 'types';
 
 export default function PortfolioPageClient() {
-  // ... (keep all the state and hooks from the original PortfolioPage)
+  const { wallet } = useWallet(); // Assuming useWallet provides wallet state
+  const [mounted, setMounted] = useState(false);
+  const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [chainLoading, setChainLoading] = useState<string | null>(null);
+  const [protocols, setProtocols] = useState<ProtocolData[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -59,7 +64,7 @@ export default function PortfolioPageClient() {
     setChainLoading(chainId);
     if (wallet && mounted) {
       try {
-        const response = await fetch(`/api/debank/user/protocols?id=${wallet?.address}&chain_id=${chainId}`, {
+        const response = await fetch(`/api/debank/user/protocols?id=${wallet.address}&chain_id=${chainId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

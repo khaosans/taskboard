@@ -27,6 +27,8 @@ interface PortfolioData {
   chain_list: ChainData[];
 }
 
+declare const fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+
 export default function PortfolioContent() {
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
   const [selectedChain, setSelectedChain] = useState<ChainData | null>(null);
