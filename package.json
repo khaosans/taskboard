@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "Task-Flow",
+  "name": "task-flow",
   "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
@@ -155,5 +155,9 @@
   "resolutions": {
     "punycode": "2.1.0"
   },
+<<<<<<< HEAD
   "packageManager": "pnpm@8.x"
+=======
+  "packageManager": "pnpm@8.0.0"
+>>>>>>> 964cf9b (Update landing page and tests)
 }
