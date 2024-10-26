@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useTheme } from '../hooks/useTheme';
@@ -9,7 +9,16 @@ import Header from '../components/Header';
 
 const WelcomePage: React.FC = () => {
   const [selectedChain, setSelectedChain] = React.useState('eth');
+  const [mounted, setMounted] = useState(false);
   const { theme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className={`min-h-screen bg-gray-900 text-white ${theme}`}>

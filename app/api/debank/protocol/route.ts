@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
     const apiKey = process.env.DEBANK_API_KEY;
     if (!apiKey) {
-      logger.error('DEBANK_API_KEY is not set', { error: 'API key not configured' });
+      logger.error('DEBANK_API_KEY is not set');
       return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }
 
