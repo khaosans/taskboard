@@ -1,3 +1,4 @@
+/* eslint-env node, commonjs */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: 'class',
@@ -5,10 +6,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        border: 'your-border-color-here',
-        // other custom colors...
+        background: 'var(--background)',
+        border: 'var(--border-color)', // Add this line
       },
     },
   },
   plugins: [],
-}
+};
