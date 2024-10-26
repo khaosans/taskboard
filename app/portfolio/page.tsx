@@ -39,7 +39,7 @@ export default function PortfolioPage() {
   const [chainLoading, setChainLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
-  const { wallet } = useWallet();
+  const [wallet, setWallet] = useState<Wallet | null>(null);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
@@ -49,8 +49,7 @@ export default function PortfolioPage() {
   }, []);
 
   useEffect(() => {
-    if (isUserLoaded && isSignedIn && user && wallet) {
-      logger.info(`Fetching balance for wallet: ${wallet.address}`);
+    if (wallet) {
       const fetchPortfolioData = async () => {
         try {
           const response = await fetch(`/api/debank/user/total_balance?id=${wallet.address}`, {
@@ -85,28 +84,30 @@ export default function PortfolioPage() {
       setPortfolioData(null);
       setLoading(false);
     }
-  }, [isUserLoaded, isSignedIn, user, wallet]);
+  }, [wallet]);
 
   const fetchProtocolData = async (chainId: string) => {
     setChainLoading(chainId);
-    try {
-      const response = await fetch(`/api/debank/user/protocols?id=${wallet?.address}&chain_id=${chainId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    if (wallet) {
+      try {
+        const response = await fetch(`/api/debank/user/protocols?id=${wallet?.address}&chain_id=${chainId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch protocol data');
+        if (!response.ok) {
+          throw new Error('Failed to fetch protocol data');
+        }
+
+        const data: ProtocolData[] = await response.json();
+        setProtocols(data);
+      } catch (error) {
+        setError((error as Error).message);
+      } finally {
+        setChainLoading(null);
       }
-
-      const data: ProtocolData[] = await response.json();
-      setProtocols(data);
-    } catch (error) {
-      setError((error as Error).message);
-    } finally {
-      setChainLoading(null);
     }
   };
 
