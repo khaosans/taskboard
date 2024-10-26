@@ -49,8 +49,8 @@ export default function PortfolioPage() {
   }, []);
 
   useEffect(() => {
-    if (wallet) {
-      const fetchPortfolioData = async () => {
+    const fetchPortfolioData = async () => {
+      if (wallet && typeof window !== 'undefined') {
         try {
           const response = await fetch(`/api/debank/user/total_balance?id=${wallet.address}`, {
             method: 'GET',
@@ -77,18 +77,18 @@ export default function PortfolioPage() {
         } finally {
           setLoading(false);
         }
-      };
+      } else {
+        setPortfolioData(null);
+        setLoading(false);
+      }
+    };
 
-      fetchPortfolioData();
-    } else {
-      setPortfolioData(null);
-      setLoading(false);
-    }
+    fetchPortfolioData();
   }, [wallet]);
 
   const fetchProtocolData = async (chainId: string) => {
     setChainLoading(chainId);
-    if (wallet) {
+    if (wallet && typeof window !== 'undefined') {
       try {
         const response = await fetch(`/api/debank/user/protocols?id=${wallet?.address}&chain_id=${chainId}`, {
           method: 'GET',

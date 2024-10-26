@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { URLSearchParams } from 'url';
 
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 
