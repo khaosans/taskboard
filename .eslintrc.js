@@ -1,5 +1,6 @@
+/* eslint-env node */
 module.exports = {
-  extends: ['next', 'next/core-web-vitals'],
+  extends: ['next/core-web-vitals'],
   env: {
     node: true,
     browser: true,

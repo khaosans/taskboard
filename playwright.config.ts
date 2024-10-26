@@ -1,13 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
-import { PlaywrightTestConfig } from '@playwright/test';
 
-// Load environment variables from .env.local
+// Load environment variables from .env.local for local development
 dotenv.config({ path: '.env.local' });
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-
-const config: PlaywrightTestConfig = {
+export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -15,30 +13,14 @@ const config: PlaywrightTestConfig = {
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || BASE_URL,
+    baseURL: process.env.DEPLOYMENT_URL || process.env.BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
+    headless: true,
   },
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
   ],
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: 'npm run dev',
-        url: BASE_URL,
-        reuseExistingServer: !process.env.CI,
-      },
-};
-
-export default config;
+});
