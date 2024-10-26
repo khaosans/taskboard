@@ -3,9 +3,8 @@ import logger from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   try {
-    const url = new URL(req.url);
-    const id = url.searchParams.get('id');
-    const chainId = url.searchParams.get('chain_id');
+    const id = req.nextUrl.searchParams.get('id');
+    const chainId = req.nextUrl.searchParams.get('chain_id');
 
     if (!id) {
       logger.info('Missing protocol id in request');
@@ -14,7 +13,7 @@ export async function GET(req: NextRequest) {
 
     const apiKey = process.env.DEBANK_API_KEY;
     if (!apiKey) {
-      logger.error('DEBANK_API_KEY is not set');
+      logger.error('DEBANK_API_KEY is not set', { error: 'API key not configured' });
       return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }
 
