@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .border-border {
+    /* Define your custom border style here */
+    border-color: theme('colors.border');
+  }
+}
+
+/* Add your custom styles here if needed */
+
 .glow {
   text-shadow: 0 0 5px rgba(97, 27, 189, 0.7), 0 0 10px rgba(97, 27, 189, 0.5), 0 0 15px rgba(97, 27, 189, 0.3);
 }
