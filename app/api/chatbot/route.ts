@@ -1,25 +1,22 @@
-import { NextResponse } from 'next/server';
-import axios from 'axios';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(req: Request) {
-  const { message } = await req.json();
+export async function POST(request: NextRequest) {
+  const { message } = await request.json();
+  const apiKey = process.env.HUGGINGFACE_API_KEY;
 
-  try {
-    const response = await axios.post(
-      'https://api-inference.huggingface.co/models/your-model-name',
-      { inputs: message },
-      {
-        headers: {
-          Authorization: `Bearer YOUR_HUGGING_FACE_API_KEY`,
-        },
-      }
-    );
-
-    const reply = response.data.generated_text;
-
-    return NextResponse.json({ reply });
-  } catch (error) {
-    console.error('Error in chatbot API:', error);
-    return NextResponse.json({ error: 'An error occurred while processing your request.' }, { status: 500 });
+  if (!apiKey) {
+    return NextResponse.json({ error: 'API key is missing' }, { status: 500 });
   }
+
+  const response = await fetch('https://api.huggingface.co/chat', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({ inputs: message }),
+  });
+
+  const data = await response.json();
+  return NextResponse.json(data);
 }
