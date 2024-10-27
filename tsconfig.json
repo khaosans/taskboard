@@ -20,6 +20,7 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+<<<<<<< HEAD
       "@components/*": [
         "components/*"
       ],
@@ -41,6 +42,9 @@
       "@/styles/*": [
         "styles/*"
       ]
+=======
+      "@/*": ["./*"]
+>>>>>>> e53f5bc (Feature/market view (#51))
     },
     "typeRoots": [
       "./node_modules/@types",
